@@ -625,6 +625,7 @@ bool NlModel::solveEqualitySimple(Node eq,
     }
     return ret;
   }
+  return false;
   Trace("nl-ext-quad") << "Solve quadratic : " << seq << std::endl;
   Trace("nl-ext-quad") << "  a : " << a << std::endl;
   Trace("nl-ext-quad") << "  b : " << b << std::endl;
