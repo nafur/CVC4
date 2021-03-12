@@ -1,3 +1,4 @@
+; COMMAND-LINE: --nl-cad
 ; SCRUBBER: sed -e 's/witness.*/witness/'
 ; EXPECT: sat
 ; EXPECT: ((x (witness

@@ -1,4 +1,4 @@
-; COMMAND-LINE: --no-check-models
+; COMMAND-LINE: --no-check-models --nl-cad
 ; EXPECT: sat
 (set-logic NRA)
 (set-info :status sat)
