@@ -1452,7 +1452,7 @@ void setDefaults(LogicInfo& logic, bool isInternalSubsolver)
         "Try --bv-div-zero-const to interpret division by zero as a constant.");
   }
 
-  if (logic.isTheoryEnabled(TheoryId::THEORY_ARITH))
+  if (logic.isTheoryEnabled(TheoryId::THEORY_ARITH) && !logic.isLinear())
   {
 #ifdef CVC5_USE_POLY
     if (!options::nlCad() && !options::nlCad.wasSetByUser())
