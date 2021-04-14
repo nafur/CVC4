@@ -1452,15 +1452,18 @@ void setDefaults(LogicInfo& logic, bool isInternalSubsolver)
         "Try --bv-div-zero-const to interpret division by zero as a constant.");
   }
 
-  if (logic == LogicInfo("QF_UFNRA"))
+  if (logic.isTheoryEnabled(TheoryId::THEORY_ARITH))
   {
 #ifdef CVC5_USE_POLY
     if (!options::nlCad() && !options::nlCad.wasSetByUser())
     {
       options::nlCad.set(true);
-      if (!options::nlExt.wasSetByUser())
+      if (!logic.areTranscendentalsUsed())
       {
-        options::nlExt.set(false);
+        if (!options::nlExt.wasSetByUser())
+        {
+          options::nlExt.set(false);
+        }
       }
       if (!options::nlRlvMode.wasSetByUser())
       {
