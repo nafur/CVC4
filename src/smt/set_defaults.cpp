@@ -1458,12 +1458,9 @@ void setDefaults(LogicInfo& logic, bool isInternalSubsolver)
     if (!options::nlCad() && !options::nlCad.wasSetByUser())
     {
       options::nlCad.set(true);
-      if (!logic.areTranscendentalsUsed())
+      if (!logic.areTranscendentalsUsed() && !options::nlExt.wasSetByUser())
       {
-        if (!options::nlExt.wasSetByUser())
-        {
-          options::nlExt.set(false);
-        }
+        options::nlExt.set(false);
       }
       if (!options::nlRlvMode.wasSetByUser())
       {
