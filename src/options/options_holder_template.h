@@ -32,7 +32,6 @@ namespace options {
 
 struct OptionsHolder
 {
-  OptionsHolder();
   ${macros_module}$
 
 }; /* struct OptionsHolder */

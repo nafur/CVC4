@@ -252,10 +252,6 @@ void Options::setListener(OptionsListener* ol) { d_olisten = ol; }
 
 // clang-format off
 ${custom_handlers}$
-
-options::OptionsHolder::OptionsHolder()
-{
-}
 // clang-format on
 
 static const std::string mostCommonOptionsDescription =
