@@ -94,15 +94,16 @@ def parse(args):
                 for category in resource_re.finditer(content):
                     catname = category.group(1)
                     for res in resource_list_re.finditer(category.group(2)):
-                        resources[f'{catname}:{res.group(1)}'] = int(res.group(2))
-                
+                        resources[f'{catname}:{res.group(1)}'] = int(
+                            res.group(2))
+
                 timematch = totaltime_re.search(content)
                 if timematch:
                     timematch = timematch.group(1)
                 else:
                     logging.debug(f'Timeout on {file}')
                     continue
-                    
+
                 data[filename] = {
                     'resources': resources,
                     'time': float(timematch),
@@ -143,7 +144,7 @@ def analyze(args):
 
         for r in d['resources']:
             vals[r].append(d['resources'][r])
-    
+
     vals = {
         r: vals[r] for r in vals if vals[r] != []
     }
@@ -160,7 +161,8 @@ def analyze(args):
         avgval = statistics.mean(vals[c[0]])
         medval = statistics.median(vals[c[0]])
         impact = c[1] * avgval
-        logging.info(f'{c[0]:50}-> {c[1]:10.4f}  ({minval:6} .. {maxval:10}, avg {avgval:10.2f}, med {medval:10.2f}, impact {impact:10.2f})')
+        logging.info(
+            f'{c[0]:50}-> {c[1]:10.4f}  ({minval:6} .. {maxval:10}, avg {avgval:10.2f}, med {medval:10.2f}, impact {impact:10.2f})')
 
     logging.info('Comparing regression model with reality')
     outliers = {
@@ -174,8 +176,10 @@ def analyze(args):
             continue
         vals = get_sorted_values(resources, d['resources'])
         predict = float(r.predict([vals])) / args.mult
-        outliers['over-estimated'].append([predict / actual, predict, actual, filename])
-        outliers['under-estimated'].append([actual / predict, predict, actual, filename])
+        outliers['over-estimated'].append([predict /
+                                           actual, predict, actual, filename])
+        outliers['under-estimated'].append([actual /
+                                            predict, predict, actual, filename])
 
     for out in outliers:
         logging.info('Showing outliers for {}'.format(out))
