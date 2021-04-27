@@ -26,7 +26,6 @@ namespace cvc5 {
 
 ${accs}$
 
-
 namespace options {
 
 ${defs}$
