@@ -62,8 +62,7 @@ OPTION_ATTR_ALL = OPTION_ATTR_REQ + [
 
 CATEGORY_VALUES = ['common', 'expert', 'regular', 'undocumented']
 
-SUPPORTED_CTYPES = ['int', 'unsigned', 'unsigned long', 'long', 'float',
-                    'double']
+SUPPORTED_CTYPES = ['int', 'unsigned', 'unsigned long', 'long', 'double']
 
 ### Other globals
 
