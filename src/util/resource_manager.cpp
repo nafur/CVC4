@@ -25,6 +25,7 @@
 #include "options/options.h"
 #include "options/smt_options.h"
 #include "util/statistics_registry.h"
+#include "util/resource_manager_weights.h"
 
 using namespace std;
 
@@ -118,36 +119,6 @@ ResourceManager::Statistics::Statistics(StatisticsRegistry& stats)
 {
 }
 
-bool parseOption(const std::string& optarg, std::string& name, uint64_t& weight)
-{
-  auto pos = optarg.find('=');
-  // Check if there is a '='
-  if (pos == std::string::npos) return false;
-  // The name is the part before '='
-  name = optarg.substr(0, pos);
-  // The weight is the part after '='
-  std::string num = optarg.substr(pos + 1);
-  std::size_t converted;
-  weight = std::stoull(num, &converted);
-  // Check everything after '=' was converted
-  return converted == num.size();
-}
-
-template <typename T, typename Weights>
-bool setWeight(const std::string& name, uint64_t weight, Weights& weights)
-{
-  using theory::toString;
-  for (std::size_t i = 0; i < weights.size(); ++i)
-  {
-    if (name == toString(static_cast<T>(i)))
-    {
-      weights[i] = weight;
-      return true;
-    }
-  }
-  return false;
-}
-
 /*---------------------------------------------------------------------------*/
 
 ResourceManager::ResourceManager(StatisticsRegistry& stats, Options& options)
@@ -161,19 +132,7 @@ ResourceManager::ResourceManager(StatisticsRegistry& stats, Options& options)
 
   d_infidWeights.fill(1);
   d_resourceWeights.fill(1);
-  for (const auto& opt :
-       options[cvc5::options::resourceWeightHolder__option_t()])
-  {
-    std::string name;
-    uint64_t weight;
-    if (parseOption(opt, name, weight))
-    {
-      if (setWeight<theory::InferenceId>(name, weight, d_infidWeights))
-        continue;
-      if (setWeight<Resource>(name, weight, d_resourceWeights)) continue;
-      throw OptionException("Did not recognize resource type " + name);
-    }
-  }
+  loadWeights(options, theory::InferenceId(), d_infidWeights, Resource(), d_resourceWeights);
 }
 
 ResourceManager::~ResourceManager() {}
