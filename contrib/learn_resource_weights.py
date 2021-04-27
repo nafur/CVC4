@@ -25,14 +25,14 @@ in a compact form.
 
 In the second stage ("analyze") this script loads the gziped json file and uses
 a linear regression model to learn resource weights. The resulting weights can
-be used as constants for the resource options ("--*-step=n"). Additionally,
-this script performs some analysis on the results to identify outliers where
-the linear model performs particularly bad, i.e., the runtime estimation is way
-off.
+be used as constants for the resource options ("--rweight=name=n").
+Additionally, this script performs some analysis on the results to identify
+outliers where the linear model performs particularly bad, i.e., the runtime
+estimation is way off.
     """
     usage = """
     first stage to parse the solver output:
-    %(prog)s parse <output directory>
+    %(prog)s parse <output directory> ...
     
     second stage to learn resource weights:
     %(prog)s analyze
@@ -43,13 +43,13 @@ off.
                                      usage=usage)
     parser.add_argument('command', choices=[
                         'parse', 'analyze'], help='task to perform')
-    parser.add_argument('basedir', default=None, nargs='?',
-                        help='path of benchmark results')
+    parser.add_argument('basedir', default=None, nargs='*',
+                        help='paths of benchmark results')
     parser.add_argument('-v', '--verbose',
                         action='store_true', help='be more verbose')
     parser.add_argument('--json', default='data.json.gz',
                         help='path of json file')
-    parser.add_argument('--threshold', metavar='SEC', type=int, default=1,
+    parser.add_argument('--threshold', metavar='SEC', type=int, default=5,
                         help='ignore benchmarks with a runtime below this threshold')
     parser.add_argument('--mult', type=int, default=1000,
                         help='multiply running times with this factor for regression')
@@ -69,36 +69,47 @@ def save_zipped_json(filename, data):
         fout.write(json.dumps(data).encode('utf-8'))
 
 
-def get_sorted_values(data):
-    """Transform [['name', value], ...] to [value, ...] sorted by names"""
-    return [d[1] for d in sorted(data)]
+def get_sorted_values(resources, data):
+    """Transform {'name': value, ...} to [value, ...] sorted by names"""
+    return [data.get(r, 0) for r in resources]
 
 
 def parse(args):
     if args.basedir is None:
         raise Exception('Specify basedir for parsing!')
     filename_re = re.compile('(.*\\.smt2)/output\\.log')
-    resource_re = re.compile('resource::([^,]+), ([0-9]+)')
-    result_re = re.compile('driver::sat/unsat, ([a-z]+)')
-    totaltime_re = re.compile('driver::totalTime, ([0-9\\.]+)')
+    resource_re = re.compile('resource::steps::([^ ]+) = { ([^}]*) }')
+    resource_list_re = re.compile('([a-zA-Z0-9_]+): ([0-9]+)')
+    totaltime_re = re.compile('driver::totalTime = ([0-9\\.]+)')
 
-    logging.info('Parsing files from {}'.format(args.basedir))
     data = {}
     failed = 0
-    for file in glob.iglob('{}/**/output.log'.format(args.basedir), recursive=True):
-        content = open(file).read()
-        try:
-            filename = filename_re.match(file).group(1)
-            r = resource_re.findall(content)
-            r = list(map(lambda x: (x[0], int(x[1])), r))
-            data[filename] = {
-                'resources': r,
-                'result': result_re.search(content).group(1),
-                'time': float(totaltime_re.search(content).group(1)),
-            }
-        except Exception as e:
-            logging.debug('Failed to parse {}: {}'.format(file, e))
-            failed += 1
+    for basedir in args.basedir:
+        logging.info(f'Parsing files from {basedir}')
+        for file in glob.iglob(f'{basedir}/**/output.log', recursive=True):
+            content = open(file).read()
+            try:
+                filename = filename_re.match(file).group(1)
+                resources = {}
+                for category in resource_re.finditer(content):
+                    catname = category.group(1)
+                    for res in resource_list_re.finditer(category.group(2)):
+                        resources[f'{catname}:{res.group(1)}'] = int(res.group(2))
+                
+                timematch = totaltime_re.search(content)
+                if timematch:
+                    timematch = timematch.group(1)
+                else:
+                    logging.debug(f'Timeout on {file}')
+                    continue
+                    
+                data[filename] = {
+                    'resources': resources,
+                    'time': float(timematch),
+                }
+            except Exception as e:
+                logging.debug('Failed to parse {}: {}'.format(file, e))
+                failed += 1
 
     if failed > 0:
         logging.info('Failed to parse {} out of {} files'.format(
@@ -115,7 +126,7 @@ def analyze(args):
     resources = set()
     for f in data:
         for r in data[f]['resources']:
-            resources.add(r[0])
+            resources.add(r)
     resources = list(sorted(resources))
 
     vals = {r: [] for r in resources}
@@ -127,24 +138,29 @@ def analyze(args):
         d = data[filename]
         if d['time'] < args.threshold:
             continue
-        x.append(get_sorted_values(d['resources']))
+        x.append(get_sorted_values(resources, d['resources']))
         y.append(d['time'] * args.mult)
 
         for r in d['resources']:
-            vals[r[0]].append(r[1])
+            vals[r].append(d['resources'][r])
+    
+    vals = {
+        r: vals[r] for r in vals if vals[r] != []
+    }
 
     logging.info('Training regression model')
-    clf = linear_model.LinearRegression()
+    clf = linear_model.Ridge(solver='sparse_cg')
     r = clf.fit(x, y)
     coeffs = zip(resources, r.coef_)
     for c in sorted(coeffs, key=lambda c: c[1]):
+        if not c[0] in vals:
+            continue
         minval = min(vals[c[0]])
         maxval = max(vals[c[0]])
         avgval = statistics.mean(vals[c[0]])
         medval = statistics.median(vals[c[0]])
         impact = c[1] * avgval
-        logging.info('{:23}-> {:15.10f}\t({} .. {:10}, avg {:9.2f}, med {:8}, impact {:7.3f})'.format(
-            *c, minval, maxval, avgval, medval, impact))
+        logging.info(f'{c[0]:50}-> {c[1]:10.4f}  ({minval:6} .. {maxval:10}, avg {avgval:10.2f}, med {medval:10.2f}, impact {impact:10.2f})')
 
     logging.info('Comparing regression model with reality')
     outliers = {
@@ -156,7 +172,7 @@ def analyze(args):
         actual = d['time']
         if actual < args.threshold:
             continue
-        vals = get_sorted_values(d['resources'])
+        vals = get_sorted_values(resources, d['resources'])
         predict = float(r.predict([vals])) / args.mult
         outliers['over-estimated'].append([predict / actual, predict, actual, filename])
         outliers['under-estimated'].append([actual / predict, predict, actual, filename])
