@@ -28,7 +28,8 @@
 
 namespace cvc5 {
 
-std::vector<std::string> DidYouMean::getMatch(const std::string& input) {
+std::vector<std::string> DidYouMean::getMatch(const std::string& input)
+{
   /** Magic numbers */
   const int similarityThreshold = 7;
   const unsigned numMatchesThreshold = 10;
@@ -72,11 +73,11 @@ int DidYouMean::editDistance(const std::string& a, const std::string& b) {
   // input string: a
   // desired string: b
 
-  const uint64_t swapCost = 0;
-  const uint64_t substituteCost = 2;
-  const uint64_t addCost = 1;
-  const uint64_t deleteCost = 3;
-  const uint64_t switchCaseCost = 0;
+  const size_t swapCost = 0;
+  const size_t substituteCost = 2;
+  const size_t addCost = 1;
+  const size_t deleteCost = 3;
+  const size_t switchCaseCost = 0;
 
   size_t len1 = a.size();
   size_t len2 = b.size();
@@ -88,18 +89,21 @@ int DidYouMean::editDistance(const std::string& a, const std::string& b) {
   }
   //  int C[3][len2+1];             // cost
 
-  for (size_t j = 0; j <= len2; ++j) {
+  for (size_t j = 0; j <= len2; ++j)
+  {
     C[0][j] = j * addCost;
   }
 
-  for (size_t i = 1; i <= len1; ++i) {
+  for (size_t i = 1; i <= len1; ++i)
+  {
     size_t cur = i % 3;
     size_t prv = (i + 2) % 3;
     size_t pr2 = (i + 1) % 3;
 
     C[cur][0] = i * deleteCost;
 
-    for (size_t j = 1; j <= len2; ++j) {
+    for (size_t j = 1; j <= len2; ++j)
+    {
       C[cur][j] = 100000000;  // INF
 
       if (a[i - 1] == b[j - 1]) {
@@ -136,8 +140,10 @@ int DidYouMean::editDistance(const std::string& a, const std::string& b) {
   return result;
 }
 
-std::string DidYouMean::getMatchAsString(const std::string& input, uint64_t prefixNewLines,
-                                         uint64_t suffixNewLines) {
+std::string DidYouMean::getMatchAsString(const std::string& input,
+                                         uint64_t prefixNewLines,
+                                         uint64_t suffixNewLines)
+{
   std::vector<std::string> matches = getMatch(input);
   std::ostringstream oss;
   if (matches.size() > 0) {
@@ -149,7 +155,8 @@ std::string DidYouMean::getMatchAsString(const std::string& input, uint64_t pref
     } else {
       oss << "Did you mean any of these?";
     }
-    for (size_t i = 0; i < matches.size(); ++i) {
+    for (size_t i = 0; i < matches.size(); ++i)
+    {
       oss << "\n        " << matches[i];
     }
     while (suffixNewLines-- > 0) {

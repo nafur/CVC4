@@ -28,7 +28,7 @@ namespace cvc5 {
 
 class DidYouMean {
  public:
-  typedef std::set<std::string> Words;
+  using Words = std::set<std::string>;
 
   DidYouMean() {}
   ~DidYouMean() {}
@@ -41,7 +41,8 @@ class DidYouMean {
    * This is provided to make it easier to ensure consistency of
    * output. Returned string is empty if there are no matches.
    */
-  std::string getMatchAsString(const std::string& input, uint64_t prefixNewLines = 2,
+  std::string getMatchAsString(const std::string& input,
+                               uint64_t prefixNewLines = 2,
                                uint64_t suffixNewLines = 0);
 
  private:
