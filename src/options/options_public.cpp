@@ -16,6 +16,8 @@
  * Options::wasSetByUser<T> for different option types T.
  */
 
+#include "options_public.h"
+
 #include <fstream>
 #include <ostream>
 #include <string>
