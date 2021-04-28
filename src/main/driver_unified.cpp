@@ -139,7 +139,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
 
   // if we're reading from stdin on a TTY, default to interactive mode
   if(!options::wasSetByUserInteractive(opts)) {
-    opts.setInteractive(inputFromStdin && isatty(fileno(stdin)));
+    options::setInteractive(inputFromStdin && isatty(fileno(stdin)), opts);
   }
 
   // Auto-detect input language by filename extension
