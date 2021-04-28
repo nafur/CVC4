@@ -230,13 +230,11 @@ Options::Options(OptionsListener* ol)
 
 Options::~Options() {
   delete d_handler;
-  delete d_holder;
 }
 
 void Options::copyValues(const Options& options){
   if(this != &options) {
-    delete d_holder;
-    d_holder = new options::OptionsHolder(*options.d_holder);
+    *d_holder = *options.d_holder;
   }
 }
 
@@ -292,7 +290,7 @@ Languages currently supported as arguments to the --output-lang option:\n\
   ast                            internal format (simple syntax trees)\n\
 ";
 
-std::string Options::getDescription() const {
+const std::string& Options::getDescription() const {
   return optionsDescription;
 }
 
