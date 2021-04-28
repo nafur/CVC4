@@ -174,13 +174,6 @@ public:
   bool wasSetByUser(T) const;
 
   /**
-   * Look up long command-line option names that bear some similarity
-   * to the given name.  Returns an empty string if there are no
-   * suggestions.
-   */
-  static std::string suggestCommandLineOptions(const std::string& optionName);
-
-  /**
    * Initialize the Options object options based on the given
    * command-line arguments given in argc and argv.  The return value
    * is what's left of the command line (that is, the non-option

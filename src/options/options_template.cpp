@@ -346,6 +346,18 @@ std::vector<std::string> Options::parseOptions(Options* options,
   return nonoptions;
 }
 
+std::string suggestCommandLineOptions(const std::string& optionName)
+{
+  DidYouMean didYouMean;
+
+  const char* opt;
+  for(size_t i = 0; (opt = cmdlineOptions[i].name) != nullptr; ++i) {
+    didYouMean.addWord(std::string("--") + cmdlineOptions[i].name);
+  }
+
+  return didYouMean.getMatchAsString(optionName.substr(0, optionName.find('=')));
+}
+
 void Options::parseOptionsRecursive(int argc,
                                     char* argv[],
                                     std::vector<std::string>* nonoptions)
@@ -456,18 +468,6 @@ ${options_handler}$
 
   Debug("options") << "got " << nonoptions->size()
                    << " non-option arguments." << std::endl;
-}
-
-std::string Options::suggestCommandLineOptions(const std::string& optionName)
-{
-  DidYouMean didYouMean;
-
-  const char* opt;
-  for(size_t i = 0; (opt = cmdlineOptions[i].name) != NULL; ++i) {
-    didYouMean.addWord(std::string("--") + cmdlineOptions[i].name);
-  }
-
-  return didYouMean.getMatchAsString(optionName.substr(0, optionName.find('=')));
 }
 
 // clang-format off
