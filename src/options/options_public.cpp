@@ -228,17 +228,4 @@ bool Options::wasSetByUserInteractive() const {
   return wasSetByUser(options::interactive);
 }
 
-
-void Options::flushErr() {
-  if(getErr() != NULL) {
-    *(getErr()) << std::flush;
-  }
-}
-
-void Options::flushOut() {
-  if(getOut() != NULL) {
-    *(getOut()) << std::flush;
-  }
-}
-
 }  // namespace cvc5

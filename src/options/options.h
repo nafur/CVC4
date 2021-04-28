@@ -255,12 +255,6 @@ public:
   /** Set the generic listener associated with this class to ol */
   void setListener(OptionsListener* ol);
 
-  /** Sends a std::flush to getErr(). */
-  void flushErr();
-
-  /** Sends a std::flush to getOut(). */
-  void flushOut();
-
  private:
   /** Pointer to the options listener, if one exists */
   OptionsListener* d_olisten;

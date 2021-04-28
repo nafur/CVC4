@@ -42,6 +42,7 @@
 #include "expr/symbol_manager.h"
 #include "options/language.h"
 #include "options/options.h"
+#include "options/options_public.h"
 #include "parser/input.h"
 #include "parser/parser.h"
 #include "parser/parser_builder.h"
@@ -94,8 +95,8 @@ InteractiveShell::InteractiveShell(api::Solver* solver, SymbolManager* sm)
   ParserBuilder parserBuilder(solver, sm, INPUT_FILENAME, d_options);
   /* Create parser with bogus input. */
   d_parser = parserBuilder.withStringInput("").build();
-  if(d_options.wasSetByUserForceLogicString()) {
-    LogicInfo tmp(d_options.getForceLogicString());
+  if(options::wasSetByUserForceLogicString(d_options)) {
+    LogicInfo tmp(options::getForceLogicString(d_options));
     d_parser->forceLogic(tmp.getLogicString());
   }
 
@@ -207,7 +208,7 @@ restart:
   }
   else
   {
-    if(d_options.getInteractivePrompt()) {
+    if(options::getInteractivePrompt(d_options)) {
       if(line == "") {
         d_out << "cvc5> " << flush;
       } else {
@@ -290,7 +291,7 @@ restart:
       }
       else
       {
-        if(d_options.getInteractivePrompt()) {
+        if(options::getInteractivePrompt(d_options)) {
           d_out << "... > " << flush;
         }
 
@@ -306,7 +307,7 @@ restart:
     }
   }
 
-  d_parser->setInput(Input::newStringInput(d_options.getInputLanguage(),
+  d_parser->setInput(Input::newStringInput(options::getInputLanguage(d_options),
                                            input, INPUT_FILENAME));
 
   /* There may be more than one command in the input. Build up a
@@ -358,7 +359,7 @@ restart:
   }
   catch (ParserException& pe)
   {
-    if (language::isOutputLang_smt2(d_options.getOutputLanguage()))
+    if (language::isOutputLang_smt2(options::getOutputLanguage(d_options)))
     {
       d_out << "(error \"" << pe << "\")" << endl;
     }
