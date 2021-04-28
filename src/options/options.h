@@ -25,11 +25,6 @@
 
 #include "base/listener.h"
 #include "cvc5_export.h"
-<<<<<<< HEAD
-=======
-#include "options/language.h"
-#include "options/printer_modes.h"
->>>>>>> upstream/master
 
 namespace cvc5 {
 
