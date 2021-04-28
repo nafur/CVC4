@@ -167,21 +167,6 @@ public:
    */
   std::string getOption(const std::string& key) const;
 
-  // TODO: Document these.
-  void setInputLanguage(InputLanguage);
-  void setInteractive(bool);
-  void setOut(std::ostream*);
-  void setOutputLanguage(OutputLanguage);
-
-  bool wasSetByUserEarlyExit() const;
-  bool wasSetByUserForceLogicString() const;
-  bool wasSetByUserIncrementalSolving() const;
-  bool wasSetByUserInteractive() const;
-
-  // Static accessor functions.
-  // TODO: Document these.
-  static std::ostream* currentGetOut();
-
   /**
    * Returns true iff the value of the given option was set
    * by the user via a command-line option or SmtEngine::setOption().
@@ -195,7 +180,7 @@ public:
    * Get a description of the command-line flags accepted by
    * parseOptions.  The returned string will be escaped so that it is
    * suitable as an argument to printf. */
-  std::string getDescription() const;
+  const std::string& getDescription() const;
 
   /**
    * Print overall command-line option usage message, prefixed by

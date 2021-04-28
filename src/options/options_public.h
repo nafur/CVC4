@@ -62,6 +62,10 @@ std::ostream* getErr(const Options& opts);
 std::ostream* getOut(const Options& opts);
 const std::string& getBinaryName(const Options& opts);
 
+void setInputLanguage(InputLanguage val, Options& opts);
+void setInteractive(bool val, Options& opts);
+void setOut(std::ostream* val, Options& opts);
+void setOutputLanguage(OutputLanguage val, Options& opts);
 
 bool wasSetByUserEarlyExit(const Options& opts);
 bool wasSetByUserForceLogicString(const Options& opts);

@@ -173,6 +173,19 @@ const std::string& getBinaryName(const Options& opts) {
   return opts[options::binary_name];
 }
 
+void setInputLanguage(InputLanguage val, Options& opts) {
+  opts.set(options::inputLanguage, val);
+}
+void setInteractive(bool val, Options& opts) {
+  opts.set(options::interactive, val);
+}
+void setOut(std::ostream* val, Options& opts) {
+  opts.set(options::out, val);
+}
+void setOutputLanguage(OutputLanguage val, Options& opts) {
+  opts.set(options::outputLanguage, val);
+}
+
 bool wasSetByUserEarlyExit(const Options& opts)
 {
   return opts.wasSetByUser(options::earlyExit);
@@ -191,41 +204,3 @@ bool wasSetByUserInteractive(const Options& opts)
 }
 
 }
-
-namespace cvc5 {
-
-// TODO: Document these.
-
-void Options::setInputLanguage(InputLanguage value) {
-  set(options::inputLanguage, value);
-}
-
-void Options::setInteractive(bool value) {
-  set(options::interactive, value);
-}
-
-void Options::setOut(std::ostream* value) {
-  set(options::out, value);
-}
-
-void Options::setOutputLanguage(OutputLanguage value) {
-  set(options::outputLanguage, value);
-}
-
-bool Options::wasSetByUserEarlyExit() const {
-  return wasSetByUser(options::earlyExit);
-}
-
-bool Options::wasSetByUserForceLogicString() const {
-  return wasSetByUser(options::forceLogicString);
-}
-
-bool Options::wasSetByUserIncrementalSolving() const {
-  return wasSetByUser(options::incrementalSolving);
-}
-
-bool Options::wasSetByUserInteractive() const {
-  return wasSetByUser(options::interactive);
-}
-
-}  // namespace cvc5

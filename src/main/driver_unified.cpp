@@ -154,27 +154,27 @@ int runCvc5(int argc, char* argv[], Options& opts)
   if(options::getInputLanguage(opts) == language::input::LANG_AUTO) {
     if( inputFromStdin ) {
       // We can't do any fancy detection on stdin
-      opts.setInputLanguage(language::input::LANG_CVC);
+      options::setInputLanguage(language::input::LANG_CVC, opts);
     } else {
-      unsigned len = filenameStr.size();
+      size_t len = filenameStr.size();
       if(len >= 5 && !strcmp(".smt2", filename + len - 5)) {
-        opts.setInputLanguage(language::input::LANG_SMTLIB_V2_6);
+        options::setInputLanguage(language::input::LANG_SMTLIB_V2_6, opts);
       } else if((len >= 2 && !strcmp(".p", filename + len - 2))
                 || (len >= 5 && !strcmp(".tptp", filename + len - 5))) {
-        opts.setInputLanguage(language::input::LANG_TPTP);
+        options::setInputLanguage(language::input::LANG_TPTP, opts);
       } else if(( len >= 4 && !strcmp(".cvc", filename + len - 4) )
                 || ( len >= 5 && !strcmp(".cvc4", filename + len - 5) )) {
-        opts.setInputLanguage(language::input::LANG_CVC);
+        options::setInputLanguage(language::input::LANG_CVC, opts);
       } else if((len >= 3 && !strcmp(".sy", filename + len - 3))
                 || (len >= 3 && !strcmp(".sl", filename + len - 3))) {
         // version 2 sygus is the default
-        opts.setInputLanguage(language::input::LANG_SYGUS_V2);
+        options::setInputLanguage(language::input::LANG_SYGUS_V2, opts);
       }
     }
   }
 
   if(options::getOutputLanguage(opts) == language::output::LANG_AUTO) {
-    opts.setOutputLanguage(language::toOutputLanguage(options::getInputLanguage(opts)));
+    options::setOutputLanguage(language::toOutputLanguage(options::getInputLanguage(opts)), opts);
   }
 
   // Determine which messages to show based on smtcomp_mode and verbosity
