@@ -174,30 +174,6 @@ public:
   bool wasSetByUser(T) const;
 
   /**
-   * Get a description of the command-line flags accepted by
-   * parseOptions.  The returned string will be escaped so that it is
-   * suitable as an argument to printf. */
-  const std::string& getDescription() const;
-
-  /**
-   * Print overall command-line option usage message, prefixed by
-   * "msg"---which could be an error message causing the usage
-   * output in the first place, e.g. "no such option --foo"
-   */
-  static void printUsage(const std::string msg, std::ostream& out);
-
-  /**
-   * Print command-line option usage message for only the most-commonly
-   * used options.  The message is prefixed by "msg"---which could be
-   * an error message causing the usage output in the first place, e.g.
-   * "no such option --foo"
-   */
-  static void printShortUsage(const std::string msg, std::ostream& out);
-
-  /** Print help for the --lang command line option */
-  static void printLanguageHelp(std::ostream& out);
-
-  /**
    * Look up long command-line option names that bear some similarity
    * to the given name.  Returns an empty string if there are no
    * suggestions.
@@ -261,6 +237,35 @@ public:
                                     char* argv[],
                                     std::vector<std::string>* nonoptions);
 }; /* class Options */
+
+namespace options {
+
+
+  /**
+   * Get a description of the command-line flags accepted by
+   * parseOptions.  The returned string will be escaped so that it is
+   * suitable as an argument to printf. */
+  const std::string& getDescription() CVC5_EXPORT;
+
+  /**
+   * Print overall command-line option usage message, prefixed by
+   * "msg"---which could be an error message causing the usage
+   * output in the first place, e.g. "no such option --foo"
+   */
+  void printUsage(const std::string& msg, std::ostream& out) CVC5_EXPORT;
+
+  /**
+   * Print command-line option usage message for only the most-commonly
+   * used options.  The message is prefixed by "msg"---which could be
+   * an error message causing the usage output in the first place, e.g.
+   * "no such option --foo"
+   */
+  void printShortUsage(const std::string& msg, std::ostream& out) CVC5_EXPORT;
+
+  /** Print help for the --lang command line option */
+  void printLanguageHelp(std::ostream& out) CVC5_EXPORT;
+
+}
 
 }  // namespace cvc5
 

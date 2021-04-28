@@ -252,65 +252,6 @@ void Options::setListener(OptionsListener* ol) { d_olisten = ol; }
 ${custom_handlers}$
 // clang-format on
 
-static const std::string mostCommonOptionsDescription =
-    "\
-Most commonly-used cvc5 options:\n"
-    // clang-format off
-${help_common}$
-    // clang-format on
-    ;
-
-// clang-format off
-static const std::string optionsDescription =
-    mostCommonOptionsDescription + "\n\nAdditional cvc5 options:\n"
-${help_others}$;
-// clang-format on
-
-static const std::string optionsFootnote = "\n\
-[*] Each of these options has a --no-OPTIONNAME variant, which reverses the\n\
-    sense of the option.\n\
-";
-
-static const std::string languageDescription =
-    "\
-Languages currently supported as arguments to the -L / --lang option:\n\
-  auto                           attempt to automatically determine language\n\
-  cvc | presentation | pl        CVC presentation language\n\
-  smt | smtlib | smt2 |\n\
-  smt2.6 | smtlib2.6             SMT-LIB format 2.6 with support for the strings standard\n\
-  tptp                           TPTP format (cnf, fof and tff)\n\
-  sygus | sygus2                 SyGuS version 2.0\n\
-\n\
-Languages currently supported as arguments to the --output-lang option:\n\
-  auto                           match output language to input language\n\
-  cvc | presentation | pl        CVC presentation language\n\
-  smt | smtlib | smt2 |\n\
-  smt2.6 | smtlib2.6             SMT-LIB format 2.6 with support for the strings standard\n\
-  tptp                           TPTP format\n\
-  ast                            internal format (simple syntax trees)\n\
-";
-
-const std::string& Options::getDescription() const
-{
-  return optionsDescription;
-}
-
-void Options::printUsage(const std::string msg, std::ostream& out) {
-  out << msg << optionsDescription << std::endl
-      << optionsFootnote << std::endl << std::flush;
-}
-
-void Options::printShortUsage(const std::string msg, std::ostream& out) {
-  out << msg << mostCommonOptionsDescription << std::endl
-      << optionsFootnote << std::endl
-      << "For full usage, please use --help."
-      << std::endl << std::endl << std::flush;
-}
-
-void Options::printLanguageHelp(std::ostream& out) {
-  out << languageDescription << std::flush;
-}
-
 /**
  * This is a table of long options.  By policy, each short option
  * should have an equivalent long option (but the reverse isn't the
@@ -593,6 +534,68 @@ std::string Options::getOption(const std::string& key) const
   throw UnrecognizedOptionException(key);
 }
 // clang-format on
+
+namespace options {
+
+// clang-format off
+static const std::string mostCommonOptionsDescription =
+    "\
+Most commonly-used cvc5 options:\n"
+${help_common}$
+    ;
+
+static const std::string optionsDescription =
+    mostCommonOptionsDescription + "\n\nAdditional cvc5 options:\n"
+${help_others}$;
+
+static const std::string optionsFootnote = "\n\
+[*] Each of these options has a --no-OPTIONNAME variant, which reverses the\n\
+    sense of the option.\n\
+";
+
+static const std::string languageDescription =
+    "\
+Languages currently supported as arguments to the -L / --lang option:\n\
+  auto                           attempt to automatically determine language\n\
+  cvc | presentation | pl        CVC presentation language\n\
+  smt | smtlib | smt2 |\n\
+  smt2.6 | smtlib2.6             SMT-LIB format 2.6 with support for the strings standard\n\
+  tptp                           TPTP format (cnf, fof and tff)\n\
+  sygus | sygus2                 SyGuS version 2.0\n\
+\n\
+Languages currently supported as arguments to the --output-lang option:\n\
+  auto                           match output language to input language\n\
+  cvc | presentation | pl        CVC presentation language\n\
+  smt | smtlib | smt2 |\n\
+  smt2.6 | smtlib2.6             SMT-LIB format 2.6 with support for the strings standard\n\
+  tptp                           TPTP format\n\
+  ast                            internal format (simple syntax trees)\n\
+";
+// clang-format on
+
+
+const std::string& getDescription()
+{
+  return optionsDescription;
+}
+
+void printUsage(const std::string& msg, std::ostream& out) {
+  out << msg << optionsDescription << std::endl
+      << optionsFootnote << std::endl << std::flush;
+}
+
+void printShortUsage(const std::string& msg, std::ostream& out) {
+  out << msg << mostCommonOptionsDescription << std::endl
+      << optionsFootnote << std::endl
+      << "For full usage, please use --help."
+      << std::endl << std::endl << std::flush;
+}
+
+void printLanguageHelp(std::ostream& out) {
+  out << languageDescription << std::flush;
+}
+
+}
 
 }  // namespace cvc5
 // clang-format on

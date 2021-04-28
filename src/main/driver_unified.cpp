@@ -87,9 +87,9 @@ void printUsage(Options& opts, bool full) {
      << endl
      << "cvc5 options:" << endl;
   if(full) {
-    Options::printUsage(ss.str(), *(options::getOut(opts)));
+    options::printUsage(ss.str(), *(options::getOut(opts)));
   } else {
-    Options::printShortUsage(ss.str(), *(options::getOut(opts)));
+    options::printShortUsage(ss.str(), *(options::getOut(opts)));
   }
 }
 
@@ -119,7 +119,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
   }
   else if (options::getLanguageHelp(opts))
   {
-    Options::printLanguageHelp(*(options::getOut(opts)));
+    options::printLanguageHelp(*(options::getOut(opts)));
     exit(1);
   }
   else if (options::getVersion(opts))

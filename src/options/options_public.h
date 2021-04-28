@@ -29,50 +29,50 @@
 
 namespace cvc5::options {
 
-InputLanguage getInputLanguage(const Options& opts);
-InstFormatMode getInstFormatMode(const Options& opts);
-OutputLanguage getOutputLanguage(const Options& opts);
-bool getUfHo(const Options& opts);
-bool getDumpInstantiations(const Options& opts);
-bool getDumpModels(const Options& opts);
-bool getDumpProofs(const Options& opts);
-bool getDumpUnsatCores(const Options& opts);
-bool getEarlyExit(const Options& opts);
-bool getFilesystemAccess(const Options& opts);
-bool getForceNoLimitCpuWhileDump(const Options& opts);
-bool getHelp(const Options& opts);
-bool getIncrementalSolving(const Options& opts);
-bool getInteractive(const Options& opts);
-bool getInteractivePrompt(const Options& opts);
-bool getLanguageHelp(const Options& opts);
-bool getMemoryMap(const Options& opts);
-bool getParseOnly(const Options& opts);
-bool getProduceModels(const Options& opts);
-bool getSegvSpin(const Options& opts);
-bool getSemanticChecks(const Options& opts);
-bool getStatistics(const Options& opts);
-bool getStatsEveryQuery(const Options& opts);
-bool getStrictParsing(const Options& opts);
-int getTearDownIncremental(const Options& opts);
-unsigned long getCumulativeTimeLimit(const Options& opts);
-bool getVersion(const Options& opts);
-const std::string& getForceLogicString(const Options& opts);
-int getVerbosity(const Options& opts);
+InputLanguage getInputLanguage(const Options& opts) CVC5_EXPORT;
+InstFormatMode getInstFormatMode(const Options& opts) CVC5_EXPORT;
+OutputLanguage getOutputLanguage(const Options& opts) CVC5_EXPORT;
+bool getUfHo(const Options& opts) CVC5_EXPORT;
+bool getDumpInstantiations(const Options& opts) CVC5_EXPORT;
+bool getDumpModels(const Options& opts) CVC5_EXPORT;
+bool getDumpProofs(const Options& opts) CVC5_EXPORT;
+bool getDumpUnsatCores(const Options& opts) CVC5_EXPORT;
+bool getEarlyExit(const Options& opts) CVC5_EXPORT;
+bool getFilesystemAccess(const Options& opts) CVC5_EXPORT;
+bool getForceNoLimitCpuWhileDump(const Options& opts) CVC5_EXPORT;
+bool getHelp(const Options& opts) CVC5_EXPORT;
+bool getIncrementalSolving(const Options& opts) CVC5_EXPORT;
+bool getInteractive(const Options& opts) CVC5_EXPORT;
+bool getInteractivePrompt(const Options& opts) CVC5_EXPORT;
+bool getLanguageHelp(const Options& opts) CVC5_EXPORT;
+bool getMemoryMap(const Options& opts) CVC5_EXPORT;
+bool getParseOnly(const Options& opts) CVC5_EXPORT;
+bool getProduceModels(const Options& opts) CVC5_EXPORT;
+bool getSegvSpin(const Options& opts) CVC5_EXPORT;
+bool getSemanticChecks(const Options& opts) CVC5_EXPORT;
+bool getStatistics(const Options& opts) CVC5_EXPORT;
+bool getStatsEveryQuery(const Options& opts) CVC5_EXPORT;
+bool getStrictParsing(const Options& opts) CVC5_EXPORT;
+int getTearDownIncremental(const Options& opts) CVC5_EXPORT;
+unsigned long getCumulativeTimeLimit(const Options& opts) CVC5_EXPORT;
+bool getVersion(const Options& opts) CVC5_EXPORT;
+const std::string& getForceLogicString(const Options& opts) CVC5_EXPORT;
+int getVerbosity(const Options& opts) CVC5_EXPORT;
 
-std::istream* getIn(const Options& opts);
-std::ostream* getErr(const Options& opts);
-std::ostream* getOut(const Options& opts);
-const std::string& getBinaryName(const Options& opts);
+std::istream* getIn(const Options& opts) CVC5_EXPORT;
+std::ostream* getErr(const Options& opts) CVC5_EXPORT;
+std::ostream* getOut(const Options& opts) CVC5_EXPORT;
+const std::string& getBinaryName(const Options& opts) CVC5_EXPORT;
 
-void setInputLanguage(InputLanguage val, Options& opts);
-void setInteractive(bool val, Options& opts);
-void setOut(std::ostream* val, Options& opts);
-void setOutputLanguage(OutputLanguage val, Options& opts);
+void setInputLanguage(InputLanguage val, Options& opts) CVC5_EXPORT;
+void setInteractive(bool val, Options& opts) CVC5_EXPORT;
+void setOut(std::ostream* val, Options& opts) CVC5_EXPORT;
+void setOutputLanguage(OutputLanguage val, Options& opts) CVC5_EXPORT;
 
-bool wasSetByUserEarlyExit(const Options& opts);
-bool wasSetByUserForceLogicString(const Options& opts);
-bool wasSetByUserIncrementalSolving(const Options& opts);
-bool wasSetByUserInteractive(const Options& opts);
+bool wasSetByUserEarlyExit(const Options& opts) CVC5_EXPORT;
+bool wasSetByUserForceLogicString(const Options& opts) CVC5_EXPORT;
+bool wasSetByUserIncrementalSolving(const Options& opts) CVC5_EXPORT;
+bool wasSetByUserInteractive(const Options& opts) CVC5_EXPORT;
 
 }  // namespace cvc5::options
 
