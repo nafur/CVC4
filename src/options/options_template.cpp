@@ -579,20 +579,20 @@ const std::string& getDescription()
   return optionsDescription;
 }
 
-void printUsage(const std::string& msg, std::ostream& out) {
-  out << msg << optionsDescription << std::endl
+void printUsage(const std::string& msg, std::ostream& os) {
+  os << msg << optionsDescription << std::endl
       << optionsFootnote << std::endl << std::flush;
 }
 
-void printShortUsage(const std::string& msg, std::ostream& out) {
-  out << msg << mostCommonOptionsDescription << std::endl
+void printShortUsage(const std::string& msg, std::ostream& os) {
+  os << msg << mostCommonOptionsDescription << std::endl
       << optionsFootnote << std::endl
       << "For full usage, please use --help."
       << std::endl << std::endl << std::flush;
 }
 
-void printLanguageHelp(std::ostream& out) {
-  out << languageDescription << std::flush;
+void printLanguageHelp(std::ostream& os) {
+  os << languageDescription << std::flush;
 }
 
 }

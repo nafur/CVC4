@@ -252,7 +252,7 @@ namespace options {
    * "msg"---which could be an error message causing the usage
    * output in the first place, e.g. "no such option --foo"
    */
-  void printUsage(const std::string& msg, std::ostream& out) CVC5_EXPORT;
+  void printUsage(const std::string& msg, std::ostream& os) CVC5_EXPORT;
 
   /**
    * Print command-line option usage message for only the most-commonly
@@ -260,10 +260,10 @@ namespace options {
    * an error message causing the usage output in the first place, e.g.
    * "no such option --foo"
    */
-  void printShortUsage(const std::string& msg, std::ostream& out) CVC5_EXPORT;
+  void printShortUsage(const std::string& msg, std::ostream& os) CVC5_EXPORT;
 
   /** Print help for the --lang command line option */
-  void printLanguageHelp(std::ostream& out) CVC5_EXPORT;
+  void printLanguageHelp(std::ostream& os) CVC5_EXPORT;
 
 }
 
