@@ -28,6 +28,7 @@
 #include <utility>
 
 #include "lib/strtok_r.h"
+#include "options/option_exception.h"
 #include "options/parser_options.h"
 
 namespace cvc5 {

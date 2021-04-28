@@ -56,6 +56,7 @@
 #include <cstring>
 
 #include "signal_handlers.h"
+#include "base/exception.h"
 #include "options/options_public.h"
 
 namespace cvc5 {

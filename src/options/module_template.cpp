@@ -16,6 +16,7 @@
  * expands this template and generates a <module>_options.cpp file.
  */
 
+#include "options/option_exception.h"
 #include "options/options_holder.h"
 #include "base/check.h"
 
