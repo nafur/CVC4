@@ -60,7 +60,7 @@ bool getDumpModels(const Options& opts) { return opts[options::dumpModels]; }
 bool getDumpProofs(const Options& opts) { return opts[options::dumpProofs]; }
 bool getDumpUnsatCores(const Options& opts)
 {
-  return opts[options::dumpUnsatCores];
+  return opts[options::dumpUnsatCores] || opts[options::dumpUnsatCoresFull];
 }
 bool getEarlyExit(const Options& opts) { return opts[options::earlyExit]; }
 bool getFilesystemAccess(const Options& opts)
