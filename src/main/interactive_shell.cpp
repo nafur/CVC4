@@ -88,8 +88,8 @@ static set<string> s_declarations;
 
 InteractiveShell::InteractiveShell(api::Solver* solver, SymbolManager* sm)
     : d_options(solver->getOptions()),
-      d_in(*d_options.getIn()),
-      d_out(*d_options.getOutConst()),
+      d_in(*options::getIn(d_options)),
+      d_out(*options::getOut(d_options)),
       d_quit(false)
 {
   ParserBuilder parserBuilder(solver, sm, INPUT_FILENAME, d_options);
