@@ -14,12 +14,13 @@
  */
 #include "main/main.h"
 
+#include <stdio.h>
+#include <unistd.h>
+
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
 #include <iostream>
-#include <stdio.h>
-#include <unistd.h>
 
 #include "base/configuration.h"
 #include "base/output.h"

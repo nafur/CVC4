@@ -55,9 +55,9 @@
 #include <cerrno>
 #include <cstring>
 
-#include "signal_handlers.h"
 #include "base/exception.h"
 #include "options/options_public.h"
+#include "signal_handlers.h"
 
 namespace cvc5 {
 namespace main {

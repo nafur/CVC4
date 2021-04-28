@@ -167,16 +167,17 @@ ParserBuilder& ParserBuilder::withParseOnly(bool flag) {
   return *this;
 }
 
-ParserBuilder& ParserBuilder::withOptions(const Options& opts) {
+ParserBuilder& ParserBuilder::withOptions(const Options& opts)
+{
   ParserBuilder& retval = *this;
-  retval =
-      retval.withInputLanguage(options::getInputLanguage(opts))
-      .withMmap(options::getMemoryMap(opts))
-      .withChecks(options::getSemanticChecks(opts))
-      .withStrictMode(options::getStrictParsing(opts))
-      .withParseOnly(options::getParseOnly(opts))
-      .withIncludeFile(options::getFilesystemAccess(opts));
-  if(options::wasSetByUserForceLogicString(opts)) {
+  retval = retval.withInputLanguage(options::getInputLanguage(opts))
+               .withMmap(options::getMemoryMap(opts))
+               .withChecks(options::getSemanticChecks(opts))
+               .withStrictMode(options::getStrictParsing(opts))
+               .withParseOnly(options::getParseOnly(opts))
+               .withIncludeFile(options::getFilesystemAccess(opts));
+  if (options::wasSetByUserForceLogicString(opts))
+  {
     LogicInfo tmp(options::getForceLogicString(opts));
     retval = retval.withForcedLogic(tmp.getLogicString());
   }

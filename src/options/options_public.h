@@ -10,8 +10,9 @@
  * directory for licensing information.
  * ****************************************************************************
  *
- * Public facing functions for options that need to be accessed from the outside.
- * 
+ * Public facing functions for options that need to be accessed from the
+ * outside.
+ *
  * These are all 1 line wrappers for `Options::operator[]`, `Options::set()` and
  * `Options::wasSetByUser()` so that external code (including parser/ and main/)
  * does not need to include the option modules (*_options.h).
@@ -26,8 +27,7 @@
 #include "options/options.h"
 #include "options/printer_modes.h"
 
-namespace cvc5::options
-{
+namespace cvc5::options {
 
 InputLanguage getInputLanguage(const Options& opts);
 InstFormatMode getInstFormatMode(const Options& opts);
@@ -74,6 +74,6 @@ bool wasSetByUserForceLogicString(const Options& opts);
 bool wasSetByUserIncrementalSolving(const Options& opts);
 bool wasSetByUserInteractive(const Options& opts);
 
-}
+}  // namespace cvc5::options
 
 #endif

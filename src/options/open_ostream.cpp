@@ -18,7 +18,6 @@
 
 #include "options/open_ostream.h"
 
-
 #include <cerrno>
 #include <fstream>
 #include <iostream>

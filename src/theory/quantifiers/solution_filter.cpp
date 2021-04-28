@@ -16,6 +16,7 @@
 #include "theory/quantifiers/solution_filter.h"
 
 #include <fstream>
+
 #include "options/base_options.h"
 #include "options/quantifiers_options.h"
 #include "smt/smt_engine.h"

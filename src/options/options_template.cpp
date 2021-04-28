@@ -290,7 +290,8 @@ Languages currently supported as arguments to the --output-lang option:\n\
   ast                            internal format (simple syntax trees)\n\
 ";
 
-const std::string& Options::getDescription() const {
+const std::string& Options::getDescription() const
+{
   return optionsDescription;
 }
 

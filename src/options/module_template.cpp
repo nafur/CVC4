@@ -16,11 +16,11 @@
  * expands this template and generates a <module>_options.cpp file.
  */
 
+#include <iostream>
+
+#include "base/check.h"
 #include "options/option_exception.h"
 #include "options/options_holder.h"
-#include "base/check.h"
-
-#include <iostream>
 
 // clang-format off
 namespace cvc5 {

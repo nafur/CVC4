@@ -79,16 +79,17 @@ TotalTimer::~TotalTimer()
 
 void printUsage(Options& opts, bool full) {
   stringstream ss;
-  ss << "usage: " << options::getBinaryName(opts) << " [options] [input-file]" << endl
+  ss << "usage: " << options::getBinaryName(opts) << " [options] [input-file]"
+     << endl
      << endl
      << "Without an input file, or with `-', cvc5 reads from standard input."
      << endl
      << endl
      << "cvc5 options:" << endl;
   if(full) {
-    Options::printUsage( ss.str(), *(options::getOut(opts)) );
+    Options::printUsage(ss.str(), *(options::getOut(opts)));
   } else {
-    Options::printShortUsage( ss.str(), *(options::getOut(opts)) );
+    Options::printShortUsage(ss.str(), *(options::getOut(opts)));
   }
 }
 
@@ -111,13 +112,18 @@ int runCvc5(int argc, char* argv[], Options& opts)
   string progNameStr = options::getBinaryName(opts);
   progName = &progNameStr;
 
-  if( options::getHelp(opts) ) {
+  if (options::getHelp(opts))
+  {
     printUsage(opts, true);
     exit(1);
-  } else if( options::getLanguageHelp(opts) ) {
+  }
+  else if (options::getLanguageHelp(opts))
+  {
     Options::printLanguageHelp(*(options::getOut(opts)));
     exit(1);
-  } else if( options::getVersion(opts) ) {
+  }
+  else if (options::getVersion(opts))
+  {
     *(options::getOut(opts)) << Configuration::about().c_str() << flush;
     exit(0);
   }
@@ -138,7 +144,8 @@ int runCvc5(int argc, char* argv[], Options& opts)
   const bool inputFromStdin = filenames.empty() || filenames[0] == "-";
 
   // if we're reading from stdin on a TTY, default to interactive mode
-  if(!options::wasSetByUserInteractive(opts)) {
+  if (!options::wasSetByUserInteractive(opts))
+  {
     options::setInteractive(inputFromStdin && isatty(fileno(stdin)), opts);
   }
 
@@ -151,7 +158,8 @@ int runCvc5(int argc, char* argv[], Options& opts)
   }
   const char* filename = filenameStr.c_str();
 
-  if(options::getInputLanguage(opts) == language::input::LANG_AUTO) {
+  if (options::getInputLanguage(opts) == language::input::LANG_AUTO)
+  {
     if( inputFromStdin ) {
       // We can't do any fancy detection on stdin
       options::setInputLanguage(language::input::LANG_CVC, opts);
@@ -173,8 +181,10 @@ int runCvc5(int argc, char* argv[], Options& opts)
     }
   }
 
-  if(options::getOutputLanguage(opts) == language::output::LANG_AUTO) {
-    options::setOutputLanguage(language::toOutputLanguage(options::getInputLanguage(opts)), opts);
+  if (options::getOutputLanguage(opts) == language::output::LANG_AUTO)
+  {
+    options::setOutputLanguage(
+        language::toOutputLanguage(options::getInputLanguage(opts)), opts);
   }
 
   // Determine which messages to show based on smtcomp_mode and verbosity
@@ -188,7 +198,8 @@ int runCvc5(int argc, char* argv[], Options& opts)
   }
 
   // important even for muzzled builds (to get result output right)
-  (*(options::getOut(opts))) << language::SetLanguage(options::getOutputLanguage(opts));
+  (*(options::getOut(opts)))
+      << language::SetLanguage(options::getOutputLanguage(opts));
 
   // Create the command executor to execute the parsed commands
   pExecutor = std::make_unique<CommandExecutor>(opts);
@@ -201,19 +212,23 @@ int runCvc5(int argc, char* argv[], Options& opts)
     // Parse and execute commands until we are done
     std::unique_ptr<Command> cmd;
     bool status = true;
-    if(options::getInteractive(opts) && inputFromStdin) {
-      if(options::getTearDownIncremental(opts) > 0) {
+    if (options::getInteractive(opts) && inputFromStdin)
+    {
+      if (options::getTearDownIncremental(opts) > 0)
+      {
         throw Exception(
             "--tear-down-incremental doesn't work in interactive mode");
       }
-      if(!options::wasSetByUserIncrementalSolving(opts)) {
+      if (!options::wasSetByUserIncrementalSolving(opts))
+      {
         cmd.reset(new SetOptionCommand("incremental", "true"));
         cmd->setMuted(true);
         pExecutor->doCommand(cmd);
       }
       InteractiveShell shell(pExecutor->getSolver(),
                              pExecutor->getSymbolManager());
-      if(options::getInteractivePrompt(opts)) {
+      if (options::getInteractivePrompt(opts))
+      {
         CVC5Message() << Configuration::getPackageName() << " "
                       << Configuration::getVersionString();
         if(Configuration::isGitBuild()) {
@@ -241,8 +256,12 @@ int runCvc5(int argc, char* argv[], Options& opts)
           break;
         }
       }
-    } else if( options::getTearDownIncremental(opts) > 0) {
-      if(!options::getIncrementalSolving(opts) && options::getTearDownIncremental(opts) > 1) {
+    }
+    else if (options::getTearDownIncremental(opts) > 0)
+    {
+      if (!options::getIncrementalSolving(opts)
+          && options::getTearDownIncremental(opts) > 1)
+      {
         // For tear-down-incremental values greater than 1, need incremental
         // on too.
         cmd.reset(new SetOptionCommand("incremental", "true"));
@@ -293,7 +312,8 @@ int runCvc5(int argc, char* argv[], Options& opts)
         }
 
         if(dynamic_cast<PushCommand*>(cmd.get()) != nullptr) {
-          if(needReset >= options::getTearDownIncremental(opts)) {
+          if (needReset >= options::getTearDownIncremental(opts))
+          {
             pExecutor->reset();
             for(size_t i = 0; i < allCommands.size() && !interrupted; ++i) {
               if (interrupted) break;
@@ -321,7 +341,8 @@ int runCvc5(int argc, char* argv[], Options& opts)
           }
         } else if(dynamic_cast<PopCommand*>(cmd.get()) != nullptr) {
           allCommands.pop_back(); // fixme leaks cmds here
-          if (needReset >= options::getTearDownIncremental(opts)) {
+          if (needReset >= options::getTearDownIncremental(opts))
+          {
             pExecutor->reset();
             for(size_t i = 0; i < allCommands.size() && !interrupted; ++i) {
               for(size_t j = 0; j < allCommands[i].size() && !interrupted; ++j)
@@ -338,7 +359,9 @@ int runCvc5(int argc, char* argv[], Options& opts)
             if (interrupted) continue;
             (*options::getOut(opts)) << CommandSuccess();
             needReset = 0;
-          } else {
+          }
+          else
+          {
             status = pExecutor->doCommand(cmd);
             if(cmd->interrupted()) {
               interrupted = true;
@@ -347,7 +370,8 @@ int runCvc5(int argc, char* argv[], Options& opts)
           }
         } else if(dynamic_cast<CheckSatCommand*>(cmd.get()) != nullptr ||
                   dynamic_cast<QueryCommand*>(cmd.get()) != nullptr) {
-          if(needReset >= options::getTearDownIncremental(opts)) {
+          if (needReset >= options::getTearDownIncremental(opts))
+          {
             pExecutor->reset();
             for(size_t i = 0; i < allCommands.size() && !interrupted; ++i) {
               for(size_t j = 0; j < allCommands[i].size() && !interrupted; ++j)
@@ -363,7 +387,9 @@ int runCvc5(int argc, char* argv[], Options& opts)
               }
             }
             needReset = 0;
-          } else {
+          }
+          else
+          {
             ++needReset;
           }
           if (interrupted) {
@@ -407,8 +433,11 @@ int runCvc5(int argc, char* argv[], Options& opts)
           }
         }
       }
-    } else {
-      if(!options::wasSetByUserIncrementalSolving(opts)) {
+    }
+    else
+    {
+      if (!options::wasSetByUserIncrementalSolving(opts))
+      {
         cmd.reset(new SetOptionCommand("incremental", "false"));
         cmd->setMuted(true);
         pExecutor->doCommand(cmd);
@@ -466,7 +495,8 @@ int runCvc5(int argc, char* argv[], Options& opts)
     }
 
 #ifdef CVC5_COMPETITION_MODE
-    if (cvc5::options::getOut(options) != nullptr) {
+    if (cvc5::options::getOut(options) != nullptr)
+    {
       cvc5::options::getOut(options) << std::flush;
     }
     // exit, don't return (don't want destructors to run)
@@ -479,11 +509,13 @@ int runCvc5(int argc, char* argv[], Options& opts)
     pExecutor->flushOutputStreams();
 
 #ifdef CVC5_DEBUG
-    if(options::getEarlyExit(opts) && options::wasSetByUserEarlyExit(opts)) {
+    if (options::getEarlyExit(opts) && options::wasSetByUserEarlyExit(opts))
+    {
       _exit(returnValue);
     }
 #else  /* CVC5_DEBUG */
-    if(options::getEarlyExit(opts)) {
+    if (options::getEarlyExit(opts))
+    {
       _exit(returnValue);
     }
 #endif /* CVC5_DEBUG */

@@ -899,7 +899,8 @@ std::vector<unsigned> Parser::processAdHocStringEsc(const std::string& s)
 
 api::Term Parser::mkStringConstant(const std::string& s)
 {
-  if (language::isInputLang_smt2_6(options::getInputLanguage(d_solver->getOptions())))
+  if (language::isInputLang_smt2_6(
+          options::getInputLanguage(d_solver->getOptions())))
   {
     return d_solver->mkString(s, true);
   }

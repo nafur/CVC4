@@ -81,7 +81,8 @@ void CommandExecutor::printStatisticsSafe(int fd) const
 
 bool CommandExecutor::doCommand(Command* cmd)
 {
-  if( options::getParseOnly(d_options) ) {
+  if (options::getParseOnly(d_options))
+  {
     return true;
   }
 
@@ -99,7 +100,8 @@ bool CommandExecutor::doCommand(Command* cmd)
 
     return status;
   } else {
-    if(options::getVerbosity(d_options) > 2) {
+    if (options::getVerbosity(d_options) > 2)
+    {
       *options::getOut(d_options) << "Invoking: " << *cmd << std::endl;
     }
 
@@ -122,10 +124,13 @@ void CommandExecutor::reset()
 bool CommandExecutor::doCommandSingleton(Command* cmd)
 {
   bool status = true;
-  if(options::getVerbosity(d_options) >= -1) {
-    status =
-        solverInvoke(d_solver.get(), d_symman.get(), cmd, options::getOut(d_options));
-  } else {
+  if (options::getVerbosity(d_options) >= -1)
+  {
+    status = solverInvoke(
+        d_solver.get(), d_symman.get(), cmd, options::getOut(d_options));
+  }
+  else
+  {
     status = solverInvoke(d_solver.get(), d_symman.get(), cmd, nullptr);
   }
 
@@ -145,7 +150,8 @@ bool CommandExecutor::doCommandSingleton(Command* cmd)
     d_result = res = q->getResult();
   }
 
-  if((cs != nullptr || q != nullptr) && options::getStatsEveryQuery(d_options)) {
+  if ((cs != nullptr || q != nullptr) && options::getStatsEveryQuery(d_options))
+  {
     getSmtEngine()->printStatisticsDiff(*options::getErr(d_options));
   }
 
@@ -167,7 +173,8 @@ bool CommandExecutor::doCommandSingleton(Command* cmd)
     }
 
     if (options::getDumpInstantiations(d_options)
-        && ((options::getInstFormatMode(d_options) != options::InstFormatMode::SZS
+        && ((options::getInstFormatMode(d_options)
+                 != options::InstFormatMode::SZS
              && (res.isSat()
                  || (res.isSatUnknown()
                      && res.getUnknownExplanation()
@@ -184,7 +191,8 @@ bool CommandExecutor::doCommandSingleton(Command* cmd)
 
     if (!getterCommands.empty()) {
       // set no time limit during dumping if applicable
-      if (options::getForceNoLimitCpuWhileDump(d_options)) {
+      if (options::getForceNoLimitCpuWhileDump(d_options))
+      {
         setNoLimitCPU();
       }
       for (const auto& getterCommand : getterCommands) {
@@ -227,10 +235,12 @@ void CommandExecutor::flushOutputStreams() {
 
   // make sure out and err streams are flushed too
 
-  if (options::getOut(d_options) != nullptr) {
+  if (options::getOut(d_options) != nullptr)
+  {
     *options::getOut(d_options) << std::flush;
   }
-  if (options::getErr(d_options) != nullptr) {
+  if (options::getErr(d_options) != nullptr)
+  {
     *options::getErr(d_options) << std::flush;
   }
 }

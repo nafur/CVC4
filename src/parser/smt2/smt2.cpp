@@ -1094,7 +1094,8 @@ api::Term Smt2::applyParseOp(ParseOp& p, std::vector<api::Term>& args)
   }
   else if (isBuiltinOperator)
   {
-    if (!options::getUfHo(opts) && (kind == api::EQUAL || kind == api::DISTINCT))
+    if (!options::getUfHo(opts)
+        && (kind == api::EQUAL || kind == api::DISTINCT))
     {
       // need --uf-ho if these operators are applied over function args
       for (std::vector<api::Term>::iterator i = args.begin(); i != args.end();
