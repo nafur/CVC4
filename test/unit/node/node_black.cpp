@@ -26,6 +26,7 @@
 #include "expr/node_manager.h"
 #include "expr/node_value.h"
 #include "expr/skolem_manager.h"
+#include "options/options_parser.h"
 #include "smt/smt_engine.h"
 #include "test_node.h"
 #include "theory/rewriter.h"
@@ -64,7 +65,7 @@ class TestNodeBlackNode : public TestNode
     char* argv[2];
     argv[0] = strdup("");
     argv[1] = strdup("--output-lang=ast");
-    Options::parseOptions(&opts, 2, argv);
+    options::parseOptions(&opts, 2, argv);
     free(argv[0]);
     free(argv[1]);
     d_smt.reset(new SmtEngine(d_nodeManager.get(), &opts));
