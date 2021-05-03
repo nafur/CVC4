@@ -69,7 +69,7 @@ namespace cvc5::options {
    */
   std::vector<std::string> parseOptions(Options* options,
                                                int argc,
-                                               char* argv[]);
+                                               char* argv[]) CVC5_EXPORT;
 
   /**
    * Internal procedure for implementing the parseOptions function.
@@ -86,7 +86,7 @@ namespace cvc5::options {
   void parseOptionsRecursive(Options* options, OptionsHandler* d_handler,
                                     int argc,
                                     char* argv[],
-                                    std::vector<std::string>& nonoptions);
+                                    std::vector<std::string>& nonoptions) CVC5_EXPORT;
 
 }  // namespace cvc5
 
