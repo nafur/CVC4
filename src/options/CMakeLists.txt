@@ -31,6 +31,7 @@ libcvc5_add_sources(
   options_handler.cpp
   options_handler.h
   options_listener.h
+  options_parser.h
   options_public.cpp
   options_public.h
   printer_modes.cpp
@@ -68,13 +69,13 @@ set(options_toml_files
 string(REPLACE "toml" "cpp;" options_gen_cpp_files ${options_toml_files})
 string(REPLACE "toml" "h;"   options_gen_h_files ${options_toml_files})
 
-libcvc5_add_sources(GENERATED options.cpp ${options_gen_cpp_files})
+libcvc5_add_sources(GENERATED options.cpp options_parser.cpp ${options_gen_cpp_files})
 
 list_prepend(options_toml_files "${CMAKE_CURRENT_LIST_DIR}/" abs_toml_files)
 
 add_custom_command(
     OUTPUT
-      options.cpp options_holder.h
+      options.cpp options_holder.h options_parser.cpp
       ${options_gen_cpp_files} ${options_gen_h_files}
     COMMAND
       ${PYTHON_EXECUTABLE}
@@ -89,12 +90,14 @@ add_custom_command(
       module_template.cpp
       options_holder_template.h
       options_template.cpp
+      options_parser_template.cpp
 )
 
 add_custom_target(gen-options
   DEPENDS
     options.cpp
     options_holder.h
+    options_parser.cpp
     ${options_gen_cpp_files}
     ${options_gen_h_files}
 )

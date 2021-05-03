@@ -27,6 +27,7 @@
 
     Directory <tpl-src> must contain:
         - options_template.cpp
+        - options_parser_template.cpp
         - module_template.cpp
         - options_holder_template.h
         - module_template.h
@@ -106,9 +107,9 @@ TPL_IMPL_ASSIGN_BOOL = \
 }}"""
 
 TPL_CALL_ASSIGN_BOOL = \
-    '  assignBool(options::{name}, {option}, {value});'
+    '  options->assignBool(options::{name}, {option}, {value});'
 
-TPL_CALL_ASSIGN = '  assign(options::{name}, {option}, optionarg);'
+TPL_CALL_ASSIGN = '  options->assign(options::{name}, {option}, optionarg);'
 
 TPL_CALL_SET_OPTION = 'setOption(std::string("{smtname}"), ("{value}"));'
 
@@ -602,7 +603,7 @@ def add_getopt_long(long_name, argument_req, getopt_long):
             'required' if argument_req else 'no', value))
 
 
-def codegen_all_modules(modules, dst_dir, tpl_options, tpl_options_holder):
+def codegen_all_modules(modules, dst_dir, tpl_options, tpl_options_holder, tpl_options_parser):
     """
     Generate code for all option modules (options.cpp, options_holder.h).
     """
@@ -831,9 +832,6 @@ def codegen_all_modules(modules, dst_dir, tpl_options, tpl_options_holder):
         headers_handler='\n'.join(sorted(list(headers_handler))),
         custom_handlers='\n'.join(custom_handlers),
         module_defaults=',\n  '.join(defaults),
-        help_common='\n'.join(help_common),
-        help_others='\n'.join(help_others),
-        cmdline_options='\n  '.join(getopt_long),
         options_short=''.join(getopt_short),
         options_handler='\n    '.join(options_handler),
         option_value_begin=g_getopt_long_start,
@@ -842,6 +840,15 @@ def codegen_all_modules(modules, dst_dir, tpl_options, tpl_options_holder):
         options_getoptions='\n  '.join(options_getoptions),
         setoption_handlers='\n'.join(setoption_handlers),
         getoption_handlers='\n'.join(getoption_handlers)
+    ))
+
+    write_file(dst_dir, 'options_parser.cpp', tpl_options_parser.format(
+        cmdline_options='\n  '.join(getopt_long),
+        headers_module='\n'.join(headers_module),
+        help_common='\n'.join(help_common),
+        help_others='\n'.join(help_others),
+        options_handler='\n    '.join(options_handler),
+        options_short=''.join(getopt_short),
     ))
 
 
@@ -988,6 +995,7 @@ def mkoptions_main():
     tpl_module_cpp = read_tpl(src_dir, 'module_template.cpp')
     tpl_options = read_tpl(src_dir, 'options_template.cpp')
     tpl_options_holder = read_tpl(src_dir, 'options_holder_template.h')
+    tpl_options_parser = read_tpl(src_dir, 'options_parser_template.cpp')
 
     # Parse files, check attributes and create module/option objects
     modules = []
@@ -1011,7 +1019,7 @@ def mkoptions_main():
         codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp)
 
     # Create options.cpp and options_holder.h in destination directory
-    codegen_all_modules(modules, dst_dir, tpl_options, tpl_options_holder)
+    codegen_all_modules(modules, dst_dir, tpl_options, tpl_options_holder, tpl_options_parser)
 
 
 

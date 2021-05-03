@@ -34,6 +34,7 @@
 #include "main/signal_handlers.h"
 #include "main/time_limit.h"
 #include "options/options.h"
+#include "options/options_parser.h"
 #include "options/options_public.h"
 #include "options/set_language.h"
 #include "parser/parser.h"
@@ -105,7 +106,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
   progPath = argv[0];
 
   // Parse the options
-  vector<string> filenames = Options::parseOptions(&opts, argc, argv);
+  vector<string> filenames = options::parseOptions(&opts, argc, argv);
 
   auto limit = install_time_limit(opts);
 

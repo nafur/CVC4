@@ -27,6 +27,7 @@
 #include "cvc5_export.h"
 
 namespace cvc5 {
+class Options;
 
 namespace api {
 class Solver;
@@ -34,6 +35,13 @@ class Solver;
 namespace options {
   struct OptionsHolder;
   class OptionsHandler;
+  void parseOptionsRecursive(Options* options, OptionsHandler* d_handler,
+                                    int argc,
+                                    char* argv[],
+                                    std::vector<std::string>& nonoptions);
+  std::vector<std::string> parseOptions(Options* options,
+                                               int argc,
+                                               char* argv[]);
   }  // namespace options
 
 class OptionsListener;
@@ -58,6 +66,13 @@ class CVC5_EXPORT Options
   void assignBool(T, std::string option, bool value);
 
   friend class options::OptionsHandler;
+  friend std::vector<std::string> options::parseOptions(Options* options,
+                                               int argc,
+                                               char* argv[]);
+  friend void options::parseOptionsRecursive(Options* options, options::OptionsHandler* d_handler,
+                                    int argc,
+                                    char* argv[],
+                                    std::vector<std::string>& nonoptions);
 
   /**
    * Options cannot be copied as they are given an explicit list of
@@ -174,22 +189,6 @@ public:
   bool wasSetByUser(T) const;
 
   /**
-   * Initialize the Options object options based on the given
-   * command-line arguments given in argc and argv.  The return value
-   * is what's left of the command line (that is, the non-option
-   * arguments).
-   *
-   * This function uses getopt_long() and is not thread safe.
-   *
-   * Throws OptionException on failures.
-   *
-   * Preconditions: options and argv must be non-null.
-   */
-  static std::vector<std::string> parseOptions(Options* options,
-                                               int argc,
-                                               char* argv[]);
-
-  /**
    * Get the setting for all options.
    */
   std::vector<std::vector<std::string> > getOptions() const;
@@ -205,51 +204,8 @@ public:
    * option.
    */
   void setOptionInternal(const std::string& key, const std::string& optionarg);
-  /**
-   * Internal procedure for implementing the parseOptions function.
-   * Initializes the options object based on the given command-line
-   * arguments. The command line arguments are stored in argc/argv.
-   * Nonoptions are stored into nonoptions.
-   *
-   * This is not thread safe.
-   *
-   * Throws OptionException on failures.
-   *
-   * Preconditions: options, extender and nonoptions are non-null.
-   */
-  void parseOptionsRecursive(int argc,
-                                    char* argv[],
-                                    std::vector<std::string>* nonoptions);
+
 }; /* class Options */
-
-namespace options {
-
-
-  /**
-   * Get a description of the command-line flags accepted by
-   * parseOptions.  The returned string will be escaped so that it is
-   * suitable as an argument to printf. */
-  const std::string& getDescription() CVC5_EXPORT;
-
-  /**
-   * Print overall command-line option usage message, prefixed by
-   * "msg"---which could be an error message causing the usage
-   * output in the first place, e.g. "no such option --foo"
-   */
-  void printUsage(const std::string& msg, std::ostream& os) CVC5_EXPORT;
-
-  /**
-   * Print command-line option usage message for only the most-commonly
-   * used options.  The message is prefixed by "msg"---which could be
-   * an error message causing the usage output in the first place, e.g.
-   * "no such option --foo"
-   */
-  void printShortUsage(const std::string& msg, std::ostream& os) CVC5_EXPORT;
-
-  /** Print help for the --lang command line option */
-  void printLanguageHelp(std::ostream& os) CVC5_EXPORT;
-
-}
 
 }  // namespace cvc5
 
