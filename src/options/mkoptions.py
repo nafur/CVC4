@@ -142,18 +142,6 @@ TPL_OPTION_STRUCT_RO = \
   static constexpr const char* name = "{long_name}";
 }} thread_local {name};"""
 
-
-TPL_DECL_OP_BRACKET = \
-"""template <> const options::{name}__option_t::type& Options::operator[](
-    options::{name}__option_t) const;"""
-
-TPL_IMPL_OP_BRACKET = TPL_DECL_OP_BRACKET[:-1] + \
-"""
-{{
-  return {module}->{name};
-}}"""
-
-
 TPL_DECL_WAS_SET_BY_USER = \
 """void setDefault_{module}_{name}({type} value);"""
 
@@ -460,7 +448,6 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
         decls.append(tpl_decl.format(name=option.name, type=option.type, long_name = long_name))
 
         # Generate module specialization
-        specs.append(TPL_DECL_OP_BRACKET.format(name=option.name))
         inls.append(TPL_DECL_WAS_SET_BY_USER.format(module=module.ident, name=option.name, type=option.type))
 
         if option.long and option.type not in ['bool', 'void'] and \
@@ -481,7 +468,6 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
         ### Generate code for {module.name}_options.cpp
 
         # Accessors
-        accs.append(TPL_IMPL_OP_BRACKET.format(module=module.ident, name=option.name))
         defs.append(TPL_IMPL_WAS_SET_BY_USER.format(module=module.ident, name=option.name, type=option.type))
 
         # Global definitions

@@ -116,29 +116,11 @@ public:
   public:
 
   /**
-   * Get a non-const reference to the value of the given option. Causes a
-   * compile-time error if the given option is read-only. Writeable options
-   * specialize this template with a real implementation.
-   */
-private:
-  template <class T>
-  typename T::type& ref(T) {
-    // Flag a compile-time error.
-    T::you_are_trying_to_get_nonconst_access_to_a_read_only_option;
-    // Ensure the compiler does not complain about the return value.
-    return *static_cast<typename T::type*>(nullptr);
-  }
-public:
-  /**
    * Set the value of the given option by key.
    *
    * Throws OptionException or ModalException on failures.
    */
   void setOption(const std::string& key, const std::string& optionarg);
-
-  /** Get the value of the given option.  Const access only. */
-  template <class T>
-  const typename T::type& operator[](T) const;
 
   /**
    * Gets the value of the given option by key and returns value as a string.
