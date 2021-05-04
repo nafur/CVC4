@@ -26,7 +26,7 @@
 #include "expr/node_manager.h"
 #include "expr/node_value.h"
 #include "expr/skolem_manager.h"
-#include "options/options_parser.h"
+#include "options/options_api.h"
 #include "smt/smt_engine.h"
 #include "test_node.h"
 #include "theory/rewriter.h"
