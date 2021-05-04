@@ -589,8 +589,6 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
     options_smt = []         # all options names accessible via {set,get}-option
     options_getoptions = []  # options for Options::getOptions()
     options_handler = []     # option handler calls
-    defaults = []            # default values
-    custom_handlers = []     # custom handler implementations assign/assignBool
     help_common = []         # help text for all common options
     help_others = []         # help text for all non-common options
     setoption_handlers = []  # handlers for set-option command
@@ -807,15 +805,6 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                         handler=handler,
                         predicates='\n'.join(predicates)
                     ))
-                
-
-                # Default option values
-                default = option.default if option.default else ''
-                # Prepend enum name
-                if option.mode and option.type not in default:
-                    default = '{}::{}'.format(option.type, default)
-                defaults.append('{}({})'.format(option.name, default))
-                defaults.append('{}__setByUser__(false)'.format(option.name))
 
     write_file(dst_dir, 'options_holder.h', tpl_options_holder.format(
         headers_module='\n'.join(headers_module),
@@ -823,18 +812,6 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
     ))
 
     write_file(dst_dir, 'options.h', tpl_options_h.format(
-        headers_module='\n'.join(headers_module),
-        headers_handler='\n'.join(sorted(list(headers_handler))),
-        custom_handlers='\n'.join(custom_handlers),
-        module_defaults=',\n  '.join(defaults),
-        options_short=''.join(getopt_short),
-        options_handler='\n    '.join(options_handler),
-        option_value_begin=g_getopt_long_start,
-        option_value_end=g_getopt_long_start + len(getopt_long),
-        options_smt='\n  '.join(options_smt),
-        options_getoptions='\n  '.join(options_getoptions),
-        setoption_handlers='\n'.join(setoption_handlers),
-        getoption_handlers='\n'.join(getoption_handlers),
         holder_fwd_decls='\n'.join(module_holder_fwd_decls),
         holder_mem_decls='\n'.join(module_holder_mem_decls),
     ))
@@ -842,16 +819,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
     write_file(dst_dir, 'options.cpp', tpl_options_cpp.format(
         headers_module='\n'.join(headers_module),
         headers_handler='\n'.join(sorted(list(headers_handler))),
-        custom_handlers='\n'.join(custom_handlers),
-        module_defaults=',\n  '.join(defaults),
-        options_short=''.join(getopt_short),
-        options_handler='\n    '.join(options_handler),
-        option_value_begin=g_getopt_long_start,
-        option_value_end=g_getopt_long_start + len(getopt_long),
-        options_smt='\n  '.join(options_smt),
         options_getoptions='\n  '.join(options_getoptions),
-        setoption_handlers='\n'.join(setoption_handlers),
-        getoption_handlers='\n'.join(getoption_handlers)
     ))
 
     write_file(dst_dir, 'options_api.cpp', tpl_options_api.format(
