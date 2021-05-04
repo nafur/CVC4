@@ -15,8 +15,8 @@
 
 #include "cvc5_public.h"
 
-#ifndef CVC5__OPTIONS__OPTIONS_PARSER_H
-#define CVC5__OPTIONS__OPTIONS_PARSER_H
+#ifndef CVC5__OPTIONS__OPTIONS_API_H
+#define CVC5__OPTIONS__OPTIONS_API_H
 
 #include <iosfwd>
 #include <string>
@@ -88,8 +88,8 @@ namespace cvc5::options {
                                     char* argv[],
                                     std::vector<std::string>& nonoptions) CVC5_EXPORT;
 
-    void setOptionInternal(Options* options, const std::string& key,
-                                const std::string& optionarg);
+    std::string get(const Options& options, const std::string& key);
+    void set(Options& options, const std::string& key, const std::string& optionarg);
 
 
 }  // namespace cvc5

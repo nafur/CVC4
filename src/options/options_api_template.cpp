@@ -13,7 +13,7 @@
  * Global (command-line, set-option, ...) parameters for SMT.
  */
 
-#include "options/options_parser.h"
+#include "options/options_api.h"
 
 #if !defined(_BSD_SOURCE) && defined(__MINGW32__) && !defined(__MINGW64__)
 // force use of optreset; mingw32 croaks on argv-switching otherwise
@@ -40,8 +40,10 @@ extern int optreset;
 #include "options/didyoumean.h"
 #include "options/options_handler.h"
 #include "options/options_holder.h"
+#include "options/options_listener.h"
 #include "options/options.h"
 ${headers_module}$
+${headers_handler}$
 
 #include <cstring>
 #include <iostream>
@@ -285,10 +287,10 @@ struct OptionHandler<T, true, true> {
 template <class T>
 struct OptionHandler<T, true, false> {
   static T handle(std::string option, std::string optionarg) {
-    std::stringstream in(optionarg);
+    std::stringstream inss(optionarg);
     long double r;
-    in >> r;
-    if(! in.eof()) {
+    inss >> r;
+    if(! inss.eof()) {
       // we didn't consume the whole string (junk at end)
       throw OptionException(option + " requires a numeric argument");
     }
@@ -458,12 +460,35 @@ ${options_handler}$
                    << " non-option arguments." << std::endl;
 }
 
-void setOptionInternal(Options* options, const std::string& key,
+std::string get(const Options& options, const std::string& key)
+{
+  Trace("options") << "Options::getOption(" << key << ")" << std::endl;
+  ${getoption_handlers}$
+
+  throw UnrecognizedOptionException(key);
+}
+
+void setInternal(Options* options, const std::string& key,
                                 const std::string& optionarg)
                                 {
   options::OptionsHandler* handler = options->d_handler;
   ${setoption_handlers}$
   throw UnrecognizedOptionException(key);
 }
+
+void set(Options& options, const std::string& key, const std::string& optionarg)
+{
+
+  Trace("options") << "setOption(" << key << ", " << optionarg << ")"
+                   << std::endl;
+  // first update this object
+  setInternal(&options, key, optionarg);
+  // then, notify the provided listener
+  if (options.d_olisten != nullptr)
+  {
+    options.d_olisten->notifySetOption(key);
+  }
+}
+
 
 }

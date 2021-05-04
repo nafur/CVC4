@@ -32,7 +32,7 @@
 #include "options/language.h"
 #include "options/options_handler.h"
 #include "options/options_listener.h"
-#include "options/options_parser.h"
+#include "options/options_api.h"
 
 // clang-format off
 ${headers_module}$
@@ -239,29 +239,6 @@ std::vector<std::vector<std::string> > Options::getOptions() const
   ${options_getoptions}$
 
   return opts;
-}
-// clang-format on
-
-void Options::setOption(const std::string& key, const std::string& optionarg)
-{
-  Trace("options") << "setOption(" << key << ", " << optionarg << ")"
-                   << std::endl;
-  // first update this object
-  options::setOptionInternal(this, key, optionarg);
-  // then, notify the provided listener
-  if (d_olisten != nullptr)
-  {
-    d_olisten->notifySetOption(key);
-  }
-}
-
-// clang-format off
-std::string Options::getOption(const std::string& key) const
-{
-  Trace("options") << "Options::getOption(" << key << ")" << std::endl;
-  ${getoption_handlers}$
-
-  throw UnrecognizedOptionException(key);
 }
 // clang-format on
 

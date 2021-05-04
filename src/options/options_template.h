@@ -116,21 +116,6 @@ public:
   public:
 
   /**
-   * Set the value of the given option by key.
-   *
-   * Throws OptionException or ModalException on failures.
-   */
-  void setOption(const std::string& key, const std::string& optionarg);
-
-  /**
-   * Gets the value of the given option by key and returns value as a string.
-   *
-   * Throws OptionException on failures, such as key not being the name of an
-   * option.
-   */
-  std::string getOption(const std::string& key) const;
-
-  /**
    * Returns true iff the value of the given option was set
    * by the user via a command-line option or SmtEngine::setOption().
    * (Options::set() is low-level and doesn't count.)  Returns false
@@ -147,7 +132,7 @@ public:
   /** Set the generic listener associated with this class to ol */
   void setListener(OptionsListener* ol);
 
- private:
+ public:
   /** Pointer to the options listener, if one exists */
   OptionsListener* d_olisten;
 

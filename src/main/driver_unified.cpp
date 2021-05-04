@@ -34,7 +34,7 @@
 #include "main/signal_handlers.h"
 #include "main/time_limit.h"
 #include "options/options.h"
-#include "options/options_parser.h"
+#include "options/options_api.h"
 #include "options/options_public.h"
 #include "options/set_language.h"
 #include "parser/parser.h"

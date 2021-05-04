@@ -22,6 +22,7 @@
 #include "decision/decision_engine.h"
 #include "expr/bound_var_manager.h"
 #include "expr/node.h"
+#include "options/options_api.h"
 #include "options/base_options.h"
 #include "options/expr_options.h"
 #include "options/language.h"
@@ -1953,7 +1954,7 @@ void SmtEngine::setOption(const std::string& key, const std::string& value)
   }
 
   std::string optionarg = value;
-  getOptions().setOption(key, optionarg);
+  options::set(getOptions(), key, optionarg);
 }
 
 void SmtEngine::setIsInternalSubsolver() { d_isInternalSubsolver = true; }
@@ -2018,7 +2019,7 @@ std::string SmtEngine::getOption(const std::string& key) const
     return nm->mkNode(Kind::SEXPR, result).toString();
   }
 
-  std::string atom = getOptions().getOption(key);
+  std::string atom = options::get(getOptions(), key);
 
   if (atom != "true" && atom != "false")
   {

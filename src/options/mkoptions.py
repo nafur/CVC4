@@ -27,7 +27,7 @@
 
     Directory <tpl-src> must contain:
         - options_template.cpp
-        - options_parser_template.cpp
+        - options_api_template.cpp
         - module_template.cpp
         - options_holder_template.h
         - module_template.h
@@ -576,7 +576,7 @@ def add_getopt_long(long_name, argument_req, getopt_long):
             'required' if argument_req else 'no', value))
 
 
-def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_options_holder, tpl_options_parser):
+def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_options_holder, tpl_options_api):
     """
     Generate code for all option modules (options.cpp, options_holder.h).
     """
@@ -622,6 +622,9 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
             argument_req = option.type not in ['bool', 'void']
 
             docgen_option(option, help_common, help_others)
+
+
+            headers_handler.update([format_include(x) for x in option.includes])
 
             # Generate handler call
             handler = None
@@ -734,17 +737,17 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                         'if ({}) {{'.format(cond))
                     if option.type == 'bool':
                         getoption_handlers.append(
-                            'return this->{}->{} ? "true" : "false";'.format(module.ident, option.name))
+                            'return options.{}->{} ? "true" : "false";'.format(module.ident, option.name))
                     elif option.type == 'std::string':
                         getoption_handlers.append(
-                            'return this->{}->{};'.format(module.ident, option.name))
+                            'return options.{}->{};'.format(module.ident, option.name))
                     elif is_numeric_cpp_type(option.type):
                         getoption_handlers.append(
-                            'return std::to_string(this->{}->{});'.format(module.ident, option.name))
+                            'return std::to_string(options.{}->{});'.format(module.ident, option.name))
                     else:
                         getoption_handlers.append('std::stringstream ss;')
                         getoption_handlers.append(
-                            'ss << this->{}->{};'.format(module.ident, option.name))
+                            'ss << options.{}->{};'.format(module.ident, option.name))
                         getoption_handlers.append('return ss.str();')
                     getoption_handlers.append('}')
 
@@ -851,14 +854,16 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
         getoption_handlers='\n'.join(getoption_handlers)
     ))
 
-    write_file(dst_dir, 'options_parser.cpp', tpl_options_parser.format(
+    write_file(dst_dir, 'options_api.cpp', tpl_options_api.format(
         cmdline_options='\n  '.join(getopt_long),
         headers_module='\n'.join(headers_module),
+        headers_handler='\n'.join(sorted(list(headers_handler))),
         help_common='\n'.join(help_common),
         help_others='\n'.join(help_others),
         options_handler='\n    '.join(options_handler),
         options_short=''.join(getopt_short),
         assigns='\n'.join(assign_impls),
+        getoption_handlers='\n'.join(getoption_handlers),
         setoption_handlers='\n'.join(setoption_handlers),
     ))
 
@@ -1008,7 +1013,7 @@ def mkoptions_main():
     tpl_options_h = read_tpl(src_dir, 'options_template.h')
     tpl_options_cpp = read_tpl(src_dir, 'options_template.cpp')
     tpl_options_holder = read_tpl(src_dir, 'options_holder_template.h')
-    tpl_options_parser = read_tpl(src_dir, 'options_parser_template.cpp')
+    tpl_options_api = read_tpl(src_dir, 'options_api_template.cpp')
 
     # Parse files, check attributes and create module/option objects
     modules = []
@@ -1032,7 +1037,7 @@ def mkoptions_main():
         codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp)
 
     # Create options.cpp and options_holder.h in destination directory
-    codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_options_holder, tpl_options_parser)
+    codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_options_holder, tpl_options_api)
 
 
 
