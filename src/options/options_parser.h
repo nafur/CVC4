@@ -88,6 +88,10 @@ namespace cvc5::options {
                                     char* argv[],
                                     std::vector<std::string>& nonoptions) CVC5_EXPORT;
 
+    void setOptionInternal(Options* options, const std::string& key,
+                                const std::string& optionarg);
+
+
 }  // namespace cvc5
 
 #endif /* CVC5__OPTIONS__OPTIONS_H */

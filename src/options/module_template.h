@@ -23,6 +23,8 @@
 
 #include "options/options.h"
 
+#include <iostream>
+
 // clang-format off
 ${includes}$
 
@@ -34,6 +36,18 @@ namespace options {
 ${modes}$
 
 ${decls}$
+
+#if defined(CVC5_MUZZLED) || defined(CVC5_COMPETITION_MODE)
+#  define DO_SEMANTIC_CHECKS_BY_DEFAULT false
+#else /* CVC5_MUZZLED || CVC5_COMPETITION_MODE */
+#  define DO_SEMANTIC_CHECKS_BY_DEFAULT true
+#endif /* CVC5_MUZZLED || CVC5_COMPETITION_MODE */
+
+struct Holder${id}$ {
+    CVC5_OPTIONS__${id}$__FOR_OPTION_HOLDER
+};
+
+#undef DO_SEMANTIC_CHECKS_BY_DEFAULT
 
 }  // namespace options
 

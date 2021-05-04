@@ -32,6 +32,7 @@
 #include "options/language.h"
 #include "options/options_handler.h"
 #include "options/options_listener.h"
+#include "options/options_parser.h"
 
 // clang-format off
 ${headers_module}$
@@ -202,7 +203,10 @@ void runBoolPredicates(T, std::string option, bool b, options::OptionsHandler* h
 }
 
 Options::Options(OptionsListener* ol)
-    : d_holder(new options::OptionsHolder()),
+    : arith(std::make_unique<options::HolderARITH>()),
+      arrays(std::make_unique<options::HolderARRAYS>()),
+      base(std::make_unique<options::HolderBASE>()),
+      d_holder(new options::OptionsHolder()),
       d_handler(new options::OptionsHandler(this)),
       d_olisten(ol)
 {}
@@ -228,7 +232,6 @@ std::string Options::formatThreadOptionException(const std::string& option) {
 void Options::setListener(OptionsListener* ol) { d_olisten = ol; }
 
 // clang-format off
-${custom_handlers}$
 
 std::vector<std::vector<std::string> > Options::getOptions() const
 {
@@ -245,7 +248,7 @@ void Options::setOption(const std::string& key, const std::string& optionarg)
   Trace("options") << "setOption(" << key << ", " << optionarg << ")"
                    << std::endl;
   // first update this object
-  setOptionInternal(key, optionarg);
+  options::setOptionInternal(this, key, optionarg);
   // then, notify the provided listener
   if (d_olisten != nullptr)
   {
@@ -254,15 +257,6 @@ void Options::setOption(const std::string& key, const std::string& optionarg)
 }
 
 // clang-format off
-void Options::setOptionInternal(const std::string& key,
-                                const std::string& optionarg)
-{
-  options::OptionsHandler* handler = d_handler;
-  Options* options = this;
-  ${setoption_handlers}$
-  throw UnrecognizedOptionException(key);
-}
-
 std::string Options::getOption(const std::string& key) const
 {
   Trace("options") << "Options::getOption(" << key << ")" << std::endl;

@@ -45,6 +45,7 @@ ${headers_module}$
 
 #include <cstring>
 #include <iostream>
+#include <limits>
 
 namespace cvc5::options {
 
@@ -193,7 +194,7 @@ std::vector<std::string> parseOptions(Options* options,
   if(x != nullptr) {
     progName = x + 1;
   }
-  options->d_holder->binary_name = std::string(progName);
+  options->base->binary_name = std::string(progName);
 
   std::vector<std::string> nonoptions;
   parseOptionsRecursive(options, options->d_handler, argc, argv, nonoptions);
@@ -206,6 +207,142 @@ std::vector<std::string> parseOptions(Options* options,
 
   return nonoptions;
 }
+
+
+/**
+ * This is a default handler for options of built-in C++ type.  This
+ * template is really just a helper for the handleOption() template,
+ * below.  Variants of this template handle numeric and non-numeric,
+ * integral and non-integral, signed and unsigned C++ types.
+ * handleOption() makes sure to instantiate the right one.
+ *
+ * This implements default behavior when e.g. an option is
+ * unsigned but the user specifies a negative argument; etc.
+ */
+template <class T, bool is_numeric, bool is_integer>
+struct OptionHandler {
+  static T handle(std::string option, std::string optionarg);
+};/* struct OptionHandler<> */
+
+/** Variant for integral C++ types */
+template <class T>
+struct OptionHandler<T, true, true> {
+  static bool stringToInt(T& t, const std::string& str) {
+    std::istringstream ss(str);
+    ss >> t;
+    char tmp;
+    return !(ss.fail() || ss.get(tmp));
+  }
+
+  static bool containsMinus(const std::string& str) {
+    return str.find('-') != std::string::npos;
+  }
+
+  static T handle(const std::string& option, const std::string& optionarg) {
+    try {
+      T i;
+      bool success = stringToInt(i, optionarg);
+
+      if(!success){
+        throw OptionException(option + ": failed to parse "+ optionarg +
+                              " as an integer of the appropriate type.");
+      }
+
+      // Depending in the platform unsigned numbers with '-' signs may parse.
+      // Reject these by looking for any minus if it is not signed.
+      if( (! std::numeric_limits<T>::is_signed) && containsMinus(optionarg) ) {
+        // unsigned type but user gave negative argument
+        throw OptionException(option + " requires a nonnegative argument");
+      } else if(i < std::numeric_limits<T>::min()) {
+        // negative overflow for type
+        std::stringstream ss;
+        ss << option << " requires an argument >= "
+           << std::numeric_limits<T>::min();
+        throw OptionException(ss.str());
+      } else if(i > std::numeric_limits<T>::max()) {
+        // positive overflow for type
+        std::stringstream ss;
+        ss << option << " requires an argument <= "
+           << std::numeric_limits<T>::max();
+        throw OptionException(ss.str());
+      }
+
+      return i;
+
+      // if(std::numeric_limits<T>::is_signed) {
+      //   return T(i.getLong());
+      // } else {
+      //   return T(i.getUnsignedLong());
+      // }
+    } catch(std::invalid_argument&) {
+      // user gave something other than an integer
+      throw OptionException(option + " requires an integer argument");
+    }
+  }
+};/* struct OptionHandler<T, true, true> */
+
+/** Variant for numeric but non-integral C++ types */
+template <class T>
+struct OptionHandler<T, true, false> {
+  static T handle(std::string option, std::string optionarg) {
+    std::stringstream in(optionarg);
+    long double r;
+    in >> r;
+    if(! in.eof()) {
+      // we didn't consume the whole string (junk at end)
+      throw OptionException(option + " requires a numeric argument");
+    }
+
+    if(! std::numeric_limits<T>::is_signed && r < 0.0) {
+      // unsigned type but user gave negative value
+      throw OptionException(option + " requires a nonnegative argument");
+    } else if(r < -std::numeric_limits<T>::max()) {
+      // negative overflow for type
+      std::stringstream ss;
+      ss << option << " requires an argument >= "
+         << -std::numeric_limits<T>::max();
+      throw OptionException(ss.str());
+    } else if(r > std::numeric_limits<T>::max()) {
+      // positive overflow for type
+      std::stringstream ss;
+      ss << option << " requires an argument <= "
+         << std::numeric_limits<T>::max();
+      throw OptionException(ss.str());
+    }
+
+    return T(r);
+  }
+};/* struct OptionHandler<T, true, false> */
+
+/** Variant for non-numeric C++ types */
+template <class T>
+struct OptionHandler<T, false, false> {
+  static T handle(std::string option, std::string optionarg) {
+    T::unsupported_handleOption_call___please_write_me;
+    // The above line causes a compiler error if this version of the template
+    // is ever instantiated (meaning that a specialization is missing).  So
+    // don't worry about the segfault in the next line, the "return" is only
+    // there to keep the compiler from giving additional, distracting errors
+    // and warnings.
+    return *(T*)0;
+  }
+};/* struct OptionHandler<T, false, false> */
+
+/** Handle an option of type T in the default way. */
+template <class T>
+T handleOption(std::string option, std::string optionarg) {
+  return OptionHandler<T, std::numeric_limits<T>::is_specialized, std::numeric_limits<T>::is_integer>::handle(option, optionarg);
+}
+
+/** Handle an option of type std::string in the default way. */
+template <>
+std::string handleOption<std::string>(std::string option, std::string optionarg) {
+  return optionarg;
+}
+
+// clang-format off
+${assigns}$
+// clang-format off
 
 void parseOptionsRecursive(Options* options, OptionsHandler* d_handler, int argc,
                                     char* argv[],
@@ -297,6 +434,7 @@ void parseOptionsRecursive(Options* options, OptionsHandler* d_handler, int argc
     Debug("preemptGetopt") << "processing option " << c
                            << " (`" << char(c) << "'), " << option << std::endl;
 
+    Options& opts = *options;
     // clang-format off
     switch(c)
     {
@@ -320,5 +458,12 @@ ${options_handler}$
                    << " non-option arguments." << std::endl;
 }
 
+void setOptionInternal(Options* options, const std::string& key,
+                                const std::string& optionarg)
+                                {
+  options::OptionsHandler* handler = options->d_handler;
+  ${setoption_handlers}$
+  throw UnrecognizedOptionException(key);
+}
 
 }

@@ -34,30 +34,28 @@ class Solver;
 }
 namespace options {
   struct OptionsHolder;
+  ${holder_fwd_decls}$
   class OptionsHandler;
-  void parseOptionsRecursive(Options* options, OptionsHandler* d_handler,
-                                    int argc,
-                                    char* argv[],
-                                    std::vector<std::string>& nonoptions);
-  std::vector<std::string> parseOptions(Options* options,
-                                               int argc,
-                                               char* argv[]);
   }  // namespace options
 
 class OptionsListener;
 
 class CVC5_EXPORT Options
 {
+  public:
+    ${holder_mem_decls}$
+
+  /** The handler for the options of the theory. */
+  options::OptionsHandler* d_handler;
+  private:
   friend api::Solver;
   /** The struct that holds all option values. */
   std::unique_ptr<options::OptionsHolder> d_holder;
 
-  /** The handler for the options of the theory. */
-  options::OptionsHandler* d_handler;
-
+public:
   /** The current Options in effect */
   static thread_local Options* s_current;
-
+private:
   /** Low-level assignment function for options */
   template <class T>
   void assign(T, std::string option, std::string value);
@@ -66,13 +64,6 @@ class CVC5_EXPORT Options
   void assignBool(T, std::string option, bool value);
 
   friend class options::OptionsHandler;
-  friend std::vector<std::string> options::parseOptions(Options* options,
-                                               int argc,
-                                               char* argv[]);
-  friend void options::parseOptionsRecursive(Options* options, options::OptionsHandler* d_handler,
-                                    int argc,
-                                    char* argv[],
-                                    std::vector<std::string>& nonoptions);
 
   /**
    * Options cannot be copied as they are given an explicit list of
@@ -199,11 +190,6 @@ public:
  private:
   /** Pointer to the options listener, if one exists */
   OptionsListener* d_olisten;
-  /**
-   * Helper method for setOption, updates this object for setting the given
-   * option.
-   */
-  void setOptionInternal(const std::string& key, const std::string& optionarg);
 
 }; /* class Options */
 
