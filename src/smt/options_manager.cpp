@@ -35,27 +35,27 @@ OptionsManager::OptionsManager(Options* opts) : d_options(opts)
   {
     notifySetOption(options::defaultExprDepth.name);
   }
-  if (opts->wasSetByUser(options::defaultDagThresh))
+  if (opts->expr->defaultDagThresh__setByUser__)
   {
     notifySetOption(options::defaultDagThresh.name);
   }
-  if (opts->wasSetByUser(options::dumpModeString))
+  if (opts->smt->dumpModeString__setByUser__)
   {
     notifySetOption(options::dumpModeString.name);
   }
-  if (opts->wasSetByUser(options::printSuccess))
+  if (opts->base->printSuccess__setByUser__)
   {
     notifySetOption(options::printSuccess.name);
   }
-  if (opts->wasSetByUser(options::diagnosticChannelName))
+  if (opts->smt->diagnosticChannelName__setByUser__)
   {
     notifySetOption(options::diagnosticChannelName.name);
   }
-  if (opts->wasSetByUser(options::regularChannelName))
+  if (opts->smt->regularChannelName__setByUser__)
   {
     notifySetOption(options::regularChannelName.name);
   }
-  if (opts->wasSetByUser(options::dumpToFileName))
+  if (opts->smt->dumpToFileName__setByUser__)
   {
     notifySetOption(options::dumpToFileName.name);
   }
