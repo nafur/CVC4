@@ -430,7 +430,7 @@ void QuantifiersEngine::check( Theory::Effort e ){
       if (options::debugInst() || debugInstTrace)
       {
         Options& sopts = smt::currentSmtEngine()->getOptions();
-        std::ostream& out = *sopts[options::out];
+        std::ostream& out = *sopts.base->out;
         d_qim.getInstantiate()->debugPrint(out);
       }
     }
