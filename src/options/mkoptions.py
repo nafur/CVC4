@@ -87,31 +87,6 @@ TPL_HOLDER_MEMBER_DECL = 'std::unique_ptr<options::Holder{id}> {name};'
 
 TPL_HOLDER_MACRO_NAME = 'CVC5_OPTIONS__{id}__FOR_OPTION_HOLDER'
 
-TPL_IMPL_ASSIGN = \
-"""template <> void Options::assign(
-    options::{name}__option_t,
-    std::string option,
-    std::string optionarg)
-{{
-  auto parsedval = {handler};
-  {predicates}
-  d_holder->{name} = parsedval;
-  d_holder->{name}__setByUser__ = true;
-  Trace("options") << "user assigned option {name}" << std::endl;
-}}"""
-
-TPL_IMPL_ASSIGN_BOOL = \
-"""template <> void Options::assignBool(
-    options::{name}__option_t,
-    std::string option,
-    bool value)
-{{
-  {predicates}
-  d_holder->{name} = value;
-  d_holder->{name}__setByUser__ = true;
-  Trace("options") << "user assigned option {name}" << std::endl;
-}}"""
-
 TPL_ASSIGN = '''
 void assign_{module}_{name}(Options& opts, const std::string& option, const std::string& optionarg) {{
   auto value = {handler};
@@ -842,9 +817,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
 
 
                 # Define handler assign/assignBool
-                tpl = None
                 if option.type == 'bool':
-                    tpl = TPL_IMPL_ASSIGN_BOOL
                     assign_impls.append(TPL_ASSIGN_BOOL.format(
                         module=module.ident,
                         name=option.name,
@@ -852,15 +825,8 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                         predicates='\n'.join(predicates)
                     ))
                 elif option.short or option.long or option.smt_name:
-                    tpl = TPL_IMPL_ASSIGN
                     assign_impls.append(TPL_ASSIGN.format(
                         module=module.ident,
-                        name=option.name,
-                        handler=handler,
-                        predicates='\n'.join(predicates)
-                    ))
-                if False and tpl:
-                    custom_handlers.append(tpl.format(
                         name=option.name,
                         handler=handler,
                         predicates='\n'.join(predicates)
