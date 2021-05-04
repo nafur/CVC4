@@ -143,17 +143,6 @@ TPL_OPTION_STRUCT_RO = \
 }} thread_local {name};"""
 
 
-TPL_DECL_SET = \
-"""template <> options::{name}__option_t::type& Options::ref(
-    options::{name}__option_t);"""
-
-TPL_IMPL_SET = TPL_DECL_SET[:-1] + \
-"""
-{{
-    return {module}->{name};
-}}"""
-
-
 TPL_DECL_OP_BRACKET = \
 """template <> const options::{name}__option_t::type& Options::operator[](
     options::{name}__option_t) const;"""
@@ -471,8 +460,6 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
         decls.append(tpl_decl.format(name=option.name, type=option.type, long_name = long_name))
 
         # Generate module specialization
-        if not option.read_only:
-            specs.append(TPL_DECL_SET.format(name=option.name))
         specs.append(TPL_DECL_OP_BRACKET.format(name=option.name))
         inls.append(TPL_DECL_WAS_SET_BY_USER.format(module=module.ident, name=option.name, type=option.type))
 
@@ -494,8 +481,6 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
         ### Generate code for {module.name}_options.cpp
 
         # Accessors
-        if not option.read_only:
-            accs.append(TPL_IMPL_SET.format(module=module.ident, name=option.name))
         accs.append(TPL_IMPL_OP_BRACKET.format(module=module.ident, name=option.name))
         defs.append(TPL_IMPL_WAS_SET_BY_USER.format(module=module.ident, name=option.name, type=option.type))
 
