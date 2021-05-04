@@ -166,12 +166,14 @@ TPL_IMPL_OP_BRACKET = TPL_DECL_OP_BRACKET[:-1] + \
 
 
 TPL_DECL_WAS_SET_BY_USER = \
-"""template <> bool Options::wasSetByUser(options::{name}__option_t) const;"""
+"""void setDefault_{module}_{name}({type} value);"""
 
 TPL_IMPL_WAS_SET_BY_USER = TPL_DECL_WAS_SET_BY_USER[:-1] + \
 """
 {{
-  return {module}->{name}__setByUser__;
+    if (!Options::current().{module}->{name}__setByUser__) {{
+        Options::current().{module}->{name} = value;
+    }}
 }}"""
 
 # Option specific methods
@@ -472,7 +474,7 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
         if not option.read_only:
             specs.append(TPL_DECL_SET.format(name=option.name))
         specs.append(TPL_DECL_OP_BRACKET.format(name=option.name))
-        specs.append(TPL_DECL_WAS_SET_BY_USER.format(name=option.name))
+        inls.append(TPL_DECL_WAS_SET_BY_USER.format(module=module.ident, name=option.name, type=option.type))
 
         if option.long and option.type not in ['bool', 'void'] and \
            '=' not in option.long:
@@ -495,7 +497,7 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
         if not option.read_only:
             accs.append(TPL_IMPL_SET.format(module=module.ident, name=option.name))
         accs.append(TPL_IMPL_OP_BRACKET.format(module=module.ident, name=option.name))
-        accs.append(TPL_IMPL_WAS_SET_BY_USER.format(module=module.ident, name=option.name))
+        defs.append(TPL_IMPL_WAS_SET_BY_USER.format(module=module.ident, name=option.name, type=option.type))
 
         # Global definitions
         defs.append(f'thread_local struct {option.name}__option_t {option.name};')

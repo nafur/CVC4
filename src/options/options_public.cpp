@@ -33,7 +33,6 @@
 #include "options/parser_options.h"
 #include "options/printer_modes.h"
 #include "options/printer_options.h"
-#include "options/quantifiers_options.h"
 #include "options/resource_manager_options.h"
 #include "options/smt_options.h"
 #include "options/uf_options.h"
@@ -42,105 +41,105 @@ namespace cvc5::options {
 
 InputLanguage getInputLanguage(const Options& opts)
 {
-  return opts[options::inputLanguage];
+  return opts.base->inputLanguage;
 }
 InstFormatMode getInstFormatMode(const Options& opts)
 {
-  return opts[options::instFormatMode];
+  return opts.printer->instFormatMode;
 }
 OutputLanguage getOutputLanguage(const Options& opts)
 {
-  return opts[options::outputLanguage];
+  return opts.base->outputLanguage;
 }
-bool getUfHo(const Options& opts) { return opts[options::ufHo]; }
+bool getUfHo(const Options& opts) { return opts.uf->ufHo; }
 bool getDumpInstantiations(const Options& opts)
 {
-  return opts[options::dumpInstantiations];
+  return opts.smt->dumpInstantiations;
 }
-bool getDumpModels(const Options& opts) { return opts[options::dumpModels]; }
-bool getDumpProofs(const Options& opts) { return opts[options::dumpProofs]; }
+bool getDumpModels(const Options& opts) { return opts.smt->dumpModels; }
+bool getDumpProofs(const Options& opts) { return opts.smt->dumpProofs; }
 bool getDumpUnsatCores(const Options& opts)
 {
-  return opts[options::dumpUnsatCores] || opts[options::dumpUnsatCoresFull];
+  return opts.smt->dumpUnsatCores || opts.smt->dumpUnsatCoresFull;
 }
-bool getEarlyExit(const Options& opts) { return opts[options::earlyExit]; }
+bool getEarlyExit(const Options& opts) { return opts.driver->earlyExit; }
 bool getFilesystemAccess(const Options& opts)
 {
-  return opts[options::filesystemAccess];
+  return opts.parser->filesystemAccess;
 }
 bool getForceNoLimitCpuWhileDump(const Options& opts)
 {
-  return opts[options::forceNoLimitCpuWhileDump];
+  return opts.smt->forceNoLimitCpuWhileDump;
 }
-bool getHelp(const Options& opts) { return opts[options::help]; }
+bool getHelp(const Options& opts) { return opts.driver->help; }
 bool getIncrementalSolving(const Options& opts)
 {
-  return opts[options::incrementalSolving];
+  return opts.smt->incrementalSolving;
 }
-bool getInteractive(const Options& opts) { return opts[options::interactive]; }
+bool getInteractive(const Options& opts) { return opts.driver->interactive; }
 bool getInteractivePrompt(const Options& opts)
 {
-  return opts[options::interactivePrompt];
+  return opts.driver->interactivePrompt;
 }
 bool getLanguageHelp(const Options& opts)
 {
-  return opts[options::languageHelp];
+  return opts.base->languageHelp;
 }
-bool getMemoryMap(const Options& opts) { return opts[options::memoryMap]; }
-bool getParseOnly(const Options& opts) { return opts[options::parseOnly]; }
+bool getMemoryMap(const Options& opts) { return opts.parser->memoryMap; }
+bool getParseOnly(const Options& opts) { return opts.base->parseOnly; }
 bool getProduceModels(const Options& opts)
 {
-  return opts[options::produceModels];
+  return opts.smt->produceModels;
 }
-bool getSegvSpin(const Options& opts) { return opts[options::segvSpin]; }
+bool getSegvSpin(const Options& opts) { return opts.driver->segvSpin; }
 bool getSemanticChecks(const Options& opts)
 {
-  return opts[options::semanticChecks];
+  return opts.parser->semanticChecks;
 }
-bool getStatistics(const Options& opts) { return opts[options::statistics]; }
+bool getStatistics(const Options& opts) { return opts.base->statistics; }
 bool getStatsEveryQuery(const Options& opts)
 {
-  return opts[options::statisticsEveryQuery];
+  return opts.base->statisticsEveryQuery;
 }
 bool getStrictParsing(const Options& opts)
 {
-  return opts[options::strictParsing];
+  return opts.parser->strictParsing;
 }
 int getTearDownIncremental(const Options& opts)
 {
-  return opts[options::tearDownIncremental];
+  return opts.driver->tearDownIncremental;
 }
 unsigned long getCumulativeTimeLimit(const Options& opts)
 {
-  return opts[options::cumulativeMillisecondLimit];
+  return opts.resman->cumulativeMillisecondLimit;
 }
-bool getVersion(const Options& opts) { return opts[options::version]; }
+bool getVersion(const Options& opts) { return opts.driver->version; }
 const std::string& getForceLogicString(const Options& opts)
 {
-  return opts[options::forceLogicString];
+  return opts.parser->forceLogicString;
 }
-int getVerbosity(const Options& opts) { return opts[options::verbosity]; }
+int getVerbosity(const Options& opts) { return opts.base->verbosity; }
 
-std::istream* getIn(const Options& opts) { return opts[options::in]; }
-std::ostream* getErr(const Options& opts) { return opts[options::err]; }
-std::ostream* getOut(const Options& opts) { return opts[options::out]; }
+std::istream* getIn(const Options& opts) { return opts.base->in; }
+std::ostream* getErr(const Options& opts) { return opts.base->err; }
+std::ostream* getOut(const Options& opts) { return opts.base->out; }
 const std::string& getBinaryName(const Options& opts)
 {
-  return opts[options::binary_name];
+  return opts.base->binary_name;
 }
 
 void setInputLanguage(InputLanguage val, Options& opts)
 {
-  opts.set(options::inputLanguage, val);
+  opts.base->inputLanguage = val;
 }
 void setInteractive(bool val, Options& opts)
 {
-  opts.set(options::interactive, val);
+  opts.driver->interactive = val;
 }
-void setOut(std::ostream* val, Options& opts) { opts.set(options::out, val); }
+void setOut(std::ostream* val, Options& opts) { opts.base->out = val; }
 void setOutputLanguage(OutputLanguage val, Options& opts)
 {
-  opts.set(options::outputLanguage, val);
+  opts.base->outputLanguage = val;
 }
 
 bool wasSetByUserEarlyExit(const Options& opts)
