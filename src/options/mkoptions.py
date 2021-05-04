@@ -84,6 +84,7 @@ TPL_HOLDER_DECL = '''struct Holder{id} {{
     CVC5_OPTIONS__{id}__FOR_OPTION_HOLDER
 }};'''
 TPL_HOLDER_MEMBER_DECL = 'std::unique_ptr<options::Holder{id}> {name};'
+TPL_HOLDER_MEMBER_INIT = '{name}(std::make_unique<options::Holder{id}>()),'
 
 TPL_HOLDER_MACRO_NAME = 'CVC5_OPTIONS__{id}__FOR_OPTION_HOLDER'
 
@@ -598,6 +599,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
 
     module_holder_fwd_decls = []
     module_holder_mem_decls = []
+    module_holder_mem_inits = []
 
     for module in modules:
         headers_module.append(format_include(module.header))
@@ -607,6 +609,9 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
         )
         module_holder_mem_decls.append(
             TPL_HOLDER_MEMBER_DECL.format(id=module.id, name=module.ident)
+        )
+        module_holder_mem_inits.append(
+            TPL_HOLDER_MEMBER_INIT.format(id=module.id, name=module.ident)
         )
 
         if module.options:
@@ -819,6 +824,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
     write_file(dst_dir, 'options.cpp', tpl_options_cpp.format(
         headers_module='\n'.join(headers_module),
         headers_handler='\n'.join(sorted(list(headers_handler))),
+        holder_mem_inits='\n'.join(module_holder_mem_inits),
         options_getoptions='\n  '.join(options_getoptions),
     ))
 

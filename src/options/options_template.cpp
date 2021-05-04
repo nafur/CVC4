@@ -203,9 +203,7 @@ void runBoolPredicates(T, std::string option, bool b, options::OptionsHandler* h
 }
 
 Options::Options(OptionsListener* ol)
-    : arith(std::make_unique<options::HolderARITH>()),
-      arrays(std::make_unique<options::HolderARRAYS>()),
-      base(std::make_unique<options::HolderBASE>()),
+    : ${holder_mem_inits}$
       d_handler(new options::OptionsHandler(this)),
       d_olisten(ol)
 {}
