@@ -31,7 +31,7 @@ namespace smt {
 OptionsManager::OptionsManager(Options* opts) : d_options(opts)
 {
   // set options that must take effect immediately
-  if (opts->wasSetByUser(options::defaultExprDepth))
+  if (opts->expr->defaultExprDepth__setByUser__)
   {
     notifySetOption(options::defaultExprDepth.name);
   }

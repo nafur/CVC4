@@ -206,7 +206,6 @@ Options::Options(OptionsListener* ol)
     : arith(std::make_unique<options::HolderARITH>()),
       arrays(std::make_unique<options::HolderARRAYS>()),
       base(std::make_unique<options::HolderBASE>()),
-      d_holder(new options::OptionsHolder()),
       d_handler(new options::OptionsHandler(this)),
       d_olisten(ol)
 {}
@@ -217,7 +216,7 @@ Options::~Options() {
 
 void Options::copyValues(const Options& options){
   if(this != &options) {
-    *d_holder = *options.d_holder;
+    //*d_holder = *options.d_holder;
   }
 }
 

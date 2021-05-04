@@ -83,7 +83,7 @@ unsigned long OptionsHandler::limitHandler(std::string option,
 
 void OptionsHandler::setResourceWeight(std::string option, std::string optarg)
 {
-  d_options->d_holder->resourceWeightHolder.emplace_back(optarg);
+  d_options->resman->resourceWeightHolder.emplace_back(optarg);
 }
 
 // theory/quantifiers/options_handlers.h
@@ -159,7 +159,7 @@ void OptionsHandler::checkBvSatSolver(std::string option, SatSolverMode m)
           || m == SatSolverMode::KISSAT))
   {
     if (options::bitblastMode() == options::BitblastMode::LAZY
-        && Options::current().wasSetByUser(options::bitblastMode))
+        && Options::current().bv->bitblastMode__setByUser__)
     {
       throwLazyBBUnsupported(m);
     }
@@ -189,7 +189,7 @@ void OptionsHandler::checkBitblastMode(std::string option, BitblastMode m)
 void OptionsHandler::setBitblastAig(std::string option, bool arg)
 {
   if(arg) {
-    if(Options::current().wasSetByUser(options::bitblastMode)) {
+    if(Options::current().bv->bitblastMode__setByUser__) {
       if (options::bitblastMode() != options::BitblastMode::EAGER)
       {
         throw OptionException("bitblast-aig must be used with eager bitblaster");
@@ -258,24 +258,24 @@ void OptionsHandler::setStats(const std::string& option, bool value)
   {
     if (opt == options::statisticsAll.name)
     {
-      d_options->d_holder->statistics = true;
+      d_options->base->statistics = true;
     }
     else if (opt == options::statisticsEveryQuery.name)
     {
-      d_options->d_holder->statistics = true;
+      d_options->base->statistics = true;
     }
     else if (opt == options::statisticsExpert.name)
     {
-      d_options->d_holder->statistics = true;
+      d_options->base->statistics = true;
     }
   }
   else
   {
     if (opt == options::statistics.name)
     {
-      d_options->d_holder->statisticsAll = false;
-      d_options->d_holder->statisticsEveryQuery = false;
-      d_options->d_holder->statisticsExpert = false;
+      d_options->base->statisticsAll = false;
+      d_options->base->statisticsEveryQuery = false;
+      d_options->base->statisticsExpert = false;
     }
   }
 }

@@ -77,7 +77,7 @@ void setDefaults(LogicInfo& logic, bool isInternalSubsolver)
   if (options::unsatCores()
       && options::unsatCoresMode() == options::UnsatCoresMode::OFF)
   {
-    if (opts.wasSetByUser(options::unsatCoresMode))
+    if (opts.smt->unsatCoresMode__setByUser__)
     {
       Notice()
           << "Overriding OFF unsat-core mode since cores were requested..\n";

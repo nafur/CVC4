@@ -49,8 +49,6 @@ class CVC5_EXPORT Options
   options::OptionsHandler* d_handler;
   private:
   friend api::Solver;
-  /** The struct that holds all option values. */
-  std::unique_ptr<options::OptionsHolder> d_holder;
 
 public:
   /** The current Options in effect */

@@ -175,7 +175,7 @@ TPL_DECL_SET = \
 TPL_IMPL_SET = TPL_DECL_SET[:-1] + \
 """
 {{
-    return d_holder->{name};
+    return {module}->{name};
 }}"""
 
 
@@ -186,7 +186,7 @@ TPL_DECL_OP_BRACKET = \
 TPL_IMPL_OP_BRACKET = TPL_DECL_OP_BRACKET[:-1] + \
 """
 {{
-  return d_holder->{name};
+  return {module}->{name};
 }}"""
 
 
@@ -196,7 +196,7 @@ TPL_DECL_WAS_SET_BY_USER = \
 TPL_IMPL_WAS_SET_BY_USER = TPL_DECL_WAS_SET_BY_USER[:-1] + \
 """
 {{
-  return d_holder->{name}__setByUser__;
+  return {module}->{name}__setByUser__;
 }}"""
 
 # Option specific methods
@@ -204,7 +204,7 @@ TPL_IMPL_WAS_SET_BY_USER = TPL_DECL_WAS_SET_BY_USER[:-1] + \
 TPL_IMPL_OP_PAR = \
 """inline {name}__option_t::type {name}__option_t::operator()() const
 {{
-  return Options::current()[*this];
+  return Options::current().{module}->{name};
 }}"""
 
 # Mode templates
@@ -511,16 +511,16 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
                     module.id, option.long, option.type))
 
         # Generate module inlines
-        inls.append(TPL_IMPL_OP_PAR.format(name=option.name))
+        inls.append(TPL_IMPL_OP_PAR.format(module=module.ident, name=option.name))
 
 
         ### Generate code for {module.name}_options.cpp
 
         # Accessors
         if not option.read_only:
-            accs.append(TPL_IMPL_SET.format(name=option.name))
-        accs.append(TPL_IMPL_OP_BRACKET.format(name=option.name))
-        accs.append(TPL_IMPL_WAS_SET_BY_USER.format(name=option.name))
+            accs.append(TPL_IMPL_SET.format(module=module.ident, name=option.name))
+        accs.append(TPL_IMPL_OP_BRACKET.format(module=module.ident, name=option.name))
+        accs.append(TPL_IMPL_WAS_SET_BY_USER.format(module=module.ident, name=option.name))
 
         # Global definitions
         defs.append(f'thread_local struct {option.name}__option_t {option.name};')
@@ -831,13 +831,12 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                     options_smt.append('"{}",'.format(optname))
 
                     if option.type == 'bool':
-                        s = 'opts.push_back({{"{}", d_holder->{} ? "true" : "false"}});'.format(
-                            optname, option.name)
+                        s = 'opts.push_back({{"{}", {}->{} ? "true" : "false"}});'.format(optname, module.ident,option.name)
                     elif is_numeric_cpp_type(option.type):
-                        s = 'opts.push_back({{"{}", std::to_string(d_holder->{})}});'.format(
-                            optname, option.name)
+                        s = 'opts.push_back({{"{}", std::to_string({}->{})}});'.format(
+                            optname, module.ident, option.name)
                     else:
-                        s = '{{ std::stringstream ss; ss << d_holder->{}; opts.push_back({{"{}", ss.str()}}); }}'.format(
+                        s = '{{ std::stringstream ss; ss << {}->{}; opts.push_back({{"{}", ss.str()}}); }}'.format(module.ident,
                             option.name, optname)
                     options_getoptions.append(s)
 
@@ -860,7 +859,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                         handler=handler,
                         predicates='\n'.join(predicates)
                     ))
-                if tpl:
+                if False and tpl:
                     custom_handlers.append(tpl.format(
                         name=option.name,
                         handler=handler,
