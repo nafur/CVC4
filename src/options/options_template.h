@@ -75,8 +75,6 @@ private:
    */
   Options& operator=(const Options& options) = delete;
 
-  static std::string formatThreadOptionException(const std::string& option);
-
 public:
  class OptionsScope
  {
