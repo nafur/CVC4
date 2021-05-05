@@ -38,7 +38,6 @@
 ${headers_module}$
 
 #include "base/cvc5config.h"
-#include "options/base_handlers.h"
 
 ${headers_handler}$
 

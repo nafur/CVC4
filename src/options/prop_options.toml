@@ -9,7 +9,7 @@ header = "options/prop_options.h"
   long       = "random-freq=P"
   type       = "double"
   default    = "0.0"
-  predicates = ["doubleGreaterOrEqual0", "doubleLessOrEqual1"]
+  predicates = ["betweenZeroAndOne"]
   read_only  = true
   help       = "sets the frequency of random decisions in the sat solver (P=0.0 by default)"
 
@@ -27,7 +27,7 @@ header = "options/prop_options.h"
   category   = "regular"
   type       = "double"
   default    = "0.95"
-  predicates = ["doubleGreaterOrEqual0", "doubleLessOrEqual1"]
+  predicates = ["betweenZeroAndOne"]
   help       = "variable activity decay factor for Minisat"
 
 [[option]]
@@ -35,7 +35,7 @@ header = "options/prop_options.h"
   category   = "regular"
   type       = "double"
   default    = "0.999"
-  predicates = ["doubleGreaterOrEqual0", "doubleLessOrEqual1"]
+  predicates = ["betweenZeroAndOne"]
   help       = "clause activity decay factor for Minisat"
 
 [[option]]
@@ -53,7 +53,7 @@ header = "options/prop_options.h"
   long       = "restart-int-inc=F"
   type       = "double"
   default    = "3.0"
-  predicates = ["doubleGreaterOrEqual0"]
+  predicates = ["geqZero"]
   read_only  = true
   help       = "sets the restart interval increase factor for the sat solver (F=3.0 by default)"
 

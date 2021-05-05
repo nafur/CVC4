@@ -19,9 +19,9 @@
 #define CVC5__OPTIONS__OPTIONS_HANDLER_H
 
 #include <ostream>
+#include <sstream>
 #include <string>
 
-#include "options/base_handlers.h"
 #include "options/bv_options.h"
 #include "options/decision_options.h"
 #include "options/language.h"
@@ -44,20 +44,21 @@ class OptionsHandler {
 public:
   OptionsHandler(Options* options);
 
-  void unsignedGreater0(const std::string& option, unsigned value) {
-    options::greater(0)(option, value);
+  template<typename T>
+  void geqZero(const std::string& option, T value) const {
+    if (value < 0) {
+      std::stringstream ss;
+      ss << option << ": " << value << " is not a legal setting, should be " << value << " >= 0.";
+      throw OptionException(ss.str());
+    }
   }
-
-  void unsignedLessEqual2(const std::string& option, unsigned value) {
-    options::less_equal(2)(option, value);
-  }
-
-  void doubleGreaterOrEqual0(const std::string& option, double value) {
-    options::greater_equal(0.0)(option, value);
-  }
-
-  void doubleLessOrEqual1(const std::string& option, double value) {
-    options::less_equal(1.0)(option, value);
+  template<typename T>
+  void betweenZeroAndOne(const std::string& option, T value) const {
+    if (value < 0 || value > 1) {
+      std::stringstream ss;
+      ss << option << ": " << value << " is not a legal setting, should be 0 <= " << option << " <= 1.";
+      throw OptionException(ss.str());
+    }
   }
 
   // theory/quantifiers/options_handlers.h
