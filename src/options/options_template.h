@@ -43,18 +43,7 @@ class CVC5_EXPORT Options
 {
   public:
 ${holder_mem_decls}$
-
-  /** The handler for the options of the theory. */
-  options::OptionsHandler* d_handler;
   private:
-  friend api::Solver;
-
-public:
-  /** The current Options in effect */
-  static thread_local Options* s_current;
-private:
-
-  friend class options::OptionsHandler;
 
   /**
    * Options cannot be copied as they are given an explicit list of
@@ -69,20 +58,21 @@ private:
   Options& operator=(const Options& options) = delete;
 
 public:
- class OptionsScope
- {
-  private:
-    Options* d_oldOptions;
-  public:
-    OptionsScope(Options* newOptions) :
-        d_oldOptions(Options::s_current)
-    {
-      Options::s_current = newOptions;
-    }
-    ~OptionsScope(){
-      Options::s_current = d_oldOptions;
-    }
- };
+  class OptionsScope
+  {
+   private:
+     Options* d_oldOptions;
+   public:
+     OptionsScope(Options* newOptions) :
+         d_oldOptions(Options::s_current)
+     {
+       Options::s_current = newOptions;
+     }
+     ~OptionsScope(){
+       Options::s_current = d_oldOptions;
+     }
+  };
+  friend class OptionsScope;
 
   /** Return true if current Options are null */
   static inline bool isCurrentNull() {
@@ -97,6 +87,10 @@ public:
   Options(OptionsListener* ol = nullptr);
   ~Options();
 
+  options::OptionsHandler& handler() const {
+    return *d_handler;
+  }
+
   /**
    * Copies the value of the options stored in OptionsHolder into the current
    * Options object.
@@ -104,15 +98,20 @@ public:
    */
   void copyValues(const Options& options);
 
-  public:
-
   /** Set the generic listener associated with this class to ol */
   void setListener(OptionsListener* ol);
 
- public:
-  /** Pointer to the options listener, if one exists */
-  OptionsListener* d_olisten;
+  void notifyListener(const std::string& key);
 
+ private:
+  /** Pointer to the options listener, if one exists */
+  OptionsListener* d_olisten = nullptr;
+
+  /** The handler for the options of the theory. */
+  std::unique_ptr<options::OptionsHandler> d_handler;
+
+  /** The current Options in effect */
+  static thread_local Options* s_current;
 }; /* class Options */
 
 }  // namespace cvc5

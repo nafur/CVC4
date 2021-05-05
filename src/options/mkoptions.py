@@ -77,8 +77,8 @@ TPL_HOLDER_DECL = '''struct Holder{id} {{
     CVC5_OPTIONS__{id}__FOR_OPTION_HOLDER
 }};'''
 TPL_HOLDER_MEMBER_DECL = '    std::unique_ptr<options::Holder{id}> {name};'
-TPL_HOLDER_MEMBER_INIT = '      {name}(std::make_unique<options::Holder{id}>()),'
-TPL_HOLDER_MEMBER_COPY = '    *{name} = *options.{name};'
+TPL_HOLDER_MEMBER_INIT = '        {name}(std::make_unique<options::Holder{id}>()),'
+TPL_HOLDER_MEMBER_COPY = '      *{name} = *options.{name};'
 
 TPL_ASSIGN = '''
 void assign_{module}_{name}(Options& opts, const std::string& option, const std::string& optionarg) {{
@@ -595,10 +595,10 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
             handler = None
             if option.handler:
                 if option.type == 'void':
-                    handler = 'opts.d_handler->{}(option)'.format(option.handler)
+                    handler = 'opts.handler().{}(option)'.format(option.handler)
                 else:
                     handler = \
-                        'opts.d_handler->{}(option, optionarg)'.format(option.handler)
+                        'opts.handler().{}(option, optionarg)'.format(option.handler)
             elif option.mode:
                 handler = 'stringTo{}(optionarg)'.format(option.type)
             elif option.type != 'bool':
@@ -610,12 +610,12 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
             if option.predicates:
                 if option.type == 'bool':
                     predicates = \
-                        ['opts.d_handler->{}(option, value);'.format(x) \
+                        ['opts.handler().{}(option, value);'.format(x) \
                             for x in option.predicates]
                 else:
                     assert option.type != 'void'
                     predicates = \
-                        ['opts.d_handler->{}(option, value);'.format(x) \
+                        ['opts.handler().{}(option, value);'.format(x) \
                             for x in option.predicates]
 
             # Generate options_handler and getopt_long
@@ -687,7 +687,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                             name=option.name,
                             option='"{}"'.format(smtname)))
                 elif option.handler:
-                    h = '    handler->{handler}("{smtname}"'
+                    h = '    opts.handler().{handler}("{smtname}"'
                     if argument_req:
                         h += ', optionarg'
                     h += ');'

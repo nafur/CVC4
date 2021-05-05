@@ -299,7 +299,7 @@ std::string handleOption<std::string>(std::string option, std::string optionarg)
 ${assigns}$
 // clang-format off
 
-void parseInternal(Options& opts, OptionsHandler* d_handler, int argc,
+void parseInternal(Options& opts, int argc,
                                     char* argv[],
                                     std::vector<std::string>& nonoptions)
 {
@@ -424,7 +424,8 @@ std::vector<std::string> parse(Options& opts,
 {
   Assert(argv != nullptr);
 
-  OptionsGuard guard(&opts.s_current, &opts);
+  Options* cur = &Options::current();
+  OptionsGuard guard(&cur, &opts);
 
   const char *progName = argv[0];
 
@@ -444,7 +445,7 @@ std::vector<std::string> parse(Options& opts,
   opts.base->binary_name = std::string(progName);
 
   std::vector<std::string> nonoptions;
-  parseInternal(opts, opts.d_handler, argc, argv, nonoptions);
+  parseInternal(opts, argc, argv, nonoptions);
   if (Debug.isOn("options")){
     for(std::vector<std::string>::const_iterator i = nonoptions.begin(),
           iend = nonoptions.end(); i != iend; ++i){
@@ -466,7 +467,6 @@ std::string get(const Options& options, const std::string& key)
 void setInternal(Options& opts, const std::string& key,
                                 const std::string& optionarg)
                                 {
-  options::OptionsHandler* handler = opts.d_handler;
   ${setoption_handlers}$
   throw UnrecognizedOptionException(key);
 }
@@ -479,10 +479,7 @@ void set(Options& opts, const std::string& key, const std::string& optionarg)
   // first update this object
   setInternal(opts, key, optionarg);
   // then, notify the provided listener
-  if (opts.d_olisten != nullptr)
-  {
-    opts.d_olisten->notifySetOption(key);
-  }
+  opts.notifyListener(key);
 }
 
 std::vector<std::vector<std::string> > getAll(const Options& opts)

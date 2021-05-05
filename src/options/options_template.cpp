@@ -13,62 +13,48 @@
  * Contains code for handling command-line options.
  */
 
-#include <unistd.h>
-#include <string.h>
-#include <time.h>
-
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <iomanip>
-#include <new>
-#include <string>
-#include <sstream>
-#include <limits>
-
-#include "base/check.h"
-#include "base/exception.h"
-#include "base/output.h"
-#include "options/language.h"
+#include "base/cvc5config.h"
 #include "options/options_handler.h"
 #include "options/options_listener.h"
-#include "options/options_api.h"
 
 // clang-format off
 ${headers_module}$
-
-#include "base/cvc5config.h"
-
-${headers_handler}$
-
-using namespace cvc5;
-using namespace cvc5::options;
 // clang-format on
 
-namespace cvc5 {
+namespace cvc5
+{
+  thread_local Options* Options::s_current = nullptr;
 
-thread_local Options* Options::s_current = NULL;
-
-Options::Options(OptionsListener* ol)
-    : ${holder_mem_inits}$
-      d_handler(new options::OptionsHandler(this)),
-      d_olisten(ol)
-{}
-
-Options::~Options() {
-  delete d_handler;
-}
-
-void Options::copyValues(const Options& options){
-  if(this != &options) {
-${holder_mem_copy}$
-  }
-}
-
-void Options::setListener(OptionsListener* ol) { d_olisten = ol; }
-
+  Options::Options(OptionsListener * ol)
+      :
 // clang-format off
-
+${holder_mem_inits}$
 // clang-format on
+        d_olisten(ol),
+        d_handler(std::make_unique<options::OptionsHandler>(this))
+  {
+  }
+
+  Options::~Options() {}
+
+  void Options::copyValues(const Options& options)
+  {
+    if (this != &options)
+    {
+// clang-format off
+${holder_mem_copy}$
+// clang-format on
+    }
+  }
+
+  void Options::setListener(OptionsListener * ol) { d_olisten = ol; }
+
+  void Options::notifyListener(const std::string& key)
+  {
+    if (d_olisten != nullptr)
+    {
+      d_olisten->notifySetOption(key);
+    }
+  }
 
 }  // namespace cvc5
