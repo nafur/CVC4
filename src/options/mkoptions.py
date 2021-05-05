@@ -92,8 +92,7 @@ void assign_{module}_{name}(Options& opts, const std::string& option, const std:
   opts.{module}->{name} = value;
   opts.{module}->{name}__setByUser = true;
   Trace("options") << "user assigned option {name} = " << value << std::endl;
-}}
-'''
+}}'''
 
 TPL_ASSIGN_BOOL = '''
 void assign_{module}_{name}(Options& opts, const std::string& option, bool value) {{
@@ -101,13 +100,12 @@ void assign_{module}_{name}(Options& opts, const std::string& option, bool value
   opts.{module}->{name} = value;
   opts.{module}->{name}__setByUser = true;
   Trace("options") << "user assigned option {name} = " << value << std::endl;
-}}
-'''
+}}'''
 
 TPL_CALL_ASSIGN_BOOL = \
-    '  assign_{module}_{name}(*options, {option}, {value});'
+    '    assign_{module}_{name}(*options, {option}, {value});'
 
-TPL_CALL_ASSIGN = '  assign_{module}_{name}(*options, {option}, optionarg);'
+TPL_CALL_ASSIGN = '    assign_{module}_{name}(*options, {option}, optionarg);'
 
 TPL_CALL_SET_OPTION = 'setOption(std::string("{smtname}"), ("{value}"));'
 
@@ -640,7 +638,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
 
             if option.long:
                 cases.append(
-                    'case {}:// --{}'.format(
+                    'case {}: // --{}'.format(
                         g_getopt_long_start + len(getopt_long),
                         option.long))
                 add_getopt_long(option.long, argument_req, getopt_long)
@@ -663,7 +661,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                 elif handler:
                     cases.append('{};'.format(handler))
 
-                cases.append('  break;\n')
+                cases.append('  break;')
 
                 options_handler.extend(cases)
 
@@ -683,7 +681,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
 
                 smtname = get_smt_name(option)
 
-                setoption_handlers.append('if({}) {{'.format(cond))
+                setoption_handlers.append('  if ({}) {{'.format(cond))
                 if option.type == 'bool':
                     setoption_handlers.append(
                         TPL_CALL_ASSIGN_BOOL.format(
@@ -698,15 +696,15 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                             name=option.name,
                             option='"{}"'.format(smtname)))
                 elif option.handler:
-                    h = 'handler->{handler}("{smtname}"'
+                    h = '    handler->{handler}("{smtname}"'
                     if argument_req:
                         h += ', optionarg'
                     h += ');'
                     setoption_handlers.append(
                         h.format(handler=option.handler, smtname=smtname))
 
-                setoption_handlers.append('return;')
-                setoption_handlers.append('}')
+                setoption_handlers.append('    return;')
+                setoption_handlers.append('  }')
 
                 if option.name:
                     getoption_handlers.append(
@@ -739,7 +737,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                     TPL_CALL_ASSIGN_BOOL.format(
                         module=module.ident,
                         name=option.name, option='option', value='false'))
-                cases.append('  break;\n')
+                cases.append('  break;')
 
                 options_handler.extend(cases)
 

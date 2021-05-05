@@ -490,9 +490,9 @@ void set(Options& options, const std::string& key, const std::string& optionarg)
 
 std::vector<std::vector<std::string> > getAll(const Options& opts)
 {
-  std::vector< std::vector<std::string> > res;
+  std::vector<std::vector<std::string>> res;
 
-  ${options_getoptions}$
+${options_getoptions}$
 
   return res;
 }
