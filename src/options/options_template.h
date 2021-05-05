@@ -33,17 +33,16 @@ namespace api {
 class Solver;
 }
 namespace options {
-  struct OptionsHolder;
-  ${holder_fwd_decls}$
   class OptionsHandler;
-  }  // namespace options
+${holder_fwd_decls}$
+}  // namespace options
 
 class OptionsListener;
 
 class CVC5_EXPORT Options
 {
   public:
-    ${holder_mem_decls}$
+${holder_mem_decls}$
 
   /** The handler for the options of the theory. */
   options::OptionsHandler* d_handler;

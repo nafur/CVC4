@@ -77,12 +77,12 @@ g_getopt_long_start = 256
 
 ### Source code templates
 
-TPL_HOLDER_FWDECL = 'struct Holder{id};'
+TPL_HOLDER_FWDECL = '  struct Holder{id};'
 TPL_HOLDER_DECL = '''struct Holder{id} {{
     CVC5_OPTIONS__{id}__FOR_OPTION_HOLDER
 }};'''
-TPL_HOLDER_MEMBER_DECL = 'std::unique_ptr<options::Holder{id}> {name};'
-TPL_HOLDER_MEMBER_INIT = '{name}(std::make_unique<options::Holder{id}>()),'
+TPL_HOLDER_MEMBER_DECL = '    std::unique_ptr<options::Holder{id}> {name};'
+TPL_HOLDER_MEMBER_INIT = '      {name}(std::make_unique<options::Holder{id}>()),'
 
 TPL_HOLDER_MACRO_NAME = 'CVC5_OPTIONS__{id}__FOR_OPTION_HOLDER'
 
