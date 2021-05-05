@@ -91,7 +91,7 @@ void assign_{module}_{name}(Options& opts, const std::string& option, const std:
   {predicates}
   opts.{module}->{name} = value;
   opts.{module}->{name}__setByUser = true;
-  Trace("options") << "user assigned option {name}" << std::endl;
+  Trace("options") << "user assigned option {name} = " << value << std::endl;
 }}
 '''
 
@@ -100,7 +100,7 @@ void assign_{module}_{name}(Options& opts, const std::string& option, bool value
   {predicates}
   opts.{module}->{name} = value;
   opts.{module}->{name}__setByUser = true;
-  Trace("options") << "user assigned option {name}" << std::endl;
+  Trace("options") << "user assigned option {name} = " << value << std::endl;
 }}
 '''
 
