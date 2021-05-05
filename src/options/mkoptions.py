@@ -103,9 +103,9 @@ void assign_{module}_{name}(Options& opts, const std::string& option, bool value
 }}'''
 
 TPL_CALL_ASSIGN_BOOL = \
-    '    assign_{module}_{name}(*options, {option}, {value});'
+    '    assign_{module}_{name}(opts, {option}, {value});'
 
-TPL_CALL_ASSIGN = '    assign_{module}_{name}(*options, {option}, optionarg);'
+TPL_CALL_ASSIGN = '    assign_{module}_{name}(opts, {option}, optionarg);'
 
 TPL_CALL_SET_OPTION = 'setOption(std::string("{smtname}"), ("{value}"));'
 

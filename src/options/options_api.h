@@ -67,12 +67,12 @@ namespace cvc5::options {
    *
    * Preconditions: options and argv must be non-null.
    */
-  std::vector<std::string> parseOptions(Options* options,
+  std::vector<std::string> parseOptions(Options& opts,
                                                int argc,
                                                char* argv[]) CVC5_EXPORT;
 
-    std::string get(const Options& options, const std::string& key);
-    void set(Options& options, const std::string& key, const std::string& optionarg);
+    std::string get(const Options& opts, const std::string& key);
+    void set(Options& opts, const std::string& key, const std::string& optionarg);
 
   /**
    * Get the setting for all options.

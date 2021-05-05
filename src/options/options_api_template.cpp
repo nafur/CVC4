@@ -299,11 +299,10 @@ std::string handleOption<std::string>(std::string option, std::string optionarg)
 ${assigns}$
 // clang-format off
 
-void parseOptionsRecursive(Options* options, OptionsHandler* d_handler, int argc,
+void parseOptionsRecursive(Options& opts, OptionsHandler* d_handler, int argc,
                                     char* argv[],
                                     std::vector<std::string>& nonoptions)
 {
-  Assert(options != nullptr);
   Assert(argv != nullptr);
   if(Debug.isOn("options")) {
     Debug("options") << "starting a new parseOptionsRecursive with "
@@ -389,7 +388,6 @@ void parseOptionsRecursive(Options* options, OptionsHandler* d_handler, int argc
     Debug("preemptGetopt") << "processing option " << c
                            << " (`" << char(c) << "'), " << option << std::endl;
 
-    Options& opts = *options;
     // clang-format off
     switch(c)
     {
@@ -420,14 +418,13 @@ ${options_handler}$
  *
  * Throws OptionException on failures.
  */
-std::vector<std::string> parseOptions(Options* options,
+std::vector<std::string> parseOptions(Options& opts,
                                                int argc,
                                                char* argv[])
 {
-  Assert(options != nullptr);
   Assert(argv != nullptr);
 
-  OptionsGuard guard(&options->s_current, options);
+  OptionsGuard guard(&opts.s_current, &opts);
 
   const char *progName = argv[0];
 
@@ -436,7 +433,7 @@ std::vector<std::string> parseOptions(Options* options,
   // not been set.
   //DebugChannel.on("options");
 
-  Debug("options") << "Options::parseOptions == " << options << std::endl;
+  Debug("options") << "Options::parseOptions == " << &opts << std::endl;
   Debug("options") << "argv == " << argv << std::endl;
 
   // Find the base name of the program.
@@ -444,11 +441,11 @@ std::vector<std::string> parseOptions(Options* options,
   if(x != nullptr) {
     progName = x + 1;
   }
-  options->base->binary_name = std::string(progName);
+  opts.base->binary_name = std::string(progName);
 
   std::vector<std::string> nonoptions;
-  parseOptionsRecursive(options, options->d_handler, argc, argv, nonoptions);
-  if(Debug.isOn("options")){
+  parseOptionsRecursive(opts, opts.d_handler, argc, argv, nonoptions);
+  if (Debug.isOn("options")){
     for(std::vector<std::string>::const_iterator i = nonoptions.begin(),
           iend = nonoptions.end(); i != iend; ++i){
       Debug("options") << "nonoptions " << *i << std::endl;
@@ -466,25 +463,25 @@ std::string get(const Options& options, const std::string& key)
   throw UnrecognizedOptionException(key);
 }
 
-void setInternal(Options* options, const std::string& key,
+void setInternal(Options& opts, const std::string& key,
                                 const std::string& optionarg)
                                 {
-  options::OptionsHandler* handler = options->d_handler;
+  options::OptionsHandler* handler = opts.d_handler;
   ${setoption_handlers}$
   throw UnrecognizedOptionException(key);
 }
 
-void set(Options& options, const std::string& key, const std::string& optionarg)
+void set(Options& opts, const std::string& key, const std::string& optionarg)
 {
 
   Trace("options") << "setOption(" << key << ", " << optionarg << ")"
                    << std::endl;
   // first update this object
-  setInternal(&options, key, optionarg);
+  setInternal(opts, key, optionarg);
   // then, notify the provided listener
-  if (options.d_olisten != nullptr)
+  if (opts.d_olisten != nullptr)
   {
-    options.d_olisten->notifySetOption(key);
+    opts.d_olisten->notifySetOption(key);
   }
 }
 
