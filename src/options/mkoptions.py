@@ -89,7 +89,7 @@ void assign_{module}_{name}(Options& opts, const std::string& option, const std:
   auto value = {handler};
   {predicates}
   opts.{module}->{name} = value;
-  opts.{module}->{name}__setByUser__ = true;
+  opts.{module}->{name}__setByUser = true;
   Trace("options") << "user assigned option {name}" << std::endl;
 }}
 '''
@@ -98,7 +98,7 @@ TPL_ASSIGN_BOOL = '''
 void assign_{module}_{name}(Options& opts, const std::string& option, bool value) {{
   {predicates}
   opts.{module}->{name} = value;
-  opts.{module}->{name}__setByUser__ = true;
+  opts.{module}->{name}__setByUser = true;
   Trace("options") << "user assigned option {name}" << std::endl;
 }}
 '''
@@ -113,21 +113,21 @@ TPL_CALL_SET_OPTION = 'setOption(std::string("{smtname}"), ("{value}"));'
 TPL_GETOPT_LONG = '{{ "{}", {}_argument, nullptr, {} }},'
 
 TPL_HOLDER_MACRO_ATTR = "  {type} {name};\n"
-TPL_HOLDER_MACRO_ATTR += "  bool {name}__setByUser__ = false;"
+TPL_HOLDER_MACRO_ATTR += "  bool {name}__setByUser = false;"
 
 TPL_HOLDER_MACRO_ATTR_DEF = "  {type} {name} = {default};\n"
-TPL_HOLDER_MACRO_ATTR_DEF += "  bool {name}__setByUser__ = false;"
+TPL_HOLDER_MACRO_ATTR_DEF += "  bool {name}__setByUser = false;"
 
 TPL_NAME_DECL = "static constexpr const char* {name}__name = \"{long_name}\";"
 
-TPL_DECL_WAS_SET_BY_USER = \
-"""void setDefault_{module}_{name}({type} value);"""
+TPL_DECL_SET_DEFAULT = \
+"""void default_{name}(Options& opts, {type} value);"""
 
-TPL_IMPL_WAS_SET_BY_USER = TPL_DECL_WAS_SET_BY_USER[:-1] + \
+TPL_IMPL_SET_DEFAULT = TPL_DECL_SET_DEFAULT[:-1] + \
 """
 {{
-    if (!Options::current().{module}->{name}__setByUser__) {{
-        Options::current().{module}->{name} = value;
+    if (!opts.{module}->{name}__setByUser) {{
+        opts.{module}->{name} = value;
     }}
 }}"""
 
@@ -385,16 +385,15 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
     """
     global g_long_to_opt
 
-    # *_options.h
+    # *_options.h / *.options.cpp
     includes = set()
     holder_specs = []
     option_names = []
     inls = []
+    default_decl = []
+    default_impl = []
     mode_decl = []
     mode_impl = []
-
-    # *_options_.cpp
-    defs = []
 
     for option in \
         sorted(module.options, key=lambda x: x.long if x.long else x.name):
@@ -414,15 +413,14 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
             holder_specs.append(TPL_HOLDER_MACRO_ATTR.format(type=option.type, name=option.name))
 
         # Generate module declaration
-        tpl_name_decl = TPL_NAME_DECL
         if option.long:
             long_name = option.long.split('=')[0]
         else:
             long_name = ""
-        option_names.append(tpl_name_decl.format(name=option.name, type=option.type, long_name = long_name))
+        option_names.append(TPL_NAME_DECL.format(name=option.name, type=option.type, long_name = long_name))
 
         # Generate module specialization
-        inls.append(TPL_DECL_WAS_SET_BY_USER.format(module=module.ident, name=option.name, type=option.type))
+        default_decl.append(TPL_DECL_SET_DEFAULT.format(module=module.ident, name=option.name, type=option.type))
 
         if option.long and option.type not in ['bool', 'void'] and \
            '=' not in option.long:
@@ -442,7 +440,7 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
         ### Generate code for {module.name}_options.cpp
 
         # Accessors
-        defs.append(TPL_IMPL_WAS_SET_BY_USER.format(module=module.ident, name=option.name, type=option.type))
+        default_impl.append(TPL_IMPL_SET_DEFAULT.format(module=module.ident, name=option.name, type=option.type))
 
         # Global definitions
         #defs.append(f'thread_local struct {option.name}__option_t {option.name};')
@@ -483,15 +481,18 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
     filename = os.path.splitext(os.path.split(module.header)[1])[0]
     write_file(dst_dir, '{}.h'.format(filename), tpl_module_h.format(
         id=module.id,
+        ident=module.ident,
         includes='\n'.join(sorted(list(includes))),
         holder_spec='\n'.join(holder_specs),
         option_names='\n'.join(option_names),
         inls='\n'.join(inls),
+        defaults='\n'.join(default_decl),
         modes=''.join(mode_decl)))
 
     write_file(dst_dir, '{}.cpp'.format(filename), tpl_module_cpp.format(
         header=module.header,
-        defs='\n'.join(defs),
+        ident=module.ident,
+        defaults='\n'.join(default_impl),
         modes=''.join(mode_impl)))
 
 

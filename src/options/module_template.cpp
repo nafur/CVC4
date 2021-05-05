@@ -27,7 +27,9 @@ namespace cvc5::options {
 
 ${modes}$
 
-${defs}$
+namespace ${ident}$ {
+${defaults}$
+}
 
 }  // namespace cvc5::options
 // clang-format on

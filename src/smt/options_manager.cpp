@@ -31,33 +31,33 @@ namespace smt {
 OptionsManager::OptionsManager(Options* opts) : d_options(opts)
 {
   // set options that must take effect immediately
-  if (opts->expr->defaultExprDepth__setByUser__)
+  if (opts->expr->defaultExprDepth__setByUser)
   {
-    notifySetOption(options::defaultExprDepth__name);
+    notifySetOption(options::expr::defaultExprDepth__name);
   }
-  if (opts->expr->defaultDagThresh__setByUser__)
+  if (opts->expr->defaultDagThresh__setByUser)
   {
-    notifySetOption(options::defaultDagThresh__name);
+    notifySetOption(options::expr::defaultDagThresh__name);
   }
-  if (opts->smt->dumpModeString__setByUser__)
+  if (opts->smt->dumpModeString__setByUser)
   {
-    notifySetOption(options::dumpModeString__name);
+    notifySetOption(options::smt::dumpModeString__name);
   }
-  if (opts->base->printSuccess__setByUser__)
+  if (opts->base->printSuccess__setByUser)
   {
-    notifySetOption(options::printSuccess__name);
+    notifySetOption(options::base::printSuccess__name);
   }
-  if (opts->smt->diagnosticChannelName__setByUser__)
+  if (opts->smt->diagnosticChannelName__setByUser)
   {
-    notifySetOption(options::diagnosticChannelName__name);
+    notifySetOption(options::smt::diagnosticChannelName__name);
   }
-  if (opts->smt->regularChannelName__setByUser__)
+  if (opts->smt->regularChannelName__setByUser)
   {
-    notifySetOption(options::regularChannelName__name);
+    notifySetOption(options::smt::regularChannelName__name);
   }
-  if (opts->smt->dumpToFileName__setByUser__)
+  if (opts->smt->dumpToFileName__setByUser)
   {
-    notifySetOption(options::dumpToFileName__name);
+    notifySetOption(options::smt::dumpToFileName__name);
   }
   // set this as a listener to be notified of options changes from now on
   opts->setListener(this);
@@ -69,7 +69,7 @@ void OptionsManager::notifySetOption(const std::string& key)
 {
   Trace("smt") << "SmtEnginePrivate::notifySetOption(" << key << ")"
                << std::endl;
-  if (key == options::defaultExprDepth__name)
+  if (key == options::expr::defaultExprDepth__name)
   {
     int depth = d_options->expr->defaultExprDepth;
     Debug.getStream() << expr::ExprSetDepth(depth);
@@ -80,7 +80,7 @@ void OptionsManager::notifySetOption(const std::string& key)
     Warning.getStream() << expr::ExprSetDepth(depth);
     // intentionally exclude Dump stream from this list
   }
-  else if (key == options::defaultDagThresh__name)
+  else if (key == options::expr::defaultDagThresh__name)
   {
     int dag = d_options->expr->defaultDagThresh;
     Debug.getStream() << expr::ExprDag(dag);
@@ -91,12 +91,12 @@ void OptionsManager::notifySetOption(const std::string& key)
     Warning.getStream() << expr::ExprDag(dag);
     Dump.getStream() << expr::ExprDag(dag);
   }
-  else if (key == options::dumpModeString__name)
+  else if (key == options::smt::dumpModeString__name)
   {
     const std::string& value = d_options->smt->dumpModeString;
     Dump.setDumpFromString(value);
   }
-  else if (key == options::printSuccess__name)
+  else if (key == options::base::printSuccess__name)
   {
     bool value = d_options->base->printSuccess;
     Debug.getStream() << Command::printsuccess(value);
@@ -107,15 +107,15 @@ void OptionsManager::notifySetOption(const std::string& key)
     Warning.getStream() << Command::printsuccess(value);
     *options::out() << Command::printsuccess(value);
   }
-  else if (key == options::regularChannelName__name)
+  else if (key == options::smt::regularChannelName__name)
   {
     d_managedRegularChannel.set(options::regularChannelName());
   }
-  else if (key == options::diagnosticChannelName__name)
+  else if (key == options::smt::diagnosticChannelName__name)
   {
     d_managedDiagnosticChannel.set(options::diagnosticChannelName());
   }
-  else if (key == options::dumpToFileName__name)
+  else if (key == options::smt::dumpToFileName__name)
   {
     d_managedDumpChannel.set(options::dumpToFileName());
   }

@@ -159,11 +159,11 @@ void OptionsHandler::checkBvSatSolver(std::string option, SatSolverMode m)
           || m == SatSolverMode::KISSAT))
   {
     if (options::bitblastMode() == options::BitblastMode::LAZY
-        && Options::current().bv->bitblastMode__setByUser__)
+        && Options::current().bv->bitblastMode__setByUser)
     {
       throwLazyBBUnsupported(m);
     }
-    options::setDefault_bv_bitvectorToBool(true);
+    options::bv::default_bitvectorToBool(*d_options, true);
   }
 }
 
@@ -171,10 +171,10 @@ void OptionsHandler::checkBitblastMode(std::string option, BitblastMode m)
 {
   if (m == options::BitblastMode::LAZY)
   {
-    options::setDefault_bv_bitvectorPropagate(true);
-    options::setDefault_bv_bitvectorEqualitySolver(true);
-    options::setDefault_bv_bitvectorInequalitySolver(true);
-    options::setDefault_bv_bitvectorAlgebraicSolver(true);
+    options::bv::default_bitvectorPropagate(*d_options, true);
+    options::bv::default_bitvectorEqualitySolver(*d_options, true);
+    options::bv::default_bitvectorInequalitySolver(*d_options, true);
+    options::bv::default_bitvectorAlgebraicSolver(*d_options, true);
     if (options::bvSatSolver() != options::SatSolverMode::MINISAT)
     {
       throwLazyBBUnsupported(options::bvSatSolver());
@@ -182,14 +182,14 @@ void OptionsHandler::checkBitblastMode(std::string option, BitblastMode m)
   }
   else if (m == BitblastMode::EAGER)
   {
-    options::setDefault_bv_bitvectorToBool(true);
+    options::bv::default_bitvectorToBool(*d_options, true);
   }
 }
 
 void OptionsHandler::setBitblastAig(std::string option, bool arg)
 {
   if(arg) {
-    if(Options::current().bv->bitblastMode__setByUser__) {
+    if(Options::current().bv->bitblastMode__setByUser) {
       if (options::bitblastMode() != options::BitblastMode::EAGER)
       {
         throw OptionException("bitblast-aig must be used with eager bitblaster");
@@ -256,22 +256,22 @@ void OptionsHandler::setStats(const std::string& option, bool value)
   std::string opt = option.substr(2);
   if (value)
   {
-    if (opt == options::statisticsAll__name)
+    if (opt == options::base::statisticsAll__name)
     {
       d_options->base->statistics = true;
     }
-    else if (opt == options::statisticsEveryQuery__name)
+    else if (opt == options::base::statisticsEveryQuery__name)
     {
       d_options->base->statistics = true;
     }
-    else if (opt == options::statisticsExpert__name)
+    else if (opt == options::base::statisticsExpert__name)
     {
       d_options->base->statistics = true;
     }
   }
   else
   {
-    if (opt == options::statistics__name)
+    if (opt == options::base::statistics__name)
     {
       d_options->base->statisticsAll = false;
       d_options->base->statisticsEveryQuery = false;

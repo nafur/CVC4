@@ -23,8 +23,6 @@
 
 #include "options/options.h"
 
-#include <iostream>
-
 // clang-format off
 ${includes}$
 
@@ -44,9 +42,14 @@ ${holder_spec}$
 
 #undef DO_SEMANTIC_CHECKS_BY_DEFAULT
 
-${option_names}$
 
 ${inls}$
+
+namespace ${ident}$ {
+${option_names}$
+
+${defaults}$
+}
 
 }  // namespace cvc5::options
 
