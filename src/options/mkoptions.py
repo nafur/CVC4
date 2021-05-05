@@ -60,8 +60,7 @@ OPTION_ATTR_ALL = OPTION_ATTR_REQ + [
 ]
 
 CATEGORY_VALUES = ['common', 'expert', 'regular', 'undocumented']
-
-SUPPORTED_CTYPES = ['int', 'unsigned', 'unsigned long', 'long', 'double']
+SUPPORTED_CTYPES = ['int', 'unsigned', 'unsigned long', 'double']
 
 ### Other globals
 
@@ -97,76 +96,56 @@ void assign_{module}_{name}(Options& opts, const std::string& option, bool value
   Trace("options") << "user assigned option {name} = " << value << std::endl;
 }}'''
 
-TPL_CALL_ASSIGN_BOOL = \
-    '    assign_{module}_{name}(opts, {option}, {value});'
-
+TPL_CALL_ASSIGN_BOOL = '    assign_{module}_{name}(opts, {option}, {value});'
 TPL_CALL_ASSIGN = '    assign_{module}_{name}(opts, {option}, optionarg);'
 
 TPL_CALL_SET_OPTION = 'setOption(std::string("{smtname}"), ("{value}"));'
 
 TPL_GETOPT_LONG = '{{ "{}", {}_argument, nullptr, {} }},'
 
-TPL_HOLDER_MACRO_ATTR = "  {type} {name};\n"
-TPL_HOLDER_MACRO_ATTR += "  bool {name}__setByUser = false;"
+TPL_HOLDER_MACRO_ATTR = '''  {type} {name};
+  bool {name}__setByUser = false;'''
 
-TPL_HOLDER_MACRO_ATTR_DEF = "  {type} {name} = {default};\n"
-TPL_HOLDER_MACRO_ATTR_DEF += "  bool {name}__setByUser = false;"
+TPL_HOLDER_MACRO_ATTR_DEF = '''  {type} {name} = {default};
+  bool {name}__setByUser = false;'''
 
-TPL_NAME_DECL = "static constexpr const char* {name}__name = \"{long_name}\";"
+TPL_NAME_DECL = 'static constexpr const char* {name}__name = "{long_name}";'
 
-TPL_DECL_SET_DEFAULT = \
-"""void default_{name}(Options& opts, {type} value);"""
-
-TPL_IMPL_SET_DEFAULT = TPL_DECL_SET_DEFAULT[:-1] + \
-"""
+TPL_DECL_SET_DEFAULT = 'void default_{name}(Options& opts, {type} value);'
+TPL_IMPL_SET_DEFAULT = TPL_DECL_SET_DEFAULT[:-1] + '''
 {{
     if (!opts.{module}->{name}__setByUser) {{
         opts.{module}->{name} = value;
     }}
-}}"""
+}}'''
 
 # Option specific methods
 
-TPL_IMPL_OP_PAR = \
-"""inline {type} {name}()
-{{
-  return Options::current().{module}->{name};
-}}"""
+TPL_IMPL_OP_PAR = 'inline {type} {name}() {{ return Options::current().{module}->{name}; }}'
 
 # Mode templates
-TPL_DECL_MODE_ENUM = \
-"""
+TPL_DECL_MODE_ENUM = '''
 enum class {type}
 {{
   {values}
-}};"""
+}};'''
 
-TPL_DECL_MODE_FUNC = \
-"""
-std::ostream& operator<<(std::ostream& os, {type} mode);"""
-
-TPL_IMPL_MODE_FUNC = TPL_DECL_MODE_FUNC[:-len(";")] + \
-"""
+TPL_DECL_MODE_FUNC = 'std::ostream& operator<<(std::ostream& os, {type} mode);'
+TPL_IMPL_MODE_FUNC = TPL_DECL_MODE_FUNC[:-1] + '''
 {{
   switch(mode) {{{cases}
     default:
       Unreachable();
   }}
   return os;
-}}
-"""
+}}'''
 
-TPL_IMPL_MODE_CASE = \
-"""
+TPL_IMPL_MODE_CASE = '''
     case {type}::{enum}:
-      return os << "{type}::{enum}";"""
+      return os << "{type}::{enum}";'''
 
-TPL_DECL_MODE_HANDLER = \
-"""
-{type} stringTo{type}(const std::string& optarg);"""
-
-TPL_IMPL_MODE_HANDLER = TPL_DECL_MODE_HANDLER[:-1] + \
-"""
+TPL_DECL_MODE_HANDLER = '{type} stringTo{type}(const std::string& optarg);'
+TPL_IMPL_MODE_HANDLER = TPL_DECL_MODE_HANDLER[:-1] + '''
 {{
   {cases}
   else if (optarg == "help")
@@ -176,14 +155,12 @@ TPL_IMPL_MODE_HANDLER = TPL_DECL_MODE_HANDLER[:-1] + \
   }}
   throw OptionException(std::string("unknown option for --{long}: `") +
                         optarg + "'.  Try --{long}=help.");
-}}
-"""
+}}'''
 
-TPL_MODE_HANDLER_CASE = \
-"""if (optarg == "{name}")
+TPL_MODE_HANDLER_CASE = '''if (optarg == "{name}")
   {{
     return {type}::{enum};
-  }}"""
+  }}'''
 
 
 class Module(object):
@@ -477,13 +454,13 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
         option_names='\n'.join(option_names),
         inls='\n'.join(inls),
         defaults='\n'.join(default_decl),
-        modes=''.join(mode_decl)))
+        modes='\n'.join(mode_decl)))
 
     write_file(dst_dir, '{}.cpp'.format(filename), tpl_module_cpp.format(
         header=module.header,
         ident=module.ident,
         defaults='\n'.join(default_impl),
-        modes=''.join(mode_impl)))
+        modes='\n'.join(mode_impl)))
 
 
 def docgen(category, name, smt_name, short_name, long_name, ctype, default,
@@ -800,13 +777,6 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
     ))
 
 
-def lstrip(prefix, s):
-    """
-    Remove prefix from the beginning of string s.
-    """
-    return s[len(prefix):] if s.startswith(prefix) else s
-
-
 def check_attribs(filename, req_attribs, valid_attribs, attribs, ctype):
     """
     Check if for a given module/option the defined attributes are valid and
@@ -942,9 +912,9 @@ def mkoptions_main():
     # Read source code template files from source directory.
     tpl_module_h = read_tpl(src_dir, 'module_template.h')
     tpl_module_cpp = read_tpl(src_dir, 'module_template.cpp')
+    tpl_options_api = read_tpl(src_dir, 'options_api_template.cpp')
     tpl_options_h = read_tpl(src_dir, 'options_template.h')
     tpl_options_cpp = read_tpl(src_dir, 'options_template.cpp')
-    tpl_options_api = read_tpl(src_dir, 'options_api_template.cpp')
 
     # Parse files, check attributes and create module/option objects
     modules = []
@@ -966,7 +936,6 @@ def mkoptions_main():
 
     # Create options.cpp in destination directory
     codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_options_api)
-
 
 
 if __name__ == "__main__":

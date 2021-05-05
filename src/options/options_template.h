@@ -27,11 +27,6 @@
 #include "cvc5_export.h"
 
 namespace cvc5 {
-class Options;
-
-namespace api {
-class Solver;
-}
 namespace options {
   class OptionsHandler;
 ${holder_fwd_decls}$
@@ -76,7 +71,7 @@ public:
 
   /** Return true if current Options are null */
   static inline bool isCurrentNull() {
-    return s_current == NULL;
+    return s_current == nullptr;
   }
 
   /** Get the current Options in effect */
