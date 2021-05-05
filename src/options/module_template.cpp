@@ -20,7 +20,6 @@
 
 #include "base/check.h"
 #include "options/option_exception.h"
-#include "options/options_holder.h"
 
 // clang-format off
 namespace cvc5 {

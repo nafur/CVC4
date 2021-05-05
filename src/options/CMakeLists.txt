@@ -74,7 +74,7 @@ list_prepend(options_toml_files "${CMAKE_CURRENT_LIST_DIR}/" abs_toml_files)
 
 add_custom_command(
     OUTPUT
-      options.h options.cpp options_holder.h options_api.cpp
+      options.h options.cpp options_api.cpp
       ${options_gen_cpp_files} ${options_gen_h_files}
     COMMAND
       ${PYTHON_EXECUTABLE}
@@ -88,7 +88,6 @@ add_custom_command(
       module_template.h
       module_template.cpp
       options_api_template.cpp
-      options_holder_template.h
       options_template.h
       options_template.cpp
 )
@@ -98,7 +97,6 @@ add_custom_target(gen-options
     options.h
     options.cpp
     options_api.cpp
-    options_holder.h
     ${options_gen_cpp_files}
     ${options_gen_h_files}
 )

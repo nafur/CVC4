@@ -29,7 +29,6 @@
         - options_template.cpp
         - options_api_template.cpp
         - module_template.cpp
-        - options_holder_template.h
         - module_template.h
 
     <toml>+ must be the list of all *.toml option configuration files from
@@ -39,7 +38,6 @@
     The script generates the following files:
         - <dst>/MODULE_options.h
         - <dst>/MODULE_options.cpp
-        - <dst>/options_holder.h
         - <dst>/options.cpp
 """
 
@@ -577,14 +575,13 @@ def add_getopt_long(long_name, argument_req, getopt_long):
             'required' if argument_req else 'no', value))
 
 
-def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_options_holder, tpl_options_api):
+def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_options_api):
     """
-    Generate code for all option modules (options.cpp, options_holder.h).
+    Generate code for all option modules (options.cpp).
     """
 
     headers_module = []      # generated *_options.h header includes
     headers_handler = set()  # option includes (for handlers, predicates, ...)
-    macros_module = []       # option holder macro for options_holder.h
     getopt_short = []        # short options for getopt_long
     getopt_long = []         # long options for getopt_long
     options_smt = []         # all options names accessible via {set,get}-option
@@ -603,7 +600,6 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
 
     for module in modules:
         headers_module.append(format_include(module.header))
-        macros_module.append(TPL_HOLDER_MACRO_NAME.format(id=module.id))
         module_holder_fwd_decls.append(
             TPL_HOLDER_FWDECL.format(id=module.id)
         )
@@ -811,11 +807,6 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                         predicates='\n'.join(predicates)
                     ))
 
-    write_file(dst_dir, 'options_holder.h', tpl_options_holder.format(
-        headers_module='\n'.join(headers_module),
-        macros_module='\n  '.join(macros_module)
-    ))
-
     write_file(dst_dir, 'options.h', tpl_options_h.format(
         holder_fwd_decls='\n'.join(module_holder_fwd_decls),
         holder_mem_decls='\n'.join(module_holder_mem_decls),
@@ -986,7 +977,6 @@ def mkoptions_main():
     tpl_module_cpp = read_tpl(src_dir, 'module_template.cpp')
     tpl_options_h = read_tpl(src_dir, 'options_template.h')
     tpl_options_cpp = read_tpl(src_dir, 'options_template.cpp')
-    tpl_options_holder = read_tpl(src_dir, 'options_holder_template.h')
     tpl_options_api = read_tpl(src_dir, 'options_api_template.cpp')
 
     # Parse files, check attributes and create module/option objects
@@ -1010,8 +1000,8 @@ def mkoptions_main():
     for module in modules:
         codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp)
 
-    # Create options.cpp and options_holder.h in destination directory
-    codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_options_holder, tpl_options_api)
+    # Create options.cpp in destination directory
+    codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_options_api)
 
 
 

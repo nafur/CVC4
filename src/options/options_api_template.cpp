@@ -39,7 +39,6 @@ extern int optreset;
 #include "base/output.h"
 #include "options/didyoumean.h"
 #include "options/options_handler.h"
-#include "options/options_holder.h"
 #include "options/options_listener.h"
 #include "options/options.h"
 ${headers_module}$
