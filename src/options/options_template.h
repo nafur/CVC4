@@ -107,15 +107,6 @@ public:
   public:
 
   /**
-   * Returns true iff the value of the given option was set
-   * by the user via a command-line option or SmtEngine::setOption().
-   * (Options::set() is low-level and doesn't count.)  Returns false
-   * otherwise.
-   */
-  template <class T>
-  bool wasSetByUser(T) const;
-
-  /**
    * Get the setting for all options.
    */
   std::vector<std::vector<std::string> > getOptions() const;

@@ -15,7 +15,7 @@
  * For each <module>_options.toml configuration file, mkoptions.py
  * expands this template and generates a <module>_options.cpp file.
  */
-#include "options/${filename}$.h"
+#include "${header}$"
 
 #include <iostream>
 
@@ -23,16 +23,11 @@
 #include "options/option_exception.h"
 
 // clang-format off
-namespace cvc5 {
-
-${accs}$
-
-namespace options {
-
-${defs}$
+namespace cvc5::options {
 
 ${modes}$
 
-}  // namespace options
-}  // namespace cvc5
+${defs}$
+
+}  // namespace cvc5::options
 // clang-format on

@@ -118,25 +118,7 @@ TPL_HOLDER_MACRO_ATTR += "  bool {name}__setByUser__ = false;"
 TPL_HOLDER_MACRO_ATTR_DEF = "  {type} {name} = {default};\n"
 TPL_HOLDER_MACRO_ATTR_DEF += "  bool {name}__setByUser__ = false;"
 
-TPL_OPTION_STRUCT_RW = \
-"""
-static constexpr const char* {name}__name = "{long_name}";
-struct {name}__option_t
-{{
-  typedef {type} type;
-  //type operator()() const;
-  static constexpr const char* name = "{long_name}";
-}};// thread_local {name};"""
-
-TPL_OPTION_STRUCT_RO = \
-"""
-static constexpr const char* {name}__name = "{long_name}";
-struct {name}__option_t
-{{
-  typedef {type} type;
-  //type operator()() const;
-  static constexpr const char* name = "{long_name}";
-}};// thread_local {name};"""
+TPL_NAME_DECL = "static constexpr const char* {name}__name = \"{long_name}\";"
 
 TPL_DECL_WAS_SET_BY_USER = \
 """void setDefault_{module}_{name}({type} value);"""
@@ -406,14 +388,12 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
     # *_options.h
     includes = set()
     holder_specs = []
-    decls = []
-    specs = []
+    option_names = []
     inls = []
     mode_decl = []
     mode_impl = []
 
     # *_options_.cpp
-    accs = []
     defs = []
 
     for option in \
@@ -434,12 +414,12 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
             holder_specs.append(TPL_HOLDER_MACRO_ATTR.format(type=option.type, name=option.name))
 
         # Generate module declaration
-        tpl_decl = TPL_OPTION_STRUCT_RO if option.read_only else TPL_OPTION_STRUCT_RW
+        tpl_name_decl = TPL_NAME_DECL
         if option.long:
             long_name = option.long.split('=')[0]
         else:
             long_name = ""
-        decls.append(tpl_decl.format(name=option.name, type=option.type, long_name = long_name))
+        option_names.append(tpl_name_decl.format(name=option.name, type=option.type, long_name = long_name))
 
         # Generate module specialization
         inls.append(TPL_DECL_WAS_SET_BY_USER.format(module=module.ident, name=option.name, type=option.type))
@@ -502,19 +482,15 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
 
     filename = os.path.splitext(os.path.split(module.header)[1])[0]
     write_file(dst_dir, '{}.h'.format(filename), tpl_module_h.format(
-        filename=filename,
-        header=module.header,
         id=module.id,
         includes='\n'.join(sorted(list(includes))),
         holder_spec='\n'.join(holder_specs),
-        decls='\n'.join(decls),
-        specs='\n'.join(specs),
+        option_names='\n'.join(option_names),
         inls='\n'.join(inls),
         modes=''.join(mode_decl)))
 
     write_file(dst_dir, '{}.cpp'.format(filename), tpl_module_cpp.format(
-        filename=filename,
-        accs='\n'.join(accs),
+        header=module.header,
         defs='\n'.join(defs),
         modes=''.join(mode_impl)))
 
