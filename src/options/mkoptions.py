@@ -83,6 +83,7 @@ TPL_HOLDER_DECL = '''struct Holder{id} {{
 }};'''
 TPL_HOLDER_MEMBER_DECL = '    std::unique_ptr<options::Holder{id}> {name};'
 TPL_HOLDER_MEMBER_INIT = '      {name}(std::make_unique<options::Holder{id}>()),'
+TPL_HOLDER_MEMBER_COPY = '    *{name} = *options.{name};'
 
 TPL_ASSIGN = '''
 void assign_{module}_{name}(Options& opts, const std::string& option, const std::string& optionarg) {{
@@ -569,6 +570,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
     module_holder_fwd_decls = []
     module_holder_mem_decls = []
     module_holder_mem_inits = []
+    module_holder_mem_copy = []
 
     for module in modules:
         headers_module.append(format_include(module.header))
@@ -580,6 +582,9 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
         )
         module_holder_mem_inits.append(
             TPL_HOLDER_MEMBER_INIT.format(id=module.id, name=module.ident)
+        )
+        module_holder_mem_copy.append(
+            TPL_HOLDER_MEMBER_COPY.format(name=module.ident)
         )
 
         if module.options:
@@ -788,6 +793,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
         headers_module='\n'.join(headers_module),
         headers_handler='\n'.join(sorted(list(headers_handler))),
         holder_mem_inits='\n'.join(module_holder_mem_inits),
+        holder_mem_copy='\n'.join(module_holder_mem_copy),
         options_getoptions='\n  '.join(options_getoptions),
     ))
 

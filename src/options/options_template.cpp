@@ -212,7 +212,7 @@ Options::~Options() {
 
 void Options::copyValues(const Options& options){
   if(this != &options) {
-    //*d_holder = *options.d_holder;
+${holder_mem_copy}$
   }
 }
 
