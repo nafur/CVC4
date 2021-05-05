@@ -28,7 +28,6 @@
 // clang-format off
 ${includes}$
 
-${holder_spec}$
 
 namespace cvc5 {
 namespace options {
@@ -44,7 +43,7 @@ ${decls}$
 #endif /* CVC5_MUZZLED || CVC5_COMPETITION_MODE */
 
 struct Holder${id}$ {
-    CVC5_OPTIONS__${id}$__FOR_OPTION_HOLDER
+${holder_spec}$
 };
 
 #undef DO_SEMANTIC_CHECKS_BY_DEFAULT

@@ -84,8 +84,6 @@ TPL_HOLDER_DECL = '''struct Holder{id} {{
 TPL_HOLDER_MEMBER_DECL = '    std::unique_ptr<options::Holder{id}> {name};'
 TPL_HOLDER_MEMBER_INIT = '      {name}(std::make_unique<options::Holder{id}>()),'
 
-TPL_HOLDER_MACRO_NAME = 'CVC5_OPTIONS__{id}__FOR_OPTION_HOLDER'
-
 TPL_ASSIGN = '''
 void assign_{module}_{name}(Options& opts, const std::string& option, const std::string& optionarg) {{
   auto value = {handler};
@@ -114,32 +112,31 @@ TPL_CALL_SET_OPTION = 'setOption(std::string("{smtname}"), ("{value}"));'
 
 TPL_GETOPT_LONG = '{{ "{}", {}_argument, nullptr, {} }},'
 
-TPL_PUSHBACK_PREEMPT = 'extender->pushBackPreemption({});'
-
-
-TPL_HOLDER_MACRO = '#define ' + TPL_HOLDER_MACRO_NAME
-
-TPL_HOLDER_MACRO_ATTR = "  {name}__option_t::type {name};\\\n"
+TPL_HOLDER_MACRO_ATTR = "  {type} {name};\n"
 TPL_HOLDER_MACRO_ATTR += "  bool {name}__setByUser__ = false;"
 
-TPL_HOLDER_MACRO_ATTR_DEF = "  {name}__option_t::type {name} = {default};\\\n"
+TPL_HOLDER_MACRO_ATTR_DEF = "  {type} {name} = {default};\n"
 TPL_HOLDER_MACRO_ATTR_DEF += "  bool {name}__setByUser__ = false;"
 
 TPL_OPTION_STRUCT_RW = \
-"""extern struct {name}__option_t
+"""
+static constexpr const char* {name}__name = "{long_name}";
+struct {name}__option_t
 {{
   typedef {type} type;
-  type operator()() const;
+  //type operator()() const;
   static constexpr const char* name = "{long_name}";
-}} thread_local {name};"""
+}};// thread_local {name};"""
 
 TPL_OPTION_STRUCT_RO = \
-"""extern struct {name}__option_t
+"""
+static constexpr const char* {name}__name = "{long_name}";
+struct {name}__option_t
 {{
   typedef {type} type;
-  type operator()() const;
+  //type operator()() const;
   static constexpr const char* name = "{long_name}";
-}} thread_local {name};"""
+}};// thread_local {name};"""
 
 TPL_DECL_WAS_SET_BY_USER = \
 """void setDefault_{module}_{name}({type} value);"""
@@ -155,7 +152,7 @@ TPL_IMPL_WAS_SET_BY_USER = TPL_DECL_WAS_SET_BY_USER[:-1] + \
 # Option specific methods
 
 TPL_IMPL_OP_PAR = \
-"""inline {name}__option_t::type {name}__option_t::operator()() const
+"""inline {type} {name}()
 {{
   return Options::current().{module}->{name};
 }}"""
@@ -419,8 +416,6 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
     accs = []
     defs = []
 
-    holder_specs.append(TPL_HOLDER_MACRO.format(id=module.id))
-
     for option in \
         sorted(module.options, key=lambda x: x.long if x.long else x.name):
         if option.name is None:
@@ -434,9 +429,9 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
             default = option.default
             if option.mode and option.type not in default:
                 default = '{}::{}'.format(option.type, default)
-            holder_specs.append(TPL_HOLDER_MACRO_ATTR_DEF.format(name=option.name, default=default))
+            holder_specs.append(TPL_HOLDER_MACRO_ATTR_DEF.format(type=option.type, name=option.name, default=default))
         else:
-            holder_specs.append(TPL_HOLDER_MACRO_ATTR.format(name=option.name))
+            holder_specs.append(TPL_HOLDER_MACRO_ATTR.format(type=option.type, name=option.name))
 
         # Generate module declaration
         tpl_decl = TPL_OPTION_STRUCT_RO if option.read_only else TPL_OPTION_STRUCT_RW
@@ -461,7 +456,7 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
                     module.id, option.long, option.type))
 
         # Generate module inlines
-        inls.append(TPL_IMPL_OP_PAR.format(module=module.ident, name=option.name))
+        inls.append(TPL_IMPL_OP_PAR.format(module=module.ident, name=option.name, type=option.type))
 
 
         ### Generate code for {module.name}_options.cpp
@@ -470,7 +465,7 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
         defs.append(TPL_IMPL_WAS_SET_BY_USER.format(module=module.ident, name=option.name, type=option.type))
 
         # Global definitions
-        defs.append(f'thread_local struct {option.name}__option_t {option.name};')
+        #defs.append(f'thread_local struct {option.name}__option_t {option.name};')
 
         if option.mode:
             values = option.mode.keys()
@@ -511,7 +506,7 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
         header=module.header,
         id=module.id,
         includes='\n'.join(sorted(list(includes))),
-        holder_spec=' \\\n'.join(holder_specs),
+        holder_spec='\n'.join(holder_specs),
         decls='\n'.join(decls),
         specs='\n'.join(specs),
         inls='\n'.join(inls),

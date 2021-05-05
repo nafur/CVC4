@@ -1529,12 +1529,12 @@ void setDefaults(LogicInfo& logic, bool isInternalSubsolver)
     if (opts.arith->nlCad__setByUser__)
     {
       std::stringstream ss;
-      ss << "Cannot use " << options::nlCad.name << " without configuring with --poly.";
+      ss << "Cannot use " << options::nlCad__name << " without configuring with --poly.";
       throw OptionException(ss.str());
     }
     else
     {
-      Notice() << "Cannot use --" << options::nlCad.name
+      Notice() << "Cannot use --" << options::nlCad__name
                << " without configuring with --poly." << std::endl;
       opts.arith->nlCad = false;
       opts.arith->nlExt = true;
