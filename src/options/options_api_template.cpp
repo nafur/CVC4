@@ -144,7 +144,7 @@ public:
  * also, to document it.
  *
  * If you add something that has a short option equivalent, you should
- * add it to the getopt_long() call in parseOptions().
+ * add it to the getopt_long() call in parse().
  */
 // clang-format off
 static struct option cmdlineOptions[] = {
@@ -299,13 +299,13 @@ std::string handleOption<std::string>(std::string option, std::string optionarg)
 ${assigns}$
 // clang-format off
 
-void parseOptionsRecursive(Options& opts, OptionsHandler* d_handler, int argc,
+void parseInternal(Options& opts, OptionsHandler* d_handler, int argc,
                                     char* argv[],
                                     std::vector<std::string>& nonoptions)
 {
   Assert(argv != nullptr);
   if(Debug.isOn("options")) {
-    Debug("options") << "starting a new parseOptionsRecursive with "
+    Debug("options") << "starting a new parseInternal with "
                      << argc << " arguments" << std::endl;
     for( int i = 0; i < argc ; i++ ){
       Assert(argv[i] != NULL);
@@ -313,7 +313,7 @@ void parseOptionsRecursive(Options& opts, OptionsHandler* d_handler, int argc,
     }
   }
 
-  // Reset getopt(), in the case of multiple calls to parseOptions().
+  // Reset getopt(), in the case of multiple calls to parse().
   // This can be = 1 in newer GNU getopt, but older (< 2007) require = 0.
   optind = 0;
 #if HAVE_DECL_OPTRESET
@@ -418,7 +418,7 @@ ${options_handler}$
  *
  * Throws OptionException on failures.
  */
-std::vector<std::string> parseOptions(Options& opts,
+std::vector<std::string> parse(Options& opts,
                                                int argc,
                                                char* argv[])
 {
@@ -433,7 +433,7 @@ std::vector<std::string> parseOptions(Options& opts,
   // not been set.
   //DebugChannel.on("options");
 
-  Debug("options") << "Options::parseOptions == " << &opts << std::endl;
+  Debug("options") << "options::parse == " << &opts << std::endl;
   Debug("options") << "argv == " << argv << std::endl;
 
   // Find the base name of the program.
@@ -444,7 +444,7 @@ std::vector<std::string> parseOptions(Options& opts,
   opts.base->binary_name = std::string(progName);
 
   std::vector<std::string> nonoptions;
-  parseOptionsRecursive(opts, opts.d_handler, argc, argv, nonoptions);
+  parseInternal(opts, opts.d_handler, argc, argv, nonoptions);
   if (Debug.isOn("options")){
     for(std::vector<std::string>::const_iterator i = nonoptions.begin(),
           iend = nonoptions.end(); i != iend; ++i){

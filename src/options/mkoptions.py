@@ -66,12 +66,7 @@ SUPPORTED_CTYPES = ['int', 'unsigned', 'unsigned long', 'long', 'double']
 ### Other globals
 
 g_long_to_opt = dict()     # maps long options to option objects
-g_module_id_cache = dict() # maps ids to filename/lineno
 g_long_cache = dict()      # maps long options to filename/fileno
-g_short_cache = dict()     # maps short options to filename/fileno
-g_smt_cache = dict()       # maps smt options to filename/fileno
-g_name_cache = dict()      # maps option names to filename/fileno
-g_long_arguments = set()   # set of long options that require an argument
 
 g_getopt_long_start = 256
 
@@ -198,12 +193,8 @@ class Module(object):
     file and contains lists of options.
     """
     def __init__(self, d):
-        self.__dict__ = dict((k, None) for k in MODULE_ATTR_ALL)
+        self.__dict__ = {k: d.get(k, None) for k in MODULE_ATTR_ALL}
         self.options = []
-        for (attr, val) in d.items():
-            assert attr in self.__dict__
-            if val:
-                self.__dict__[attr] = val
 
 
 class Option(object):
@@ -967,9 +958,6 @@ def mkoptions_main():
             check_long(filename, option, option.long, option.type)
             if option.long:
                 g_long_to_opt[long_get_option(option.long)] = option
-                # Add long option that requires an argument
-                if option.type not in ['bool', 'void']:
-                    g_long_arguments.add(long_get_option(option.long))
         modules.append(module)
 
     # Create *_options.{h,cpp} in destination directory

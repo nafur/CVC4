@@ -106,7 +106,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
   progPath = argv[0];
 
   // Parse the options
-  vector<string> filenames = options::parseOptions(opts, argc, argv);
+  vector<string> filenames = options::parse(opts, argc, argv);
 
   auto limit = install_time_limit(opts);
 

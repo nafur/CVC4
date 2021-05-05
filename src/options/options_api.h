@@ -29,11 +29,9 @@ namespace cvc5 {
 }
 
 namespace cvc5::options {
-    class OptionsHandler;
-
   /**
    * Get a description of the command-line flags accepted by
-   * parseOptions.  The returned string will be escaped so that it is
+   * parse.  The returned string will be escaped so that it is
    * suitable as an argument to printf. */
   const std::string& getDescription() CVC5_EXPORT;
 
@@ -67,17 +65,17 @@ namespace cvc5::options {
    *
    * Preconditions: options and argv must be non-null.
    */
-  std::vector<std::string> parseOptions(Options& opts,
+  std::vector<std::string> parse(Options& opts,
                                                int argc,
                                                char* argv[]) CVC5_EXPORT;
 
-    std::string get(const Options& opts, const std::string& key);
-    void set(Options& opts, const std::string& key, const std::string& optionarg);
+    std::string get(const Options& opts, const std::string& key) CVC5_EXPORT;
+    void set(Options& opts, const std::string& key, const std::string& optionarg) CVC5_EXPORT;
 
   /**
    * Get the setting for all options.
    */
-  std::vector<std::vector<std::string> > getAll(const Options& opts);
+  std::vector<std::vector<std::string> > getAll(const Options& opts) CVC5_EXPORT;
 
 }  // namespace cvc5::options
 
