@@ -165,52 +165,6 @@ std::string suggestCommandLineOptions(const std::string& optionName)
 }
 
 /**
- * Parse argc/argv and put the result into a cvc5::Options.
- * The return value is what's left of the command line (that is, the
- * non-option arguments).
- *
- * Throws OptionException on failures.
- */
-std::vector<std::string> parseOptions(Options* options,
-                                               int argc,
-                                               char* argv[])
-{
-  Assert(options != nullptr);
-  Assert(argv != nullptr);
-
-  OptionsGuard guard(&options->s_current, options);
-
-  const char *progName = argv[0];
-
-  // To debug options parsing, you may prefer to simply uncomment this
-  // and recompile. Debug flags have not been parsed yet so these have
-  // not been set.
-  //DebugChannel.on("options");
-
-  Debug("options") << "Options::parseOptions == " << options << std::endl;
-  Debug("options") << "argv == " << argv << std::endl;
-
-  // Find the base name of the program.
-  const char *x = strrchr(progName, '/');
-  if(x != nullptr) {
-    progName = x + 1;
-  }
-  options->base->binary_name = std::string(progName);
-
-  std::vector<std::string> nonoptions;
-  parseOptionsRecursive(options, options->d_handler, argc, argv, nonoptions);
-  if(Debug.isOn("options")){
-    for(std::vector<std::string>::const_iterator i = nonoptions.begin(),
-          iend = nonoptions.end(); i != iend; ++i){
-      Debug("options") << "nonoptions " << *i << std::endl;
-    }
-  }
-
-  return nonoptions;
-}
-
-
-/**
  * This is a default handler for options of built-in C++ type.  This
  * template is really just a helper for the handleOption() template,
  * below.  Variants of this template handle numeric and non-numeric,
@@ -459,6 +413,51 @@ ${options_handler}$
                    << " non-option arguments." << std::endl;
 }
 
+/**
+ * Parse argc/argv and put the result into a cvc5::Options.
+ * The return value is what's left of the command line (that is, the
+ * non-option arguments).
+ *
+ * Throws OptionException on failures.
+ */
+std::vector<std::string> parseOptions(Options* options,
+                                               int argc,
+                                               char* argv[])
+{
+  Assert(options != nullptr);
+  Assert(argv != nullptr);
+
+  OptionsGuard guard(&options->s_current, options);
+
+  const char *progName = argv[0];
+
+  // To debug options parsing, you may prefer to simply uncomment this
+  // and recompile. Debug flags have not been parsed yet so these have
+  // not been set.
+  //DebugChannel.on("options");
+
+  Debug("options") << "Options::parseOptions == " << options << std::endl;
+  Debug("options") << "argv == " << argv << std::endl;
+
+  // Find the base name of the program.
+  const char *x = strrchr(progName, '/');
+  if(x != nullptr) {
+    progName = x + 1;
+  }
+  options->base->binary_name = std::string(progName);
+
+  std::vector<std::string> nonoptions;
+  parseOptionsRecursive(options, options->d_handler, argc, argv, nonoptions);
+  if(Debug.isOn("options")){
+    for(std::vector<std::string>::const_iterator i = nonoptions.begin(),
+          iend = nonoptions.end(); i != iend; ++i){
+      Debug("options") << "nonoptions " << *i << std::endl;
+    }
+  }
+
+  return nonoptions;
+}
+
 std::string get(const Options& options, const std::string& key)
 {
   Trace("options") << "Options::getOption(" << key << ")" << std::endl;
@@ -487,6 +486,15 @@ void set(Options& options, const std::string& key, const std::string& optionarg)
   {
     options.d_olisten->notifySetOption(key);
   }
+}
+
+std::vector<std::vector<std::string> > getAll(const Options& opts)
+{
+  std::vector< std::vector<std::string> > res;
+
+  ${options_getoptions}$
+
+  return res;
 }
 
 

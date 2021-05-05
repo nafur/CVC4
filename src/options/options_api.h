@@ -71,27 +71,14 @@ namespace cvc5::options {
                                                int argc,
                                                char* argv[]) CVC5_EXPORT;
 
-  /**
-   * Internal procedure for implementing the parseOptions function.
-   * Initializes the options object based on the given command-line
-   * arguments. The command line arguments are stored in argc/argv.
-   * Nonoptions are stored into nonoptions.
-   *
-   * This is not thread safe.
-   *
-   * Throws OptionException on failures.
-   *
-   * Preconditions: options, extender and nonoptions are non-null.
-   */
-  void parseOptionsRecursive(Options* options, OptionsHandler* d_handler,
-                                    int argc,
-                                    char* argv[],
-                                    std::vector<std::string>& nonoptions) CVC5_EXPORT;
-
     std::string get(const Options& options, const std::string& key);
     void set(Options& options, const std::string& key, const std::string& optionarg);
 
+  /**
+   * Get the setting for all options.
+   */
+  std::vector<std::vector<std::string> > getAll(const Options& opts);
 
-}  // namespace cvc5
+}  // namespace cvc5::options
 
 #endif /* CVC5__OPTIONS__OPTIONS_H */

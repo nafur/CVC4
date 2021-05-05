@@ -758,12 +758,12 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                     options_smt.append('"{}",'.format(optname))
 
                     if option.type == 'bool':
-                        s = 'opts.push_back({{"{}", {}->{} ? "true" : "false"}});'.format(optname, module.ident,option.name)
+                        s = 'res.push_back({{"{}", opts.{}->{} ? "true" : "false"}});'.format(optname, module.ident,option.name)
                     elif is_numeric_cpp_type(option.type):
-                        s = 'opts.push_back({{"{}", std::to_string({}->{})}});'.format(
+                        s = 'res.push_back({{"{}", std::to_string(opts.{}->{})}});'.format(
                             optname, module.ident, option.name)
                     else:
-                        s = '{{ std::stringstream ss; ss << {}->{}; opts.push_back({{"{}", ss.str()}}); }}'.format(module.ident,
+                        s = '{{ std::stringstream ss; ss << opts.{}->{}; res.push_back({{"{}", ss.str()}}); }}'.format(module.ident,
                             option.name, optname)
                     options_getoptions.append(s)
 
@@ -794,7 +794,6 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
         headers_handler='\n'.join(sorted(list(headers_handler))),
         holder_mem_inits='\n'.join(module_holder_mem_inits),
         holder_mem_copy='\n'.join(module_holder_mem_copy),
-        options_getoptions='\n  '.join(options_getoptions),
     ))
 
     write_file(dst_dir, 'options_api.cpp', tpl_options_api.format(
@@ -806,6 +805,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
         options_handler='\n    '.join(options_handler),
         options_short=''.join(getopt_short),
         assigns='\n'.join(assign_impls),
+        options_getoptions='\n  '.join(options_getoptions),
         getoption_handlers='\n'.join(getoption_handlers),
         setoption_handlers='\n'.join(setoption_handlers),
     ))

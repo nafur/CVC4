@@ -106,11 +106,6 @@ public:
 
   public:
 
-  /**
-   * Get the setting for all options.
-   */
-  std::vector<std::vector<std::string> > getOptions() const;
-
   /** Set the generic listener associated with this class to ol */
   void setListener(OptionsListener* ol);
 
