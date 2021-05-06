@@ -27,11 +27,11 @@ namespace cvc5
 
   Options::Options(OptionsListener * ol)
       :
+        d_olisten(ol),
 // clang-format off
 ${holder_mem_inits}$
 // clang-format on
-        d_olisten(ol),
-        d_handler(std::make_unique<options::OptionsHandler>(this))
+        d_handler(std::make_unique<options::OptionsHandler>(this)),
   {
   }
 

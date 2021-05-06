@@ -100,13 +100,14 @@ ${holder_getter_decls}$
   /** Pointer to the options listener, if one exists */
   OptionsListener* d_olisten = nullptr;
 
+${holder_mem_decls}$
+
   /** The handler for the options of the theory. */
   std::unique_ptr<options::OptionsHandler> d_handler;
 
   /** The current Options in effect */
   static thread_local Options* s_current;
 
-${holder_mem_decls}$
 }; /* class Options */
 
 }  // namespace cvc5
