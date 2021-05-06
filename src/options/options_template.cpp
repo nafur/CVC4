@@ -31,7 +31,7 @@ namespace cvc5
 // clang-format off
 ${holder_mem_inits}$
 // clang-format on
-        d_handler(std::make_unique<options::OptionsHandler>(this)),
+        d_handler(std::make_unique<options::OptionsHandler>(this))
   {
   }
 

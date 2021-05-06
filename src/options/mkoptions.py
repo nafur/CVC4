@@ -71,14 +71,6 @@ g_getopt_long_start = 256
 
 ### Source code templates
 
-TPL_HOLDER_FWDECL = '  struct Holder{id};'
-TPL_HOLDER_DECL = '''struct Holder{id} {{
-    CVC5_OPTIONS__{id}__FOR_OPTION_HOLDER
-}};'''
-TPL_HOLDER_MEMBER_DECL = '    std::unique_ptr<options::Holder{id}> d_{name};'
-TPL_HOLDER_MEMBER_INIT = '        d_{name}(std::make_unique<options::Holder{id}>()),'
-TPL_HOLDER_MEMBER_COPY = '      *d_{name} = *options.d_{name};'
-
 TPL_ASSIGN = '''
 void assign_{module}_{name}(Options& opts, const std::string& option, const std::string& optionarg) {{
   auto value = {handler};
@@ -161,6 +153,27 @@ TPL_MODE_HANDLER_CASE = '''if (optarg == "{name}")
   {{
     return {type}::{enum};
   }}'''
+
+
+def concat_format(s, objs):
+    return '\n'.join([s.format(**o.__dict__) for o in objs])
+
+
+def get_module_headers(modules):
+    return concat_format('#include "{header}"', modules)
+
+
+def get_holder_fwd_decls(modules):
+    return concat_format('  struct Holder{id};', modules)
+
+
+def get_holder_mem_decls(modules):
+    return concat_format('    std::unique_ptr<options::Holder{id}> d_{ident};', modules)
+
+
+def get_holder_getter_decls(modules):
+    return concat_format('''  const options::Holder{id}& {ident}() const;
+  options::Holder{id}& {ident}();''', modules)
 
 
 class Module(object):
@@ -514,12 +527,15 @@ def add_getopt_long(long_name, argument_req, getopt_long):
             'required' if argument_req else 'no', value))
 
 
+def format_modules(s, modules):
+    return '\n'.join([s.format(**m.__dict__) for m in modules])
+
+
 def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_options_api):
     """
     Generate code for all option modules (options.cpp).
     """
 
-    headers_module = []      # generated *_options.h header includes
     headers_handler = set()  # option includes (for handlers, predicates, ...)
     getopt_short = []        # short options for getopt_long
     getopt_long = []         # long options for getopt_long
@@ -533,36 +549,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
 
     assign_impls = []
 
-    module_holder_fwd_decls = []
-    module_holder_mem_decls = []
-    module_holder_mem_inits = []
-    module_holder_mem_copy = []
-    module_holder_getter_decls = []
-    module_holder_getter_impl = []
-
     for module in modules:
-        headers_module.append(format_include(module.header))
-        module_holder_fwd_decls.append(
-            TPL_HOLDER_FWDECL.format(id=module.id)
-        )
-        module_holder_mem_decls.append(
-            TPL_HOLDER_MEMBER_DECL.format(id=module.id, name=module.ident)
-        )
-        module_holder_mem_inits.append(
-            TPL_HOLDER_MEMBER_INIT.format(id=module.id, name=module.ident)
-        )
-        module_holder_mem_copy.append(
-            TPL_HOLDER_MEMBER_COPY.format(name=module.ident)
-        )
-        module_holder_getter_decls.extend([
-            '  const options::Holder{}& {}() const;'.format(module.id, module.ident),
-            '  options::Holder{}& {}();'.format(module.id, module.ident),
-        ])
-        module_holder_getter_impl.extend([
-            'const options::Holder{}& Options::{}() const {{ return *d_{}; }}'.format(module.id, module.ident, module.ident),
-            'options::Holder{}& Options::{}() {{ return *d_{}; }}'.format(module.id, module.ident, module.ident),
-        ])
-
         if module.options:
             help_others.append(
                 '"\\nFrom the {} module:\\n"'.format(module.name))
@@ -760,33 +747,47 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                         predicates='\n'.join(predicates)
                     ))
 
-    write_file(dst_dir, 'options.h', tpl_options_h.format(
-        holder_fwd_decls='\n'.join(module_holder_fwd_decls),
-        holder_mem_decls='\n'.join(module_holder_mem_decls),
-        holder_getter_decls='\n'.join(module_holder_getter_decls),
-    ))
+    module_holder_getter_decls = [
+        '''  const options::Holder{id}& {name}() const;
+  options::Holder{id}& {name}();'''.format(id=m.id, name=m.ident)
+        for m in modules
+    ]
+    module_holder_getter_impl = [
+        '''const options::Holder{id}& Options::{name}() const {{ return *d_{name}; }}
+options::Holder{id}& Options::{name}() {{ return *d_{name}; }}'''.format(id=m.id, name=m.ident)
+        for m in modules
+    ]
 
-    write_file(dst_dir, 'options.cpp', tpl_options_cpp.format(
-        headers_module='\n'.join(headers_module),
-        headers_handler='\n'.join(sorted(list(headers_handler))),
-        holder_mem_inits='\n'.join(module_holder_mem_inits),
-        holder_mem_copy='\n'.join(module_holder_mem_copy),
-        holder_getter_impl='\n'.join(module_holder_getter_impl),
-    ))
+    data = {
+        'holder_fwd_decls': get_holder_fwd_decls(modules),
+        'holder_mem_decls': get_holder_mem_decls(modules),
+        'holder_getter_decls': get_holder_getter_decls(modules),
+    }
+    write_file(dst_dir, 'options.h', tpl_options_h.format(**data))
 
-    write_file(dst_dir, 'options_api.cpp', tpl_options_api.format(
-        cmdline_options='\n  '.join(getopt_long),
-        headers_module='\n'.join(headers_module),
-        headers_handler='\n'.join(sorted(list(headers_handler))),
-        help_common='\n'.join(help_common),
-        help_others='\n'.join(help_others),
-        options_handler='\n    '.join(options_handler),
-        options_short=''.join(getopt_short),
-        assigns='\n'.join(assign_impls),
-        options_getoptions='\n  '.join(options_getoptions),
-        getoption_handlers='\n'.join(getoption_handlers),
-        setoption_handlers='\n'.join(setoption_handlers),
-    ))
+    data = {
+        'headers_module': get_module_headers(modules),
+        'headers_handler': '\n'.join(sorted(list(headers_handler))),
+        'holder_mem_inits': format_modules('        d_{ident}(std::make_unique<options::Holder{id}>()),', modules),
+        'holder_mem_copy': format_modules('      *d_{ident} = *options.d_{ident};', modules),
+        'holder_getter_impl': '\n'.join(module_holder_getter_impl),
+    }
+    write_file(dst_dir, 'options.cpp', tpl_options_cpp.format(**data))
+
+    data = {
+        'cmdline_options': '\n  '.join(getopt_long),
+        'headers_module': get_module_headers(modules),
+        'headers_handler': '\n'.join(sorted(list(headers_handler))),
+        'help_common': '\n'.join(help_common),
+        'help_others': '\n'.join(help_others),
+        'options_handler': '\n    '.join(options_handler),
+        'options_short': ''.join(getopt_short),
+        'assigns': '\n'.join(assign_impls),
+        'options_getoptions': '\n  '.join(options_getoptions),
+        'getoption_handlers': '\n'.join(getoption_handlers),
+        'setoption_handlers': '\n'.join(setoption_handlers),
+    }
+    write_file(dst_dir, 'options_api.cpp', tpl_options_api.format(**data))
 
 
 def check_attribs(filename, req_attribs, valid_attribs, attribs, ctype):
