@@ -13,6 +13,9 @@
  * Contains code for handling command-line options.
  */
 
+#include "options/options.h"
+
+#include "base/check.h"
 #include "base/cvc5config.h"
 #include "options/options_handler.h"
 #include "options/options_listener.h"
