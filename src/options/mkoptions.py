@@ -171,9 +171,22 @@ def get_holder_mem_decls(modules):
     return concat_format('    std::unique_ptr<options::Holder{id}> d_{ident};', modules)
 
 
+def get_holder_mem_inits(modules):
+    return concat_format('        d_{ident}(std::make_unique<options::Holder{id}>()),', modules)
+
+
+def get_holder_mem_copy(modules):
+    return concat_format('      *d_{ident} = *options.d_{ident};', modules)
+
+
 def get_holder_getter_decls(modules):
     return concat_format('''  const options::Holder{id}& {ident}() const;
   options::Holder{id}& {ident}();''', modules)
+
+
+def get_holder_getter_impl(modules):
+    return concat_format('''const options::Holder{id}& Options::{ident}() const {{ return *d_{ident}; }}
+options::Holder{id}& Options::{ident}() {{ return *d_{ident}; }}''', modules)
 
 
 class Module(object):
@@ -721,7 +734,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                     options_smt.append('"{}",'.format(optname))
 
                     if option.type == 'bool':
-                        s = 'res.push_back({{"{}", opts.{}().{} ? "true" : "false"}});'.format(optname, module.ident,option.name)
+                        s = 'res.push_back({{"{}", opts.{}().{} ? "true" : "false"}});'.format(optname, module.ident, option.name)
                     elif is_numeric_cpp_type(option.type):
                         s = 'res.push_back({{"{}", std::to_string(opts.{}().{})}});'.format(
                             optname, module.ident, option.name)
@@ -747,37 +760,16 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                         predicates='\n'.join(predicates)
                     ))
 
-    module_holder_getter_decls = [
-        '''  const options::Holder{id}& {name}() const;
-  options::Holder{id}& {name}();'''.format(id=m.id, name=m.ident)
-        for m in modules
-    ]
-    module_holder_getter_impl = [
-        '''const options::Holder{id}& Options::{name}() const {{ return *d_{name}; }}
-options::Holder{id}& Options::{name}() {{ return *d_{name}; }}'''.format(id=m.id, name=m.ident)
-        for m in modules
-    ]
-
     data = {
         'holder_fwd_decls': get_holder_fwd_decls(modules),
         'holder_mem_decls': get_holder_mem_decls(modules),
         'holder_getter_decls': get_holder_getter_decls(modules),
-    }
-    write_file(dst_dir, 'options.h', tpl_options_h.format(**data))
-
-    data = {
         'headers_module': get_module_headers(modules),
         'headers_handler': '\n'.join(sorted(list(headers_handler))),
-        'holder_mem_inits': format_modules('        d_{ident}(std::make_unique<options::Holder{id}>()),', modules),
-        'holder_mem_copy': format_modules('      *d_{ident} = *options.d_{ident};', modules),
-        'holder_getter_impl': '\n'.join(module_holder_getter_impl),
-    }
-    write_file(dst_dir, 'options.cpp', tpl_options_cpp.format(**data))
-
-    data = {
+        'holder_mem_inits': get_holder_mem_inits(modules),
+        'holder_mem_copy': get_holder_mem_copy(modules),
+        'holder_getter_impl': get_holder_getter_impl(modules),
         'cmdline_options': '\n  '.join(getopt_long),
-        'headers_module': get_module_headers(modules),
-        'headers_handler': '\n'.join(sorted(list(headers_handler))),
         'help_common': '\n'.join(help_common),
         'help_others': '\n'.join(help_others),
         'options_handler': '\n    '.join(options_handler),
@@ -787,6 +779,8 @@ options::Holder{id}& Options::{name}() {{ return *d_{name}; }}'''.format(id=m.id
         'getoption_handlers': '\n'.join(getoption_handlers),
         'setoption_handlers': '\n'.join(setoption_handlers),
     }
+    write_file(dst_dir, 'options.h', tpl_options_h.format(**data))
+    write_file(dst_dir, 'options.cpp', tpl_options_cpp.format(**data))
     write_file(dst_dir, 'options_api.cpp', tpl_options_api.format(**data))
 
 
