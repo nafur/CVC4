@@ -75,24 +75,24 @@ TPL_HOLDER_FWDECL = '  struct Holder{id};'
 TPL_HOLDER_DECL = '''struct Holder{id} {{
     CVC5_OPTIONS__{id}__FOR_OPTION_HOLDER
 }};'''
-TPL_HOLDER_MEMBER_DECL = '    std::unique_ptr<options::Holder{id}> {name};'
-TPL_HOLDER_MEMBER_INIT = '        {name}(std::make_unique<options::Holder{id}>()),'
-TPL_HOLDER_MEMBER_COPY = '      *{name} = *options.{name};'
+TPL_HOLDER_MEMBER_DECL = '    std::unique_ptr<options::Holder{id}> d_{name};'
+TPL_HOLDER_MEMBER_INIT = '        d_{name}(std::make_unique<options::Holder{id}>()),'
+TPL_HOLDER_MEMBER_COPY = '      *d_{name} = *options.d_{name};'
 
 TPL_ASSIGN = '''
 void assign_{module}_{name}(Options& opts, const std::string& option, const std::string& optionarg) {{
   auto value = {handler};
   {predicates}
-  opts.{module}->{name} = value;
-  opts.{module}->{name}__setByUser = true;
+  opts.{module}().{name} = value;
+  opts.{module}().{name}__setByUser = true;
   Trace("options") << "user assigned option {name} = " << value << std::endl;
 }}'''
 
 TPL_ASSIGN_BOOL = '''
 void assign_{module}_{name}(Options& opts, const std::string& option, bool value) {{
   {predicates}
-  opts.{module}->{name} = value;
-  opts.{module}->{name}__setByUser = true;
+  opts.{module}().{name} = value;
+  opts.{module}().{name}__setByUser = true;
   Trace("options") << "user assigned option {name} = " << value << std::endl;
 }}'''
 
@@ -114,14 +114,14 @@ TPL_NAME_DECL = 'static constexpr const char* {name}__name = "{long_name}";'
 TPL_DECL_SET_DEFAULT = 'void default_{name}(Options& opts, {type} value);'
 TPL_IMPL_SET_DEFAULT = TPL_DECL_SET_DEFAULT[:-1] + '''
 {{
-    if (!opts.{module}->{name}__setByUser) {{
-        opts.{module}->{name} = value;
+    if (!opts.{module}().{name}__setByUser) {{
+        opts.{module}().{name} = value;
     }}
 }}'''
 
 # Option specific methods
 
-TPL_IMPL_OP_PAR = 'inline {type} {name}() {{ return Options::current().{module}->{name}; }}'
+TPL_IMPL_OP_PAR = 'inline {type} {name}() {{ return Options::current().{module}().{name}; }}'
 
 # Mode templates
 TPL_DECL_MODE_ENUM = '''
@@ -537,6 +537,8 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
     module_holder_mem_decls = []
     module_holder_mem_inits = []
     module_holder_mem_copy = []
+    module_holder_getter_decls = []
+    module_holder_getter_impl = []
 
     for module in modules:
         headers_module.append(format_include(module.header))
@@ -552,6 +554,14 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
         module_holder_mem_copy.append(
             TPL_HOLDER_MEMBER_COPY.format(name=module.ident)
         )
+        module_holder_getter_decls.extend([
+            '  const options::Holder{}& {}() const;'.format(module.id, module.ident),
+            '  options::Holder{}& {}();'.format(module.id, module.ident),
+        ])
+        module_holder_getter_impl.extend([
+            'const options::Holder{}& Options::{}() const {{ return *d_{}; }}'.format(module.id, module.ident, module.ident),
+            'options::Holder{}& Options::{}() {{ return *d_{}; }}'.format(module.id, module.ident, module.ident),
+        ])
 
         if module.options:
             help_others.append(
@@ -679,17 +689,17 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                         'if ({}) {{'.format(cond))
                     if option.type == 'bool':
                         getoption_handlers.append(
-                            'return options.{}->{} ? "true" : "false";'.format(module.ident, option.name))
+                            'return options.{}().{} ? "true" : "false";'.format(module.ident, option.name))
                     elif option.type == 'std::string':
                         getoption_handlers.append(
-                            'return options.{}->{};'.format(module.ident, option.name))
+                            'return options.{}().{};'.format(module.ident, option.name))
                     elif is_numeric_cpp_type(option.type):
                         getoption_handlers.append(
-                            'return std::to_string(options.{}->{});'.format(module.ident, option.name))
+                            'return std::to_string(options.{}().{});'.format(module.ident, option.name))
                     else:
                         getoption_handlers.append('std::stringstream ss;')
                         getoption_handlers.append(
-                            'ss << options.{}->{};'.format(module.ident, option.name))
+                            'ss << options.{}().{};'.format(module.ident, option.name))
                         getoption_handlers.append('return ss.str();')
                     getoption_handlers.append('}')
 
@@ -724,12 +734,12 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                     options_smt.append('"{}",'.format(optname))
 
                     if option.type == 'bool':
-                        s = 'res.push_back({{"{}", opts.{}->{} ? "true" : "false"}});'.format(optname, module.ident,option.name)
+                        s = 'res.push_back({{"{}", opts.{}().{} ? "true" : "false"}});'.format(optname, module.ident,option.name)
                     elif is_numeric_cpp_type(option.type):
-                        s = 'res.push_back({{"{}", std::to_string(opts.{}->{})}});'.format(
+                        s = 'res.push_back({{"{}", std::to_string(opts.{}().{})}});'.format(
                             optname, module.ident, option.name)
                     else:
-                        s = '{{ std::stringstream ss; ss << opts.{}->{}; res.push_back({{"{}", ss.str()}}); }}'.format(module.ident,
+                        s = '{{ std::stringstream ss; ss << opts.{}().{}; res.push_back({{"{}", ss.str()}}); }}'.format(module.ident,
                             option.name, optname)
                     options_getoptions.append(s)
 
@@ -753,6 +763,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
     write_file(dst_dir, 'options.h', tpl_options_h.format(
         holder_fwd_decls='\n'.join(module_holder_fwd_decls),
         holder_mem_decls='\n'.join(module_holder_mem_decls),
+        holder_getter_decls='\n'.join(module_holder_getter_decls),
     ))
 
     write_file(dst_dir, 'options.cpp', tpl_options_cpp.format(
@@ -760,6 +771,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
         headers_handler='\n'.join(sorted(list(headers_handler))),
         holder_mem_inits='\n'.join(module_holder_mem_inits),
         holder_mem_copy='\n'.join(module_holder_mem_copy),
+        holder_getter_impl='\n'.join(module_holder_getter_impl),
     ))
 
     write_file(dst_dir, 'options_api.cpp', tpl_options_api.format(

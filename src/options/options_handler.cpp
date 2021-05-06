@@ -83,7 +83,7 @@ unsigned long OptionsHandler::limitHandler(std::string option,
 
 void OptionsHandler::setResourceWeight(std::string option, std::string optarg)
 {
-  d_options->resman->resourceWeightHolder.emplace_back(optarg);
+  d_options->resman().resourceWeightHolder.emplace_back(optarg);
 }
 
 // theory/quantifiers/options_handlers.h
@@ -159,7 +159,7 @@ void OptionsHandler::checkBvSatSolver(std::string option, SatSolverMode m)
           || m == SatSolverMode::KISSAT))
   {
     if (options::bitblastMode() == options::BitblastMode::LAZY
-        && Options::current().bv->bitblastMode__setByUser)
+        && Options::current().bv().bitblastMode__setByUser)
     {
       throwLazyBBUnsupported(m);
     }
@@ -189,14 +189,14 @@ void OptionsHandler::checkBitblastMode(std::string option, BitblastMode m)
 void OptionsHandler::setBitblastAig(std::string option, bool arg)
 {
   if(arg) {
-    if(Options::current().bv->bitblastMode__setByUser) {
+    if(Options::current().bv().bitblastMode__setByUser) {
       if (options::bitblastMode() != options::BitblastMode::EAGER)
       {
         throw OptionException("bitblast-aig must be used with eager bitblaster");
       }
     } else {
       options::BitblastMode mode = stringToBitblastMode("eager");
-      Options::current().bv->bitblastMode = mode;
+      Options::current().bv().bitblastMode = mode;
     }
   }
 }
@@ -231,13 +231,13 @@ InstFormatMode OptionsHandler::stringToInstFormatMode(std::string option,
 // decision/options_handlers.h
 void OptionsHandler::setDecisionModeStopOnly(std::string option, DecisionMode m)
 {
-  Options::current().decision->decisionStopOnly = (m == DecisionMode::RELEVANCY);
+  Options::current().decision().decisionStopOnly = (m == DecisionMode::RELEVANCY);
 }
 
 void OptionsHandler::setProduceAssertions(std::string option, bool value)
 {
-  Options::current().smt->produceAssertions = value;
-  Options::current().smt->interactiveMode = value;
+  Options::current().smt().produceAssertions = value;
+  Options::current().smt().interactiveMode = value;
 }
 
 void OptionsHandler::setStats(const std::string& option, bool value)
@@ -258,24 +258,24 @@ void OptionsHandler::setStats(const std::string& option, bool value)
   {
     if (opt == options::base::statisticsAll__name)
     {
-      d_options->base->statistics = true;
+      d_options->base().statistics = true;
     }
     else if (opt == options::base::statisticsEveryQuery__name)
     {
-      d_options->base->statistics = true;
+      d_options->base().statistics = true;
     }
     else if (opt == options::base::statisticsExpert__name)
     {
-      d_options->base->statistics = true;
+      d_options->base().statistics = true;
     }
   }
   else
   {
     if (opt == options::base::statistics__name)
     {
-      d_options->base->statisticsAll = false;
-      d_options->base->statisticsEveryQuery = false;
-      d_options->base->statisticsExpert = false;
+      d_options->base().statisticsAll = false;
+      d_options->base().statisticsEveryQuery = false;
+      d_options->base().statisticsExpert = false;
     }
   }
 }
@@ -486,7 +486,7 @@ OutputLanguage OptionsHandler::stringToOutputLanguage(std::string option,
                                                       std::string optarg)
 {
   if(optarg == "help") {
-    Options::current().base->languageHelp = true;
+    Options::current().base().languageHelp = true;
     return language::output::LANG_AUTO;
   }
 
@@ -504,7 +504,7 @@ InputLanguage OptionsHandler::stringToInputLanguage(std::string option,
                                                     std::string optarg)
 {
   if(optarg == "help") {
-    Options::current().base->languageHelp = true;
+    Options::current().base().languageHelp = true;
     return language::input::LANG_AUTO;
   }
 
@@ -549,13 +549,13 @@ void OptionsHandler::setVerbosity(std::string option, int value)
 }
 
 void OptionsHandler::increaseVerbosity(std::string option) {
-  Options::current().base->verbosity += 1;
-  setVerbosity(option, Options::current().base->verbosity);
+  Options::current().base().verbosity += 1;
+  setVerbosity(option, Options::current().base().verbosity);
 }
 
 void OptionsHandler::decreaseVerbosity(std::string option) {
-  Options::current().base->verbosity -= 1;
-  setVerbosity(option, Options::current().base->verbosity);
+  Options::current().base().verbosity -= 1;
+  setVerbosity(option, Options::current().base().verbosity);
 }
 
 }  // namespace options

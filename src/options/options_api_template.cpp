@@ -442,7 +442,7 @@ std::vector<std::string> parse(Options& opts,
   if(x != nullptr) {
     progName = x + 1;
   }
-  opts.base->binary_name = std::string(progName);
+  opts.base().binary_name = std::string(progName);
 
   std::vector<std::string> nonoptions;
   parseInternal(opts, argc, argv, nonoptions);

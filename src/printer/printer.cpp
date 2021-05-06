@@ -135,12 +135,12 @@ Printer* Printer::getPrinter(OutputLanguage lang)
     // the singleton "null" expr.  So we guard against segfault
     if (not Options::isCurrentNull())
     {
-      if (Options::current().base->outputLanguage__setByUser)
+      if (Options::current().base().outputLanguage__setByUser)
       {
         lang = options::outputLanguage();
       }
       if (lang == language::output::LANG_AUTO
-          && Options::current().base->inputLanguage__setByUser)
+          && Options::current().base().inputLanguage__setByUser)
       {
         lang = language::toOutputLanguage(options::inputLanguage());
       }

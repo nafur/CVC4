@@ -47,6 +47,8 @@ ${holder_mem_copy}$
     }
   }
 
+${holder_getter_impl}$
+
   void Options::setListener(OptionsListener * ol) { d_olisten = ol; }
 
   void Options::notifyListener(const std::string& key)

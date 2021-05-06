@@ -37,9 +37,6 @@ class OptionsListener;
 class CVC5_EXPORT Options
 {
   public:
-${holder_mem_decls}$
-  private:
-
   /**
    * Options cannot be copied as they are given an explicit list of
    * Listeners to respond to.
@@ -52,7 +49,6 @@ ${holder_mem_decls}$
    */
   Options& operator=(const Options& options) = delete;
 
-public:
   class OptionsScope
   {
    private:
@@ -86,6 +82,8 @@ public:
     return *d_handler;
   }
 
+${holder_getter_decls}$
+
   /**
    * Copies the value of the options stored in OptionsHolder into the current
    * Options object.
@@ -107,6 +105,8 @@ public:
 
   /** The current Options in effect */
   static thread_local Options* s_current;
+
+${holder_mem_decls}$
 }; /* class Options */
 
 }  // namespace cvc5
