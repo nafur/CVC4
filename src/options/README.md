@@ -45,18 +45,18 @@ Optional attributes are:
 
 Example:
 
-  [[option]]
-    name       = "outputLanguage"
-    smt_name   = "output-language"
-    category   = "common"
-    short      = ""
-    long       = "output-lang=LANG"
-    type       = "OutputLanguage"
-    default    = "language::output::LANG_AUTO"
-    handler    = "stringToOutputLanguage"
-    predicates = []
-    includes   = ["options/language.h"]
-    help       = "force output language (default is \"auto\"; see --output-lang help)"
+    [[option]]
+        name       = "outputLanguage"
+        smt_name   = "output-language"
+        category   = "common"
+        short      = ""
+        long       = "output-lang=LANG"
+        type       = "OutputLanguage"
+        default    = "language::output::LANG_AUTO"
+        handler    = "stringToOutputLanguage"
+        predicates = []
+        includes   = ["options/language.h"]
+        help       = "force output language (default is \"auto\"; see --output-lang help)"
 
 
 Handler functions
