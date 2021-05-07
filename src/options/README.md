@@ -72,3 +72,12 @@ Predicate functions
 
 Predicate functions are used to check whether an option value is valid after it has been parsed by a (standard or custom) handler function.
 Like a handler function, a predicate function needs to be a member function of `options::OptionsHandler` with signature `void {predicate}(const std::string& option, {type} value)`. If the check fails, the predicate should raise an `OptionException`.
+
+
+Mode options
+------------
+
+
+
+Generated code
+==============
