@@ -246,7 +246,8 @@ class Module(object):
         self.options = []
         self.id = self.id.upper()
         self.ident = self.id.lower()
-        self.header = 'options/{}_options.h'.format(self.ident)
+        if not self.header:
+            self.header = 'options/{}_options.h'.format(self.ident)
 
 
 class Option(object):
