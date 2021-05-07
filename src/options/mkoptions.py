@@ -168,34 +168,34 @@ def get_module_headers(modules):
 
 def get_holder_fwd_decls(modules):
     """Render forward declaration of holder structs"""
-    return concat_format('  struct Holder{id};', modules)
+    return concat_format('  struct Holder{id_cap};', modules)
 
 
 def get_holder_mem_decls(modules):
     """Render declarations of holder members of the Option class"""
-    return concat_format('    std::unique_ptr<options::Holder{id}> d_{ident};', modules)
+    return concat_format('    std::unique_ptr<options::Holder{id_cap}> d_{id};', modules)
 
 
 def get_holder_mem_inits(modules):
     """Render initializations of holder members of the Option class"""
-    return concat_format('        d_{ident}(std::make_unique<options::Holder{id}>()),', modules)
+    return concat_format('        d_{id}(std::make_unique<options::Holder{id_cap}>()),', modules)
 
 
 def get_holder_mem_copy(modules):
     """Render copy operation of holder members of the Option class"""
-    return concat_format('      *d_{ident} = *options.d_{ident};', modules)
+    return concat_format('      *d_{id} = *options.d_{id};', modules)
 
 
 def get_holder_getter_decls(modules):
     """Render getter declarations for holder members of the Option class"""
-    return concat_format('''  const options::Holder{id}& {ident}() const;
-  options::Holder{id}& {ident}();''', modules)
+    return concat_format('''  const options::Holder{id_cap}& {id}() const;
+  options::Holder{id_cap}& {id}();''', modules)
 
 
 def get_holder_getter_impl(modules):
     """Render getter implementations for holder members of the Option class"""
-    return concat_format('''const options::Holder{id}& Options::{ident}() const {{ return *d_{ident}; }}
-options::Holder{id}& Options::{ident}() {{ return *d_{ident}; }}''', modules)
+    return concat_format('''const options::Holder{id_cap}& Options::{id}() const {{ return *d_{id}; }}
+options::Holder{id_cap}& Options::{id}() {{ return *d_{id}; }}''', modules)
 
 
 def get_handler(option):
@@ -227,12 +227,12 @@ def get_predicates(option):
 def get_getall(module, option):
     """Render snippet to add option to result of getAll()"""
     if option.type == 'bool':
-        return 'res.push_back({{"{}", opts.{}().{} ? "true" : "false"}});'.format(option.long_name, module.ident, option.name)
+        return 'res.push_back({{"{}", opts.{}().{} ? "true" : "false"}});'.format(option.long_name, module.id, option.name)
     elif is_numeric_cpp_type(option.type):
         return 'res.push_back({{"{}", std::to_string(opts.{}().{})}});'.format(
-            option.long_name, module.ident, option.name)
+            option.long_name, module.id, option.name)
     else:
-        return '{{ std::stringstream ss; ss << opts.{}().{}; res.push_back({{"{}", ss.str()}}); }}'.format(module.ident,
+        return '{{ std::stringstream ss; ss << opts.{}().{}; res.push_back({{"{}", ss.str()}}); }}'.format(module.id,
             option.name, option.long_name)
 
 class Module(object):
@@ -244,8 +244,8 @@ class Module(object):
     def __init__(self, d, filename):
         self.__dict__ = {k: d.get(k, None) for k in MODULE_ATTR_ALL}
         self.options = []
-        self.id = self.id.upper()
-        self.ident = self.id.lower()
+        self.id = self.id.lower()
+        self.id_cap = self.id.upper()
         self.filename = os.path.splitext(os.path.split(filename)[1])[0]
         self.header = 'options/{}.h'.format(self.filename)
 
@@ -467,7 +467,7 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
         option_names.append(TPL_NAME_DECL.format(name=option.name, type=option.type, long_name = long_name))
 
         # Generate module specialization
-        default_decl.append(TPL_DECL_SET_DEFAULT.format(module=module.ident, name=option.name, type=option.type))
+        default_decl.append(TPL_DECL_SET_DEFAULT.format(module=module.id, name=option.name, type=option.type))
 
         if option.long and option.type not in ['bool', 'void'] and \
            '=' not in option.long:
@@ -481,13 +481,13 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
                     module.id, option.long, option.type))
 
         # Generate module inlines
-        inls.append(TPL_IMPL_OP_PAR.format(module=module.ident, name=option.name, type=option.type))
+        inls.append(TPL_IMPL_OP_PAR.format(module=module.id, name=option.name, type=option.type))
 
 
         ### Generate code for {module.name}_options.cpp
 
         # Accessors
-        default_impl.append(TPL_IMPL_SET_DEFAULT.format(module=module.ident, name=option.name, type=option.type))
+        default_impl.append(TPL_IMPL_SET_DEFAULT.format(module=module.id, name=option.name, type=option.type))
 
         # Global definitions
         #defs.append(f'thread_local struct {option.name}__option_t {option.name};')
@@ -526,8 +526,8 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
                     long=option.long.split('=')[0]))
 
     write_file(dst_dir, '{}.h'.format(module.filename), tpl_module_h.format(
+        id_cap=module.id_cap,
         id=module.id,
-        ident=module.ident,
         includes='\n'.join(sorted(list(includes))),
         holder_spec='\n'.join(holder_specs),
         option_names='\n'.join(option_names),
@@ -537,7 +537,7 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
 
     write_file(dst_dir, '{}.cpp'.format(module.filename), tpl_module_cpp.format(
         header=module.header,
-        ident=module.ident,
+        id=module.id,
         defaults='\n'.join(default_impl),
         modes='\n'.join(mode_impl)))
 
@@ -657,14 +657,14 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                 if option.type == 'bool' and option.name:
                     cases.append(
                         TPL_CALL_ASSIGN_BOOL.format(
-                            module=module.ident,
+                            module=module.id,
                             name=option.name,
                             option='option',
                             value='true'))
                 elif option.type != 'void' and option.name:
                     cases.append(
                         TPL_CALL_ASSIGN.format(
-                            module=module.ident,
+                            module=module.id,
                             name=option.name,
                             option='option',
                             value='optionarg'))
@@ -693,14 +693,14 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                 if option.type == 'bool':
                     setoption_handlers.append(
                         TPL_CALL_ASSIGN_BOOL.format(
-                            module=module.ident,
+                            module=module.id,
                             name=option.name,
                             option='"{}"'.format(option.long_name),
                             value='optionarg == "true"'))
                 elif argument_req and option.name:
                     setoption_handlers.append(
                         TPL_CALL_ASSIGN.format(
-                            module=module.ident,
+                            module=module.id,
                             name=option.name,
                             option='"{}"'.format(option.long_name)))
                 elif option.handler:
@@ -719,17 +719,17 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                         'if ({}) {{'.format(cond))
                     if option.type == 'bool':
                         getoption_handlers.append(
-                            'return options.{}().{} ? "true" : "false";'.format(module.ident, option.name))
+                            'return options.{}().{} ? "true" : "false";'.format(module.id, option.name))
                     elif option.type == 'std::string':
                         getoption_handlers.append(
-                            'return options.{}().{};'.format(module.ident, option.name))
+                            'return options.{}().{};'.format(module.id, option.name))
                     elif is_numeric_cpp_type(option.type):
                         getoption_handlers.append(
-                            'return std::to_string(options.{}().{});'.format(module.ident, option.name))
+                            'return std::to_string(options.{}().{});'.format(module.id, option.name))
                     else:
                         getoption_handlers.append('std::stringstream ss;')
                         getoption_handlers.append(
-                            'ss << options.{}().{};'.format(module.ident, option.name))
+                            'ss << options.{}().{};'.format(module.id, option.name))
                         getoption_handlers.append('return ss.str();')
                     getoption_handlers.append('}')
 
@@ -743,7 +743,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                         option.long))
                 cases.append(
                     TPL_CALL_ASSIGN_BOOL.format(
-                        module=module.ident,
+                        module=module.id,
                         name=option.name, option='option', value='false'))
                 cases.append('  break;')
 
@@ -761,14 +761,14 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                 # Define handler assign/assignBool
                 if option.type == 'bool':
                     assign_impls.append(TPL_ASSIGN_BOOL.format(
-                        module=module.ident,
+                        module=module.id,
                         name=option.name,
                         handler=handler,
                         predicates='\n'.join(predicates)
                     ))
                 elif option.short or option.long or option.smt_name:
                     assign_impls.append(TPL_ASSIGN.format(
-                        module=module.ident,
+                        module=module.id,
                         name=option.name,
                         handler=handler,
                         predicates='\n'.join(predicates)

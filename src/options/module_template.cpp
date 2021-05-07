@@ -27,7 +27,7 @@ namespace cvc5::options {
 
 ${modes}$
 
-namespace ${ident}$ {
+namespace ${id}$ {
 ${defaults}$
 }
 
