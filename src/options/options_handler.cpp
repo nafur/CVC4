@@ -154,11 +154,11 @@ void OptionsHandler::checkBvSatSolver(std::string option, SatSolverMode m)
     throw OptionException(ss.str());
   }
 
-  if (options::bvSolver() != options::BVSolver::BITBLAST
+  if (d_options->bv().bvSolver != options::BVSolver::BITBLAST
       && (m == SatSolverMode::CRYPTOMINISAT || m == SatSolverMode::CADICAL
           || m == SatSolverMode::KISSAT))
   {
-    if (options::bitblastMode() == options::BitblastMode::LAZY
+    if (d_options->bv().bitblastMode == options::BitblastMode::LAZY
         && d_options->bv().bitblastMode__setByUser)
     {
       throwLazyBBUnsupported(m);
@@ -175,9 +175,9 @@ void OptionsHandler::checkBitblastMode(std::string option, BitblastMode m)
     options::bv::default_bitvectorEqualitySolver(*d_options, true);
     options::bv::default_bitvectorInequalitySolver(*d_options, true);
     options::bv::default_bitvectorAlgebraicSolver(*d_options, true);
-    if (options::bvSatSolver() != options::SatSolverMode::MINISAT)
+    if (d_options->bv().bvSatSolver != options::SatSolverMode::MINISAT)
     {
-      throwLazyBBUnsupported(options::bvSatSolver());
+      throwLazyBBUnsupported(d_options->bv().bvSatSolver);
     }
   }
   else if (m == BitblastMode::EAGER)
@@ -190,7 +190,7 @@ void OptionsHandler::setBitblastAig(std::string option, bool arg)
 {
   if(arg) {
     if(d_options->bv().bitblastMode__setByUser) {
-      if (options::bitblastMode() != options::BitblastMode::EAGER)
+      if (d_options->bv().bitblastMode != options::BitblastMode::EAGER)
       {
         throw OptionException("bitblast-aig must be used with eager bitblaster");
       }
