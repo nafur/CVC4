@@ -1,6 +1,7 @@
-Modules
-=======
+Specifying Modules
+==================
 
+Every options module, that is a group of options that belong together in some way, is declared in its own file in `options/{module name}_options.toml`.
 Each options module starts with the following required attributes:
 
 * `id` (string): ID of the module (e.g., `"arith"`)
@@ -18,10 +19,10 @@ After parsing, a module is extended to have the following attributes:
 * `filename`: base filename for generated files (`"{id}_options"`)
 * `header`: generated header name (`"options/{filename}.h"`)
 
-Options
-=======
+Specifying Options
+==================
 
-Options can be defined with the `[[option]]` tag, the required attributes for
+Options can be defined within a module file with the `[[option]]` tag, the required attributes for
 an option are:
 
 * `category` (string): one of `common`, `expert`, `regular`, or `undocumented`
@@ -30,12 +31,12 @@ an option are:
 Optional attributes are:
 
 * `name` (string): the option name used to access the option internally (`d_option.{module.id}().{name}`)
-* `short` (string): short option name consisting of one character (no `-` prefix required)
-* `long` (string): long option name (required if short is specified, no `--` prefix required). Long option names may have a suffix `=XXX` where `XXX` can be used to indicate the type of the option value, e.g., `=MODE`, `=LANG`, `=N`, ...
-* `smt_name` (string): alternative name to access the option via `options::get()` and `options::set()`, and thereby via `(set-option ...)` and `(get-option ...)` from SMT-LIB
+* `long` (string): long option name (without `--` prefix). Long option names may have a suffix `=XXX` where `XXX` can be used to indicate the type of the option value, e.g., `=MODE`, `=LANG`, `=N`, ...
+* `short` (string): short option name consisting of one character (no `-` prefix required), can be given if `long` is specified
+* `alias` (string): alternative names that can be used instead of `long`
 * `default` (string): default value, needs to be a valid C++ expression of type `type`
 * `alternate` (bool, default `true`): if `true`, adds `--no-{long}` alternative option
-* `mode` (list): used to define options whose type shall be an auto-generated enum (see example below)
+* `mode` (list): used to define options whose type shall be an auto-generated enum, more details below
 * `handler` (string): alternate parsing routine for option types not covered by the default parsers, more details below
 * `predicates` (list): custom validation function to check whether an option value is valid, more details below
 * `includes` (list): additional header files required by handler or predicates
@@ -47,7 +48,6 @@ Example:
 
     [[option]]
         name       = "outputLanguage"
-        smt_name   = "output-language"
         category   = "common"
         short      = ""
         long       = "output-lang=LANG"
@@ -77,7 +77,62 @@ Like a handler function, a predicate function needs to be a member function of `
 Mode options
 ------------
 
+An option can be defined one of a given set of values we call modes.
+Doing so automatically defines an `enum class` for the set of modes and makes the option accept on of the values from the enum.
+The enum class will be called `{type}` and methods `operator<<` and `stringTo{enum}` are automatically generated.
+A mode is defined by defining `[[option.mode.{NAME}]]` after the main `[[option]]` section with the following attributes:
+
+* `name` (string): the string value that corresponds to the enum value
+* `help` (string): documentation about this mode
+
+Example:
+
+    [[option]]
+        name       = "bitblastMode"
+        smt_name   = "bitblast"
+        category   = "regular"
+        long       = "bitblast=MODE"
+        type       = "BitblastMode"
+        default    = "LAZY"
+        help       = "choose bitblasting mode, see --bitblast=help"
+        help_mode  = "Bit-blasting modes."
+    [[option.mode.LAZY]]
+        name = "lazy"
+        help = "Separate boolean structure and term reasoning between the core SAT solver and the bit-vector SAT solver."
+    [[option.mode.EAGER]]
+        name = "eager"
+        help = "Bitblast eagerly to bit-vector SAT solver."
+
+The option can now be set with `--bitblast=lazy`, `(set-option :bitblast eager)`, or `options::set("bitblast", "eager")`.
 
 
 Generated code
 ==============
+
+The entire options setup heavily relies on generating a lot of code from the information retrieved from the `*_options.toml` files.
+After code generation, files related to options live either in `src/options/` (it not changed) or in `build/src/options/` (if automatically generated).
+After all code has been generated, the entire options setup consists of the following components:
+
+* `options.h`: core `Options` class
+* `options_api.h`: utility methods used by the API (`parse()`, `set()`, `get()`, ...)
+* `{module}_options.h`: specifics for one single options module
+
+
+`Options` class
+---------------
+
+The `Options` class is the central entry point for regular usage of options.
+It holds a `std::unique_ptr` to an "option holder" for every option module, that can be accessed by calling `{module}()` (either as `const&` or `&`).
+These holders hold the actual option data for the specific module.
+
+The holder types are forward declared and can thus only be obtained if one also includes the appropriate `{module}_options.h`, which contains the proper declaration for the holder class.
+
+
+Option modules
+--------------
+
+Every option module declares an "option holder" class, which is a simple struct that has two members for every option (that is not declared as `type = void`):
+the actual option value as `{option.type} {option.name}` and a Boolean flag `bool {option.name}__setByUser` that indicates whether the option value was explicitly set.
+
+For convenience, the option modules also provide methods `void default_{option.name}(Options& opts, {option.type} value)`. Each such method sets the option value to the given value, if the option was not yet set by the user, i.e., the `__setByUser` flag is false.
+Additionally, every option module exports the 
