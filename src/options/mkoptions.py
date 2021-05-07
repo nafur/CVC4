@@ -156,38 +156,83 @@ TPL_MODE_HANDLER_CASE = '''if (optarg == "{name}")
 
 
 def concat_format(s, objs):
+    """Helper method to render a string for a list of object"""
     return '\n'.join([s.format(**o.__dict__) for o in objs])
 
 
 def get_module_headers(modules):
+    """Render includes for module headers"""
     return concat_format('#include "{header}"', modules)
 
 
 def get_holder_fwd_decls(modules):
+    """Render forward declaration of holder structs"""
     return concat_format('  struct Holder{id};', modules)
 
 
 def get_holder_mem_decls(modules):
+    """Render declarations of holder members of the Option class"""
     return concat_format('    std::unique_ptr<options::Holder{id}> d_{ident};', modules)
 
 
 def get_holder_mem_inits(modules):
+    """Render initializations of holder members of the Option class"""
     return concat_format('        d_{ident}(std::make_unique<options::Holder{id}>()),', modules)
 
 
 def get_holder_mem_copy(modules):
+    """Render copy operation of holder members of the Option class"""
     return concat_format('      *d_{ident} = *options.d_{ident};', modules)
 
 
 def get_holder_getter_decls(modules):
+    """Render getter declarations for holder members of the Option class"""
     return concat_format('''  const options::Holder{id}& {ident}() const;
   options::Holder{id}& {ident}();''', modules)
 
 
 def get_holder_getter_impl(modules):
+    """Render getter implementations for holder members of the Option class"""
     return concat_format('''const options::Holder{id}& Options::{ident}() const {{ return *d_{ident}; }}
 options::Holder{id}& Options::{ident}() {{ return *d_{ident}; }}''', modules)
 
+
+def get_handler(option):
+    """Render handler call for assignment functions"""
+    if option.handler:
+        if option.type == 'void':
+            return 'opts.handler().{}(option)'.format(option.handler)
+        else:
+            return 'opts.handler().{}(option, optionarg)'.format(option.handler)
+    elif option.mode:
+        return 'stringTo{}(optionarg)'.format(option.type)
+    elif option.type != 'bool':
+        return 'handleOption<{}>(option, optionarg)'.format(option.type)
+    return None
+
+
+def get_predicates(option):
+    """Render predicate calls for assignment functions"""
+    if not option.predicates:
+        return []
+    if option.type == 'bool':
+        return ['opts.handler().{}(option, value);'.format(x) \
+                for x in option.predicates]
+    else:
+        assert option.type != 'void'
+        return ['opts.handler().{}(option, value);'.format(x) \
+                for x in option.predicates]
+
+def get_getall(optname, module, option):
+    """Render snippet to add option to result of getAll()"""
+    if option.type == 'bool':
+        return 'res.push_back({{"{}", opts.{}().{} ? "true" : "false"}});'.format(optname, module.ident, option.name)
+    elif is_numeric_cpp_type(option.type):
+        return 'res.push_back({{"{}", std::to_string(opts.{}().{})}});'.format(
+            optname, module.ident, option.name)
+    else:
+        return '{{ std::stringstream ss; ss << opts.{}().{}; res.push_back({{"{}", ss.str()}}); }}'.format(module.ident,
+            option.name, optname)
 
 class Module(object):
     """Options module.
@@ -223,7 +268,7 @@ def die(msg):
     sys.exit('[error] {}'.format(msg))
 
 
-def perr(filename, msg, option = None):
+def perr(filename, msg, option=None):
     if option:
         if option.name:
             msg_suffix = "option '{}' ".format(option.name)
@@ -552,8 +597,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
     headers_handler = set()  # option includes (for handlers, predicates, ...)
     getopt_short = []        # short options for getopt_long
     getopt_long = []         # long options for getopt_long
-    options_smt = []         # all options names accessible via {set,get}-option
-    options_getoptions = []  # options for Options::getOptions()
+    options_getall = []  # options for options::getAll()
     options_handler = []     # option handler calls
     help_common = []         # help text for all common options
     help_others = []         # help text for all non-common options
@@ -563,9 +607,10 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
     assign_impls = []
 
     for module in modules:
-        if module.options:
-            help_others.append(
-                '"\\nFrom the {} module:\\n"'.format(module.name))
+        if not module.options:
+            continue
+        help_others.append(
+            '"\\nFrom the {} module:\\n"'.format(module.name))
 
         for option in \
             sorted(module.options, key=lambda x: x.long if x.long else x.name):
@@ -579,31 +624,10 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
             headers_handler.update([format_include(x) for x in option.includes])
 
             # Generate handler call
-            handler = None
-            if option.handler:
-                if option.type == 'void':
-                    handler = 'opts.handler().{}(option)'.format(option.handler)
-                else:
-                    handler = \
-                        'opts.handler().{}(option, optionarg)'.format(option.handler)
-            elif option.mode:
-                handler = 'stringTo{}(optionarg)'.format(option.type)
-            elif option.type != 'bool':
-                handler = \
-                    'handleOption<{}>(option, optionarg)'.format(option.type)
+            handler = get_handler(option)
 
             # Generate predicate calls
-            predicates = []
-            if option.predicates:
-                if option.type == 'bool':
-                    predicates = \
-                        ['opts.handler().{}(option, value);'.format(x) \
-                            for x in option.predicates]
-                else:
-                    assert option.type != 'void'
-                    predicates = \
-                        ['opts.handler().{}(option, value);'.format(x) \
-                            for x in option.predicates]
+            predicates = get_predicates(option)
 
             # Generate options_handler and getopt_long
             cases = []
@@ -723,25 +747,10 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                                 getopt_long)
 
             optname = option.smt_name if option.smt_name else option.long
-            # collect options available to the SMT-frontend
-            if optname:
-                options_smt.append('"{}",'.format(optname))
-
             if option.name:
                 # Build options for options::getOptions()
                 if optname:
-                    # collect SMT option names
-                    options_smt.append('"{}",'.format(optname))
-
-                    if option.type == 'bool':
-                        s = 'res.push_back({{"{}", opts.{}().{} ? "true" : "false"}});'.format(optname, module.ident, option.name)
-                    elif is_numeric_cpp_type(option.type):
-                        s = 'res.push_back({{"{}", std::to_string(opts.{}().{})}});'.format(
-                            optname, module.ident, option.name)
-                    else:
-                        s = '{{ std::stringstream ss; ss << opts.{}().{}; res.push_back({{"{}", ss.str()}}); }}'.format(module.ident,
-                            option.name, optname)
-                    options_getoptions.append(s)
+                    options_getall.append(get_getall(optname, module, option))
 
 
                 # Define handler assign/assignBool
@@ -775,7 +784,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
         'options_handler': '\n    '.join(options_handler),
         'options_short': ''.join(getopt_short),
         'assigns': '\n'.join(assign_impls),
-        'options_getoptions': '\n  '.join(options_getoptions),
+        'options_getall': '\n  '.join(options_getall),
         'getoption_handlers': '\n'.join(getoption_handlers),
         'setoption_handlers': '\n'.join(setoption_handlers),
     }

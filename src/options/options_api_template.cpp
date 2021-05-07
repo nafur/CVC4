@@ -486,7 +486,7 @@ std::vector<std::vector<std::string> > getAll(const Options& opts)
 {
   std::vector<std::vector<std::string>> res;
 
-${options_getoptions}$
+${options_getall}$
 
   return res;
 }
