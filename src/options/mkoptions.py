@@ -50,7 +50,7 @@ import toml
 ### Allowed attributes for module/option
 
 MODULE_ATTR_REQ = ['id', 'name']
-MODULE_ATTR_ALL = MODULE_ATTR_REQ + ['header', 'option']
+MODULE_ATTR_ALL = MODULE_ATTR_REQ + ['option']
 
 OPTION_ATTR_REQ = ['category', 'type']
 OPTION_ATTR_ALL = OPTION_ATTR_REQ + [
