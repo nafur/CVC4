@@ -55,7 +55,7 @@ MODULE_ATTR_ALL = MODULE_ATTR_REQ + ['header', 'option']
 OPTION_ATTR_REQ = ['category', 'type']
 OPTION_ATTR_ALL = OPTION_ATTR_REQ + [
     'name', 'short', 'long', 'smt_name',
-    'default', 'read_only', 'alternate', 'mode',
+    'default', 'alternate', 'mode',
     'handler', 'predicates', 'includes',
     'help', 'help_mode'
 ]

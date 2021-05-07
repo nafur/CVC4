@@ -911,7 +911,6 @@ header = "options/quantifiers_options.h"
   long       = "sygus-inference"
   type       = "bool"
   default    = "false"
-  read_only  = false
   help       = "attempt to preprocess arbitrary inputs to sygus conjectures"
 
 [[option]]
@@ -1195,7 +1194,6 @@ header = "options/quantifiers_options.h"
   long       = "sygus-inv-templ-when-sg"
   type       = "bool"
   default    = "false"
-  read_only  = false
   help       = "use invariant templates (with solution reconstruction) for syntax guided problems"
 
 [[option]]
@@ -1819,7 +1817,6 @@ header = "options/quantifiers_options.h"
   long       = "ho-elim-store-ax"
   type       = "bool"
   default    = "true"
-  read_only  = false
   help       = "use store axiom during ho-elim"
 
 ### Output options
