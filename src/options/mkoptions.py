@@ -223,16 +223,16 @@ def get_predicates(option):
         return ['opts.handler().{}(option, value);'.format(x) \
                 for x in option.predicates]
 
-def get_getall(optname, module, option):
+def get_getall(module, option):
     """Render snippet to add option to result of getAll()"""
     if option.type == 'bool':
-        return 'res.push_back({{"{}", opts.{}().{} ? "true" : "false"}});'.format(optname, module.ident, option.name)
+        return 'res.push_back({{"{}", opts.{}().{} ? "true" : "false"}});'.format(option.long_name, module.ident, option.name)
     elif is_numeric_cpp_type(option.type):
         return 'res.push_back({{"{}", std::to_string(opts.{}().{})}});'.format(
-            optname, module.ident, option.name)
+            option.long_name, module.ident, option.name)
     else:
         return '{{ std::stringstream ss; ss << opts.{}().{}; res.push_back({{"{}", ss.str()}}); }}'.format(module.ident,
-            option.name, optname)
+            option.name, option.long_name)
 
 class Module(object):
     """Options module.
@@ -262,6 +262,7 @@ class Option(object):
             assert attr in self.__dict__
             if attr in ['read_only', 'alternate'] or val:
                 self.__dict__[attr] = val
+        self.long_name = get_long_name(self)
 
 
 def die(msg):
@@ -324,13 +325,17 @@ def long_get_option(name):
     return name.split('=')[0]
 
 
-def get_smt_name(option):
+def get_long_name(option):
     """
     Determine the name of the option used as SMT option name. If no smt_name is
     given it defaults to the long option name.
     """
-    assert option.smt_name or option.long
-    return option.smt_name if option.smt_name else long_get_option(option.long)
+    if option.smt_name:
+        return option.smt_name
+    elif option.long:
+        return long_get_option(option.long)
+    else:
+        return None
 
 
 def is_numeric_cpp_type(ctype):
@@ -681,29 +686,27 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                 cond = ' || '.join(
                     ['key == "{}"'.format(x) for x in sorted(keys)])
 
-                smtname = get_smt_name(option)
-
                 setoption_handlers.append('  if ({}) {{'.format(cond))
                 if option.type == 'bool':
                     setoption_handlers.append(
                         TPL_CALL_ASSIGN_BOOL.format(
                             module=module.ident,
                             name=option.name,
-                            option='"{}"'.format(smtname),
+                            option='"{}"'.format(option.long_name),
                             value='optionarg == "true"'))
                 elif argument_req and option.name:
                     setoption_handlers.append(
                         TPL_CALL_ASSIGN.format(
                             module=module.ident,
                             name=option.name,
-                            option='"{}"'.format(smtname)))
+                            option='"{}"'.format(option.long_name)))
                 elif option.handler:
                     h = '    opts.handler().{handler}("{smtname}"'
                     if argument_req:
                         h += ', optionarg'
                     h += ');'
                     setoption_handlers.append(
-                        h.format(handler=option.handler, smtname=smtname))
+                        h.format(handler=option.handler, smtname=option.long_name))
 
                 setoption_handlers.append('    return;')
                 setoption_handlers.append('  }')
@@ -746,11 +749,10 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                 add_getopt_long('no-{}'.format(option.long), argument_req,
                                 getopt_long)
 
-            optname = option.smt_name if option.smt_name else option.long
             if option.name:
                 # Build options for options::getOptions()
-                if optname:
-                    options_getall.append(get_getall(optname, module, option))
+                if option.long_name:
+                    options_getall.append(get_getall(module, option))
 
 
                 # Define handler assign/assignBool
