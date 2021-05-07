@@ -89,7 +89,6 @@ Example:
 
     [[option]]
         name       = "bitblastMode"
-        smt_name   = "bitblast"
         category   = "regular"
         long       = "bitblast=MODE"
         type       = "BitblastMode"
