@@ -256,12 +256,11 @@ class Option(object):
         self.__dict__ = dict((k, None) for k in OPTION_ATTR_ALL)
         self.includes = []
         self.predicates = []
-        self.read_only = False
         self.alternate = True    # add --no- alternative long option for bool
         self.filename = None
         for (attr, val) in d.items():
             assert attr in self.__dict__
-            if attr in ['read_only', 'alternate'] or val:
+            if attr in ['alternate'] or val:
                 self.__dict__[attr] = val
         self.long_name = get_long_name(self)
 
@@ -688,32 +687,28 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                     ['key == "{}"'.format(x) for x in sorted(keys)])
 
                 setoption_handlers.append('  if ({}) {{'.format(cond))
-                if option.read_only:
-                    setoption_handlers.append('    throw OptionException("Option \\\"{}\\\" is read-only!");'.format(option.long_name))
-                else:
-                    if option.type == 'bool':
-                        setoption_handlers.append(
-                            TPL_CALL_ASSIGN_BOOL.format(
-                                module=module.ident,
-                                name=option.name,
-                                option='"{}"'.format(option.long_name),
-                                value='optionarg == "true"'))
-                    elif argument_req and option.name:
-                        setoption_handlers.append(
-                            TPL_CALL_ASSIGN.format(
-                                module=module.ident,
-                                name=option.name,
-                                option='"{}"'.format(option.long_name)))
-                    elif option.handler:
-                        h = '    opts.handler().{handler}("{smtname}"'
-                        if argument_req:
-                            h += ', optionarg'
-                        h += ');'
-                        setoption_handlers.append(
-                            h.format(handler=option.handler, smtname=option.long_name))
+                if option.type == 'bool':
+                    setoption_handlers.append(
+                        TPL_CALL_ASSIGN_BOOL.format(
+                            module=module.ident,
+                            name=option.name,
+                            option='"{}"'.format(option.long_name),
+                            value='optionarg == "true"'))
+                elif argument_req and option.name:
+                    setoption_handlers.append(
+                        TPL_CALL_ASSIGN.format(
+                            module=module.ident,
+                            name=option.name,
+                            option='"{}"'.format(option.long_name)))
+                elif option.handler:
+                    h = '    opts.handler().{handler}("{smtname}"'
+                    if argument_req:
+                        h += ', optionarg'
+                    h += ');'
+                    setoption_handlers.append(
+                        h.format(handler=option.handler, smtname=option.long_name))
 
-                    setoption_handlers.append('    return;')
-                
+                setoption_handlers.append('    return;')
                 setoption_handlers.append('  }')
 
                 if option.name:
