@@ -241,13 +241,14 @@ class Module(object):
     An options module represents a MODULE_options.toml option configuration
     file and contains lists of options.
     """
-    def __init__(self, d):
+    def __init__(self, d, filename):
         self.__dict__ = {k: d.get(k, None) for k in MODULE_ATTR_ALL}
         self.options = []
         self.id = self.id.upper()
         self.ident = self.id.lower()
         if not self.header:
-            self.header = 'options/{}_options.h'.format(self.ident)
+            filename = os.path.splitext(os.path.split(filename)[1])[0]
+            self.header = 'options/{}.h'.format(filename)
 
 
 class Option(object):
@@ -866,7 +867,7 @@ def parse_module(filename, module):
     # attributes are defined.
     check_attribs(filename,
                   MODULE_ATTR_REQ, MODULE_ATTR_ALL, module, 'module')
-    res = Module(module)
+    res = Module(module, filename)
 
     if 'option' in module:
         for attribs in module['option']:
