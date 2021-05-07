@@ -49,8 +49,8 @@ import toml
 
 ### Allowed attributes for module/option
 
-MODULE_ATTR_REQ = ['id', 'name', 'header']
-MODULE_ATTR_ALL = MODULE_ATTR_REQ + ['option']
+MODULE_ATTR_REQ = ['id', 'name']
+MODULE_ATTR_ALL = MODULE_ATTR_REQ + ['header', 'option']
 
 OPTION_ATTR_REQ = ['category', 'type']
 OPTION_ATTR_ALL = OPTION_ATTR_REQ + [
@@ -244,6 +244,9 @@ class Module(object):
     def __init__(self, d):
         self.__dict__ = {k: d.get(k, None) for k in MODULE_ATTR_ALL}
         self.options = []
+        self.id = self.id.upper()
+        self.ident = self.id.lower()
+        self.header = 'options/{}_options.h'.format(self.ident)
 
 
 class Option(object):
@@ -894,7 +897,6 @@ def parse_module(filename, module):
             option.filename = filename
             res.options.append(option)
 
-    res.ident = res.id.lower()
     return res
 
 
