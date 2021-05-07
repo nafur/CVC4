@@ -5,7 +5,6 @@ Modules
 
     id     ... (string) ID of the module (e.g., "ARITH")
     name   ... (string) name of the module (e.g., "Arithmetic Theory")
-    header ... (string) name of the options header to generated (e.g., "options/arith_options.h")
 
   A module defines 0 or more options.
 

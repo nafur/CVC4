@@ -246,9 +246,8 @@ class Module(object):
         self.options = []
         self.id = self.id.upper()
         self.ident = self.id.lower()
-        if not self.header:
-            filename = os.path.splitext(os.path.split(filename)[1])[0]
-            self.header = 'options/{}.h'.format(filename)
+        self.filename = os.path.splitext(os.path.split(filename)[1])[0]
+        self.header = 'options/{}.h'.format(self.filename)
 
 
 class Option(object):
@@ -526,8 +525,7 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
                     help=help_mode_format(option),
                     long=option.long.split('=')[0]))
 
-    filename = os.path.splitext(os.path.split(module.header)[1])[0]
-    write_file(dst_dir, '{}.h'.format(filename), tpl_module_h.format(
+    write_file(dst_dir, '{}.h'.format(module.filename), tpl_module_h.format(
         id=module.id,
         ident=module.ident,
         includes='\n'.join(sorted(list(includes))),
@@ -537,7 +535,7 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
         defaults='\n'.join(default_decl),
         modes='\n'.join(mode_decl)))
 
-    write_file(dst_dir, '{}.cpp'.format(filename), tpl_module_cpp.format(
+    write_file(dst_dir, '{}.cpp'.format(module.filename), tpl_module_cpp.format(
         header=module.header,
         ident=module.ident,
         defaults='\n'.join(default_impl),
