@@ -54,9 +54,10 @@ MODULE_ATTR_ALL = MODULE_ATTR_REQ + ['option']
 
 OPTION_ATTR_REQ = ['category', 'type']
 OPTION_ATTR_ALL = OPTION_ATTR_REQ + [
-    'name', 'help', 'help_mode', 'smt_name', 'short', 'long', 'default',
-    'includes', 'handler', 'predicates', 'read_only',
-    'alternate', 'mode'
+    'name', 'short', 'long', 'smt_name',
+    'default', 'read_only', 'alternate', 'mode',
+    'handler', 'predicates', 'includes',
+    'help', 'help_mode'
 ]
 
 CATEGORY_VALUES = ['common', 'expert', 'regular', 'undocumented']
@@ -687,28 +688,32 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
                     ['key == "{}"'.format(x) for x in sorted(keys)])
 
                 setoption_handlers.append('  if ({}) {{'.format(cond))
-                if option.type == 'bool':
-                    setoption_handlers.append(
-                        TPL_CALL_ASSIGN_BOOL.format(
-                            module=module.ident,
-                            name=option.name,
-                            option='"{}"'.format(option.long_name),
-                            value='optionarg == "true"'))
-                elif argument_req and option.name:
-                    setoption_handlers.append(
-                        TPL_CALL_ASSIGN.format(
-                            module=module.ident,
-                            name=option.name,
-                            option='"{}"'.format(option.long_name)))
-                elif option.handler:
-                    h = '    opts.handler().{handler}("{smtname}"'
-                    if argument_req:
-                        h += ', optionarg'
-                    h += ');'
-                    setoption_handlers.append(
-                        h.format(handler=option.handler, smtname=option.long_name))
+                if option.read_only:
+                    setoption_handlers.append('    throw OptionException("Option \\\"{}\\\" is read-only!");'.format(option.long_name))
+                else:
+                    if option.type == 'bool':
+                        setoption_handlers.append(
+                            TPL_CALL_ASSIGN_BOOL.format(
+                                module=module.ident,
+                                name=option.name,
+                                option='"{}"'.format(option.long_name),
+                                value='optionarg == "true"'))
+                    elif argument_req and option.name:
+                        setoption_handlers.append(
+                            TPL_CALL_ASSIGN.format(
+                                module=module.ident,
+                                name=option.name,
+                                option='"{}"'.format(option.long_name)))
+                    elif option.handler:
+                        h = '    opts.handler().{handler}("{smtname}"'
+                        if argument_req:
+                            h += ', optionarg'
+                        h += ');'
+                        setoption_handlers.append(
+                            h.format(handler=option.handler, smtname=option.long_name))
 
-                setoption_handlers.append('    return;')
+                    setoption_handlers.append('    return;')
+                
                 setoption_handlers.append('  }')
 
                 if option.name:

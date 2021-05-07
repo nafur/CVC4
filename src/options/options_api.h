@@ -25,57 +25,60 @@
 #include "cvc5_export.h"
 
 namespace cvc5 {
-    class Options;
+class Options;
 }
 
 namespace cvc5::options {
-  /**
-   * Get a description of the command-line flags accepted by
-   * parse.  The returned string will be escaped so that it is
-   * suitable as an argument to printf. */
-  const std::string& getDescription() CVC5_EXPORT;
+/**
+ * Get a description of the command-line flags accepted by
+ * parse.  The returned string will be escaped so that it is
+ * suitable as an argument to printf. */
+const std::string& getDescription() CVC5_EXPORT;
 
-  /**
-   * Print overall command-line option usage message, prefixed by
-   * "msg"---which could be an error message causing the usage
-   * output in the first place, e.g. "no such option --foo"
-   */
-  void printUsage(const std::string& msg, std::ostream& os) CVC5_EXPORT;
+/**
+ * Print overall command-line option usage message, prefixed by
+ * "msg"---which could be an error message causing the usage
+ * output in the first place, e.g. "no such option --foo"
+ */
+void printUsage(const std::string& msg, std::ostream& os) CVC5_EXPORT;
 
-  /**
-   * Print command-line option usage message for only the most-commonly
-   * used options.  The message is prefixed by "msg"---which could be
-   * an error message causing the usage output in the first place, e.g.
-   * "no such option --foo"
-   */
-  void printShortUsage(const std::string& msg, std::ostream& os) CVC5_EXPORT;
+/**
+ * Print command-line option usage message for only the most-commonly
+ * used options.  The message is prefixed by "msg"---which could be
+ * an error message causing the usage output in the first place, e.g.
+ * "no such option --foo"
+ */
+void printShortUsage(const std::string& msg, std::ostream& os) CVC5_EXPORT;
 
-  /** Print help for the --lang command line option */
-  void printLanguageHelp(std::ostream& os) CVC5_EXPORT;
+/** Print help for the --lang command line option */
+void printLanguageHelp(std::ostream& os) CVC5_EXPORT;
 
-  /**
-   * Initialize the Options object options based on the given
-   * command-line arguments given in argc and argv.  The return value
-   * is what's left of the command line (that is, the non-option
-   * arguments).
-   *
-   * This function uses getopt_long() and is not thread safe.
-   *
-   * Throws OptionException on failures.
-   *
-   * Preconditions: options and argv must be non-null.
-   */
-  std::vector<std::string> parse(Options& opts,
-                                               int argc,
-                                               char* argv[]) CVC5_EXPORT;
+/**
+ * Initialize the Options object options based on the given
+ * command-line arguments given in argc and argv.  The return value
+ * is what's left of the command line (that is, the non-option
+ * arguments).
+ *
+ * This function uses getopt_long() and is not thread safe.
+ *
+ * Throws OptionException on failures.
+ *
+ * Preconditions: options and argv must be non-null.
+ */
+std::vector<std::string> parse(Options& opts,
+                               int argc,
+                               char* argv[]) CVC5_EXPORT;
 
-    std::string get(const Options& opts, const std::string& key) CVC5_EXPORT;
-    void set(Options& opts, const std::string& key, const std::string& optionarg) CVC5_EXPORT;
+std::string get(const Options& opts, const std::string& key) CVC5_EXPORT;
 
-  /**
-   * Get the setting for all options.
-   */
-  std::vector<std::vector<std::string> > getAll(const Options& opts) CVC5_EXPORT;
+void set(Options& opts,
+         const std::string& key,
+         const std::string& optionarg) CVC5_EXPORT;
+
+/**
+ * Get the setting for all options.
+ */
+std::vector<std::vector<std::string> > getAll(const Options& opts) CVC5_EXPORT;
 
 }  // namespace cvc5::options
 

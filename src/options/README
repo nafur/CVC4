@@ -25,9 +25,7 @@ Options
   Optional attributes are:
 
     name       ... (string) option name that is used to access via
-                            options::<name>()
-    smt_name   ... (string) alternative name to access option via
-                            set-option/get-option commands
+                            options.<module>().<name>
     short      ... (string) short option name consisting of one character
                             (no '-' prefix required)
     long       ... (string) long option name (required if short is specified,
@@ -35,6 +33,8 @@ Options
                             long option names may have a suffix '=XXX' where
                             'XXX' can be used to indicate the type of the
                             option value, e.g., '=MODE', '=LANG', '=N', ...
+    smt_name   ... (string) alternative name to access option via
+                            set-option/get-option SMT-LIB commands
     default    ... (string) default value of type 'type'
     handler    ... (string) handler for parsing option values before setting
                             option
