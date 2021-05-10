@@ -33,7 +33,7 @@ Optional attributes are:
 * `name` (string): the option name used to access the option internally (`d_option.{module.id}().{name}`)
 * `long` (string): long option name (without `--` prefix). Long option names may have a suffix `=XXX` where `XXX` can be used to indicate the type of the option value, e.g., `=MODE`, `=LANG`, `=N`, ...
 * `short` (string): short option name consisting of one character (no `-` prefix required), can be given if `long` is specified
-* `alias` (string): alternative names that can be used instead of `long`
+* `alias` (list): alternative names that can be used instead of `long`
 * `default` (string): default value, needs to be a valid C++ expression of type `type`
 * `alternate` (bool, default `true`): if `true`, adds `--no-{long}` alternative option
 * `mode` (list): used to define options whose type shall be an auto-generated enum, more details below
@@ -44,19 +44,35 @@ Optional attributes are:
 * `help_mode` (string): documentation for the mode enum (required if `mode` is given)
 
 
-Example:
-
+Example
+-------
     [[option]]
-        name       = "outputLanguage"
-        category   = "common"
-        short      = ""
-        long       = "output-lang=LANG"
-        type       = "OutputLanguage"
-        default    = "language::output::LANG_AUTO"
-        handler    = "stringToOutputLanguage"
-        predicates = []
-        includes   = ["options/language.h"]
-        help       = "force output language (default is \"auto\"; see --output-lang help)"
+      category   = "regular"
+      name       = "decisionMode"
+      long       = "decision=MODE"
+      alias      = ["decision-mode"]
+      type       = "DecisionMode"
+      default    = "INTERNAL"
+      predicates = ["setDecisionModeStopOnly"]
+      help       = "choose decision mode, see --decision=help"
+      help_mode  = "Decision modes."
+    [[option.mode.INTERNAL]]
+      name = "internal"
+      help = "Use the internal decision heuristics of the SAT solver."
+    [[option.mode.JUSTIFICATION]]
+      name = "justification"
+      help = "An ATGP-inspired justification heuristic."
+    [[option.mode.RELEVANCY]]
+      name = "justification-stoponly"
+      help = "Use the justification heuristic only to stop early, not for decisions."
+
+This defines a new option that is accessible via `d_options.{module.id}().decisionMode` and stores an automatically generated mode `DecisionMode`, an enum class with the values `INTERNAL`, `JUSTIFICATION` and `RELEVANCY`.
+From the outside, it can be set by `--decision=internal`, but also with `--decision-mode=justification`, and similarly from an SMT-LIB input with `(set-option :decision internal)` and `(set-option :decision-mode justification)`.
+The command-line help for this option looks as follows:
+
+    --output-lang=LANG | --output-language=LANG
+                           force output language (default is "auto"; see
+                           --output-lang help)
 
 
 Handler functions
@@ -132,6 +148,7 @@ Option modules
 
 Every option module declares an "option holder" class, which is a simple struct that has two members for every option (that is not declared as `type = void`):
 the actual option value as `{option.type} {option.name}` and a Boolean flag `bool {option.name}__setByUser` that indicates whether the option value was explicitly set.
+If any of the options of a module is a mode option, the option module also defines a enum class that corresponds to the mode, including `operator<<()` and `stringTo{mode type}`.
 
 For convenience, the option modules also provide methods `void default_{option.name}(Options& opts, {option.type} value)`. Each such method sets the option value to the given value, if the option was not yet set by the user, i.e., the `__setByUser` flag is false.
 Additionally, every option module exports the 
