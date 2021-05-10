@@ -8,4 +8,5 @@ code.xref {
 
 .rst-content code {
     padding: 1px !important;
+    background: unset !important;
 }
