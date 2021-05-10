@@ -277,6 +277,97 @@ class Option(object):
                 self.long_opt = r[1]
 
 
+class SphinxGenerator:
+    def __init__(self):
+        self.common = []
+        self.others = {}
+
+    def add(self, module, option):
+        if option.category == 'undocumented':
+            return
+        if not option.long and not option.short:
+            return
+        names = []
+        if option.long:
+            if option.long_opt:
+                names.append('--{}={}'.format(option.long_name, option.long_opt))
+            else:
+                names.append('--{}'.format(option.long_name))
+        
+        if option.alias:
+            if option.long_opt:
+                names.extend(['--{}={}'.format(a, option.long_opt) for a in option.alias])
+            else:
+                names.extend(['--{}'.format(a) for a in option.alias])
+
+        if option.short:
+            if option.long_opt:
+                names.append('-{} {}'.format(option.short, option.long_opt))
+            else:
+                names.append('-{}'.format(option.short))
+
+        data = {
+            'name': names,
+            'help': option.help,
+            'expert': option.category == 'expert',
+            'alternate': option.type == 'bool' and option.alternate,
+        }
+
+        if option.category == 'common':
+            self.common.append(data)
+        else:
+            if module.name not in self.others:
+                self.others[module.name] = []
+            self.others[module.name].append(data)
+    
+    def render(self, dstdir, filename):
+        res = []
+
+        res.append('Most commonly-used cvc5 options')
+        res.append('===============================')
+        for opt in self.common:
+            fmt = '``{}``'
+            if opt['alternate']:
+                fmt += ' (also ``--no-*``)'
+            res.append(fmt.format(' | '.join(opt['name'])))
+            res.append('    {}'.format(opt['help']))
+            if opt['expert']:
+                    res.append('    ')
+                    res.append('    .. DANGER::')
+                    res.append('        This option is only intended for Experts!')
+            res.append('    ')
+
+        res.append('')
+        res.append('Additional cvc5 options')
+        res.append('=======================')
+        for module in self.others:
+            res.append('')
+            res.append('{} module'.format(module))
+            res.append('-' * (len(module) + 8))
+            for opt in self.others[module]:
+                desc = '``{}``'
+                val = '    {}'
+                if opt['expert']:
+                    res.append('.. admonition:: This option is intended for Experts only!')
+                    res.append('    ')
+                    desc = '    ' + desc
+                    val = '    ' + val
+
+                if opt['alternate']:
+                    desc += ' (also ``--no-*``)'
+                res.append(desc.format(' | '.join(opt['name'])))
+                res.append(val.format(opt['help']))
+                res.append('    ')
+
+        res.append('')
+        res.append('.. _alternate target:')
+        res.append('')
+        res.append(':sup:`-\-no-` Each of these options has a --no-OPTIONNAME variant, which reverses the sense of the option.')
+
+        write_file(dstdir, filename, '\n'.join(res))
+
+
+
 def die(msg):
     sys.exit('[error] {}'.format(msg))
 
@@ -615,6 +706,8 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
 
     assign_impls = []
 
+    sphinxgen = SphinxGenerator()
+
     for module in modules:
         if not module.options:
             continue
@@ -628,6 +721,8 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
             argument_req = option.type not in ['bool', 'void']
 
             docgen_option(option, help_common, help_others)
+
+            sphinxgen.add(module, option)
 
 
             headers_handler.update([format_include(x) for x in option.includes])
@@ -813,6 +908,8 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
     write_file(dst_dir, 'options.h', tpl_options_h.format(**data))
     write_file(dst_dir, 'options.cpp', tpl_options_cpp.format(**data))
     write_file(dst_dir, 'options_api.cpp', tpl_options_api.format(**data))
+
+    sphinxgen.render('../../docs/', 'options_generated.rst')
 
 
 def check_attribs(filename, req_attribs, valid_attribs, attribs, ctype):
