@@ -909,7 +909,8 @@ def codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_
     write_file(dst_dir, 'options.cpp', tpl_options_cpp.format(**data))
     write_file(dst_dir, 'options_api.cpp', tpl_options_api.format(**data))
 
-    sphinxgen.render('{}/docs/'.format(build_dir), 'options_generated.rst')
+    if os.path.isdir('{}/docs/'.format(build_dir)):
+        sphinxgen.render('{}/docs/'.format(build_dir), 'options_generated.rst')
 
 
 def check_attribs(filename, req_attribs, valid_attribs, attribs, ctype):
