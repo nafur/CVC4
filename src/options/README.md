@@ -43,38 +43,6 @@ Optional attributes are:
 * `help` (string): documentation string (required, unless the `category` is `undocumented`)
 * `help_mode` (string): documentation for the mode enum (required if `mode` is given)
 
-
-Example
--------
-    [[option]]
-      category   = "regular"
-      name       = "decisionMode"
-      long       = "decision=MODE"
-      alias      = ["decision-mode"]
-      type       = "DecisionMode"
-      default    = "INTERNAL"
-      predicates = ["setDecisionModeStopOnly"]
-      help       = "choose decision mode, see --decision=help"
-      help_mode  = "Decision modes."
-    [[option.mode.INTERNAL]]
-      name = "internal"
-      help = "Use the internal decision heuristics of the SAT solver."
-    [[option.mode.JUSTIFICATION]]
-      name = "justification"
-      help = "An ATGP-inspired justification heuristic."
-    [[option.mode.RELEVANCY]]
-      name = "justification-stoponly"
-      help = "Use the justification heuristic only to stop early, not for decisions."
-
-This defines a new option that is accessible via `d_options.{module.id}().decisionMode` and stores an automatically generated mode `DecisionMode`, an enum class with the values `INTERNAL`, `JUSTIFICATION` and `RELEVANCY`.
-From the outside, it can be set by `--decision=internal`, but also with `--decision-mode=justification`, and similarly from an SMT-LIB input with `(set-option :decision internal)` and `(set-option :decision-mode justification)`.
-The command-line help for this option looks as follows:
-
-    --output-lang=LANG | --output-language=LANG
-                           force output language (default is "auto"; see
-                           --output-lang help)
-
-
 Handler functions
 -----------------
 
@@ -151,4 +119,36 @@ the actual option value as `{option.type} {option.name}` and a Boolean flag `boo
 If any of the options of a module is a mode option, the option module also defines a enum class that corresponds to the mode, including `operator<<()` and `stringTo{mode type}`.
 
 For convenience, the option modules also provide methods `void default_{option.name}(Options& opts, {option.type} value)`. Each such method sets the option value to the given value, if the option was not yet set by the user, i.e., the `__setByUser` flag is false.
-Additionally, every option module exports the 
+Additionally, every option module exports the `long` option name as `static constexpr const char* {option.name}__name`.
+
+
+Full Example
+============
+
+    [[option]]
+      category   = "regular"
+      name       = "decisionMode"
+      long       = "decision=MODE"
+      alias      = ["decision-mode"]
+      type       = "DecisionMode"
+      default    = "INTERNAL"
+      predicates = ["setDecisionModeStopOnly"]
+      help       = "choose decision mode, see --decision=help"
+      help_mode  = "Decision modes."
+    [[option.mode.INTERNAL]]
+      name = "internal"
+      help = "Use the internal decision heuristics of the SAT solver."
+    [[option.mode.JUSTIFICATION]]
+      name = "justification"
+      help = "An ATGP-inspired justification heuristic."
+    [[option.mode.RELEVANCY]]
+      name = "justification-stoponly"
+      help = "Use the justification heuristic only to stop early, not for decisions."
+
+This defines a new option that is accessible via `d_options.{module.id}().decisionMode` and stores an automatically generated mode `DecisionMode`, an enum class with the values `INTERNAL`, `JUSTIFICATION` and `RELEVANCY`.
+From the outside, it can be set by `--decision=internal`, but also with `--decision-mode=justification`, and similarly from an SMT-LIB input with `(set-option :decision internal)` and `(set-option :decision-mode justification)`.
+The command-line help for this option looks as follows:
+
+    --output-lang=LANG | --output-language=LANG
+                           force output language (default is "auto"; see
+                           --output-lang help)
