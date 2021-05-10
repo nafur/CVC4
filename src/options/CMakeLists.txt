@@ -79,6 +79,7 @@ add_custom_command(
       ${PYTHON_EXECUTABLE}
       ${CMAKE_CURRENT_LIST_DIR}/mkoptions.py
       ${CMAKE_CURRENT_LIST_DIR}
+      ${CMAKE_BINARY_DIR}
       ${CMAKE_CURRENT_BINARY_DIR}
       ${abs_toml_files}
     DEPENDS

@@ -689,7 +689,7 @@ def format_modules(s, modules):
     return '\n'.join([s.format(**m.__dict__) for m in modules])
 
 
-def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_options_api):
+def codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_cpp, tpl_options_api):
     """
     Generate code for all option modules (options.cpp).
     """
@@ -909,7 +909,7 @@ def codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_op
     write_file(dst_dir, 'options.cpp', tpl_options_cpp.format(**data))
     write_file(dst_dir, 'options_api.cpp', tpl_options_api.format(**data))
 
-    sphinxgen.render('../../docs/', 'options_generated.rst')
+    sphinxgen.render('{}/docs/'.format(build_dir), 'options_generated.rst')
 
 
 def check_attribs(filename, req_attribs, valid_attribs, attribs, ctype):
@@ -1018,6 +1018,7 @@ def usage():
     print('mkoptions.py <tpl-src> <dst> <toml>+')
     print('')
     print('  <tpl-src> location of all *_template.{cpp,h} files')
+    print('  <build>   build directory')
     print('  <dst>     destination directory for the generated files')
     print('  <toml>+   one or more *_optios.toml files')
     print('')
@@ -1029,8 +1030,9 @@ def mkoptions_main():
         die('missing arguments')
 
     src_dir = sys.argv[1]
-    dst_dir = sys.argv[2]
-    filenames = sys.argv[3:]
+    build_dir = sys.argv[2]
+    dst_dir = sys.argv[3]
+    filenames = sys.argv[4:]
 
     # Check if given directories exist.
     for d in [src_dir, dst_dir]:
@@ -1069,7 +1071,7 @@ def mkoptions_main():
         codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp)
 
     # Create options.cpp in destination directory
-    codegen_all_modules(modules, dst_dir, tpl_options_h, tpl_options_cpp, tpl_options_api)
+    codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_cpp, tpl_options_api)
 
 
 if __name__ == "__main__":
