@@ -248,8 +248,8 @@ class Module(object):
         self.options = []
         self.id = self.id.lower()
         self.id_cap = self.id.upper()
-        self.filename = os.path.splitext(os.path.split(filename)[1])[0]
-        self.header = 'options/{}.h'.format(self.filename)
+        self.filename = os.path.splitext(os.path.split(filename)[-1])[0]
+        self.header = os.path.join('options', '{}.h'.format(self.filename))
 
 
 class Option(object):
@@ -266,7 +266,7 @@ class Option(object):
         self.filename = None
         for (attr, val) in d.items():
             assert attr in self.__dict__
-            if attr in ['alternate'] or val:
+            if attr == 'alternate' or val:
                 self.__dict__[attr] = val
         self.long_name = None
         self.long_opt = None
@@ -373,6 +373,7 @@ def die(msg):
 
 
 def perr(filename, msg, option=None):
+    msg_suffix = ''
     if option:
         if option.name:
             msg_suffix = "option '{}' ".format(option.name)
