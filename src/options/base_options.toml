@@ -29,7 +29,7 @@ name   = "Base"
 
 [[option]]
   name       = "inputLanguage"
-  alias   = ["input-language"]
+  alias      = ["input-language"]
   category   = "common"
   short      = "L"
   long       = "lang=LANG"
@@ -41,7 +41,7 @@ name   = "Base"
 
 [[option]]
   name       = "outputLanguage"
-  alias   = ["output-language"]
+  alias      = ["output-language"]
   category   = "common"
   long       = "output-lang=LANG"
   type       = "OutputLanguage"

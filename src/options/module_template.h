@@ -51,10 +51,13 @@ ${holder_spec}$
 ${inls}$
 // clang-format on
 
-namespace ${id}$ {
+namespace ${id}$
+{
+// clang-format off
 ${option_names}$
 
 ${defaults}$
+// clang-format on
 }
 
 }  // namespace cvc5::options
