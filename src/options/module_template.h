@@ -28,7 +28,9 @@ ${includes}$
 
 namespace cvc5::options {
 
+// clang-format off
 ${modes}$
+// clang-format on
 
 #if defined(CVC5_MUZZLED) || defined(CVC5_COMPETITION_MODE)
 #  define DO_SEMANTIC_CHECKS_BY_DEFAULT false
@@ -36,14 +38,18 @@ ${modes}$
 #  define DO_SEMANTIC_CHECKS_BY_DEFAULT true
 #endif /* CVC5_MUZZLED || CVC5_COMPETITION_MODE */
 
-struct Holder${id_cap}$ {
+struct Holder${id_cap}$
+{
+// clang-format off
 ${holder_spec}$
+// clang-format on
 };
 
 #undef DO_SEMANTIC_CHECKS_BY_DEFAULT
 
-
+// clang-format off
 ${inls}$
+// clang-format on
 
 namespace ${id}$ {
 ${option_names}$
@@ -54,4 +60,3 @@ ${defaults}$
 }  // namespace cvc5::options
 
 #endif /* CVC5__OPTIONS__${id_cap}$_H */
-//clang-format on

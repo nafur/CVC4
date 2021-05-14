@@ -284,11 +284,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
                                   opts);
 
       if( inputFromStdin ) {
-#if defined(CVC5_COMPETITION_MODE) && !defined(CVC5_SMTCOMP_APPLICATION_TRACK)
         parserBuilder.withStreamInput(cin);
-#else  /* CVC5_COMPETITION_MODE && !CVC5_SMTCOMP_APPLICATION_TRACK */
-        parserBuilder.withLineBufferedStreamInput(cin);
-#endif /* CVC5_COMPETITION_MODE && !CVC5_SMTCOMP_APPLICATION_TRACK */
       }
 
       vector< vector<Command*> > allCommands;
@@ -450,11 +446,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
                                   opts);
 
       if( inputFromStdin ) {
-#if defined(CVC5_COMPETITION_MODE) && !defined(CVC5_SMTCOMP_APPLICATION_TRACK)
         parserBuilder.withStreamInput(cin);
-#else  /* CVC5_COMPETITION_MODE && !CVC5_SMTCOMP_APPLICATION_TRACK */
-        parserBuilder.withLineBufferedStreamInput(cin);
-#endif /* CVC5_COMPETITION_MODE && !CVC5_SMTCOMP_APPLICATION_TRACK */
       }
 
       std::unique_ptr<Parser> parser(parserBuilder.build());

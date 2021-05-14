@@ -29,7 +29,9 @@
 namespace cvc5 {
 namespace options {
   class OptionsHandler;
+// clang-format off
 ${holder_fwd_decls}$
+// clang-format on
 }  // namespace options
 
 class OptionsListener;
@@ -82,7 +84,9 @@ class CVC5_EXPORT Options
     return *d_handler;
   }
 
+// clang-format off
 ${holder_getter_decls}$
+// clang-format on
 
   /**
    * Copies the value of the options stored in OptionsHolder into the current
@@ -100,7 +104,9 @@ ${holder_getter_decls}$
   /** Pointer to the options listener, if one exists */
   OptionsListener* d_olisten = nullptr;
 
+// clang-format off
 ${holder_mem_decls}$
+// clang-format on
 
   /** The handler for the options of the theory. */
   std::unique_ptr<options::OptionsHandler> d_handler;
