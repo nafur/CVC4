@@ -435,8 +435,7 @@ def get_long_name(option):
     """
     if option.long:
         return long_get_option(option.long)
-    else:
-        return None
+    return None
 
 
 def is_numeric_cpp_type(ctype):
@@ -751,7 +750,6 @@ def codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_
                 add_getopt_long(option.long, argument_req, getopt_long)
                 if option.alias:
                     for alias in option.alias:
-
                         cases.append(
                             'case {}: // --{}'.format(
                                 g_getopt_long_start + len(getopt_long),
@@ -783,7 +781,7 @@ def codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_
 
             # Generate handlers for setOption/getOption
             if option.long:
-                # Make long name available via set/get-option
+                # Make long and alias names available via set/get-option
                 keys = set()
                 if option.long:
                     keys.add(long_get_option(option.long))

@@ -1514,7 +1514,7 @@ void setDefaults(LogicInfo& logic, bool isInternalSubsolver)
       opts.arith().nlCad = true;
       if (!opts.arith().nlExt__setByUser)
       {
-        opts.arith().nlExt = false;
+        opts.arith().nlExt = options::NlExtMode::LIGHT;
       }
       if (!opts.arith().nlRlvMode__setByUser)
       {
@@ -1537,7 +1537,7 @@ void setDefaults(LogicInfo& logic, bool isInternalSubsolver)
       Notice() << "Cannot use --" << options::arith::nlCad__name
                << " without configuring with --poly." << std::endl;
       opts.arith().nlCad = false;
-      opts.arith().nlExt = true;
+      opts.arith().nlExt = options::NlExtMode::FULL;
     }
   }
 #endif

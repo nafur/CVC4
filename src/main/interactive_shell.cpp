@@ -92,9 +92,9 @@ InteractiveShell::InteractiveShell(api::Solver* solver, SymbolManager* sm)
       d_out(*options::getOut(d_options)),
       d_quit(false)
 {
-  ParserBuilder parserBuilder(solver, sm, INPUT_FILENAME, d_options);
+  ParserBuilder parserBuilder(solver, sm, d_options);
   /* Create parser with bogus input. */
-  d_parser = parserBuilder.withStringInput("").build();
+  d_parser = parserBuilder.build();
   if (options::wasSetByUserForceLogicString(d_options))
   {
     LogicInfo tmp(options::getForceLogicString(d_options));
