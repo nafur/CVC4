@@ -85,7 +85,7 @@ class CVC5_EXPORT Options
   }
 
 // clang-format off
-${holder_getter_decls}$
+${holder_ref_decls}$
 // clang-format on
 
   /**
@@ -99,8 +99,6 @@ ${holder_getter_decls}$
   void setListener(OptionsListener* ol);
 
   void notifyListener(const std::string& key);
-
-  options::HolderARITH& hold;
 
  private:
   /** Pointer to the options listener, if one exists */

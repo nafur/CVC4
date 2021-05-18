@@ -186,18 +186,9 @@ def get_holder_mem_copy(modules):
     return concat_format('      *d_{id} = *options.d_{id};', modules)
 
 
-def get_holder_getter_decls(modules):
-    """Render getter declarations for holder members of the Option class"""
+def get_holder_reference_decls(modules):
+    """Render reference declarations for holder members of the Option class"""
     return concat_format('  options::Holder{id_cap}& {id};', modules)
-    return concat_format('''  const options::Holder{id_cap}& {id}() const;
-  options::Holder{id_cap}& {id}();''', modules)
-
-
-def get_holder_getter_impl(modules):
-    """Render getter implementations for holder members of the Option class"""
-    return ''
-    return concat_format('''const options::Holder{id_cap}& Options::{id}() const {{ return *d_{id}; }}
-options::Holder{id_cap}& Options::{id}() {{ return *d_{id}; }}''', modules)
 
 
 def get_handler(option):
@@ -890,12 +881,11 @@ def codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_
     data = {
         'holder_fwd_decls': get_holder_fwd_decls(modules),
         'holder_mem_decls': get_holder_mem_decls(modules),
-        'holder_getter_decls': get_holder_getter_decls(modules),
+        'holder_ref_decls': get_holder_reference_decls(modules),
         'headers_module': get_module_headers(modules),
         'headers_handler': '\n'.join(sorted(list(headers_handler))),
         'holder_mem_inits': get_holder_mem_inits(modules),
         'holder_mem_copy': get_holder_mem_copy(modules),
-        'holder_getter_impl': get_holder_getter_impl(modules),
         'cmdline_options': '\n  '.join(getopt_long),
         'help_common': '\n'.join(help_common),
         'help_others': '\n'.join(help_others),

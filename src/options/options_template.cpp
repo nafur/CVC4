@@ -34,7 +34,6 @@ namespace cvc5
 // clang-format off
 ${holder_mem_inits}$
 // clang-format on
-        hold(*d_arith),
         d_handler(std::make_unique<options::OptionsHandler>(this))
   {
   }
@@ -50,8 +49,6 @@ ${holder_mem_copy}$
 // clang-format on
     }
   }
-
-${holder_getter_impl}$
 
   void Options::setListener(OptionsListener * ol) { d_olisten = ol; }
 
