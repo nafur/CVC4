@@ -76,16 +76,16 @@ TPL_ASSIGN = '''
 void assign_{module}_{name}(Options& opts, const std::string& option, const std::string& optionarg) {{
   auto value = {handler};
   {predicates}
-  opts.{module}().{name} = value;
-  opts.{module}().{name}__setByUser = true;
+  opts.{module}.{name} = value;
+  opts.{module}.{name}__setByUser = true;
   Trace("options") << "user assigned option {name} = " << value << std::endl;
 }}'''
 
 TPL_ASSIGN_BOOL = '''
 void assign_{module}_{name}(Options& opts, const std::string& option, bool value) {{
   {predicates}
-  opts.{module}().{name} = value;
-  opts.{module}().{name}__setByUser = true;
+  opts.{module}.{name} = value;
+  opts.{module}.{name}__setByUser = true;
   Trace("options") << "user assigned option {name} = " << value << std::endl;
 }}'''
 
@@ -107,14 +107,14 @@ TPL_NAME_DECL = 'static constexpr const char* {name}__name = "{long_name}";'
 TPL_DECL_SET_DEFAULT = 'void default_{name}(Options& opts, {type} value);'
 TPL_IMPL_SET_DEFAULT = TPL_DECL_SET_DEFAULT[:-1] + '''
 {{
-    if (!opts.{module}().{name}__setByUser) {{
-        opts.{module}().{name} = value;
+    if (!opts.{module}.{name}__setByUser) {{
+        opts.{module}.{name} = value;
     }}
 }}'''
 
 # Option specific methods
 
-TPL_IMPL_OP_PAR = 'inline {type} {name}() {{ return Options::current().{module}().{name}; }}'
+TPL_IMPL_OP_PAR = 'inline {type} {name}() {{ return Options::current().{module}.{name}; }}'
 
 # Mode templates
 TPL_DECL_MODE_ENUM = '''
@@ -178,7 +178,7 @@ def get_holder_mem_decls(modules):
 
 def get_holder_mem_inits(modules):
     """Render initializations of holder members of the Option class"""
-    return concat_format('        d_{id}(std::make_unique<options::Holder{id_cap}>()),', modules)
+    return concat_format('        d_{id}(std::make_unique<options::Holder{id_cap}>()), {id}(*d_{id}),', modules)
 
 
 def get_holder_mem_copy(modules):
@@ -188,12 +188,14 @@ def get_holder_mem_copy(modules):
 
 def get_holder_getter_decls(modules):
     """Render getter declarations for holder members of the Option class"""
+    return concat_format('  options::Holder{id_cap}& {id};', modules)
     return concat_format('''  const options::Holder{id_cap}& {id}() const;
   options::Holder{id_cap}& {id}();''', modules)
 
 
 def get_holder_getter_impl(modules):
     """Render getter implementations for holder members of the Option class"""
+    return ''
     return concat_format('''const options::Holder{id_cap}& Options::{id}() const {{ return *d_{id}; }}
 options::Holder{id_cap}& Options::{id}() {{ return *d_{id}; }}''', modules)
 
@@ -229,12 +231,12 @@ def get_predicates(option):
 def get_getall(module, option):
     """Render snippet to add option to result of getAll()"""
     if option.type == 'bool':
-        return 'res.push_back({{"{}", opts.{}().{} ? "true" : "false"}});'.format(option.long_name, module.id, option.name)
+        return 'res.push_back({{"{}", opts.{}.{} ? "true" : "false"}});'.format(option.long_name, module.id, option.name)
     elif is_numeric_cpp_type(option.type):
-        return 'res.push_back({{"{}", std::to_string(opts.{}().{})}});'.format(
+        return 'res.push_back({{"{}", std::to_string(opts.{}.{})}});'.format(
             option.long_name, module.id, option.name)
     else:
-        return '{{ std::stringstream ss; ss << opts.{}().{}; res.push_back({{"{}", ss.str()}}); }}'.format(module.id,
+        return '{{ std::stringstream ss; ss << opts.{}.{}; res.push_back({{"{}", ss.str()}}); }}'.format(module.id,
             option.name, option.long_name)
 
 class Module(object):
@@ -822,17 +824,17 @@ def codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_
                         'if ({}) {{'.format(cond))
                     if option.type == 'bool':
                         getoption_handlers.append(
-                            'return options.{}().{} ? "true" : "false";'.format(module.id, option.name))
+                            'return options.{}.{} ? "true" : "false";'.format(module.id, option.name))
                     elif option.type == 'std::string':
                         getoption_handlers.append(
-                            'return options.{}().{};'.format(module.id, option.name))
+                            'return options.{}.{};'.format(module.id, option.name))
                     elif is_numeric_cpp_type(option.type):
                         getoption_handlers.append(
-                            'return std::to_string(options.{}().{});'.format(module.id, option.name))
+                            'return std::to_string(options.{}.{});'.format(module.id, option.name))
                     else:
                         getoption_handlers.append('std::stringstream ss;')
                         getoption_handlers.append(
-                            'ss << options.{}().{};'.format(module.id, option.name))
+                            'ss << options.{}.{};'.format(module.id, option.name))
                         getoption_handlers.append('return ss.str();')
                     getoption_handlers.append('}')
 

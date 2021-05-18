@@ -83,7 +83,7 @@ unsigned long OptionsHandler::limitHandler(const std::string& option, const std:
 
 void OptionsHandler::setResourceWeight(const std::string& option, const std::string& flag, std::string optarg)
 {
-  d_options->resman().resourceWeightHolder.emplace_back(optarg);
+  d_options->resman.resourceWeightHolder.emplace_back(optarg);
 }
 
 // theory/quantifiers/options_handlers.h
@@ -154,12 +154,12 @@ void OptionsHandler::checkBvSatSolver(const std::string& option, const std::stri
     throw OptionException(ss.str());
   }
 
-  if (d_options->bv().bvSolver != options::BVSolver::BITBLAST
+  if (d_options->bv.bvSolver != options::BVSolver::BITBLAST
       && (m == SatSolverMode::CRYPTOMINISAT || m == SatSolverMode::CADICAL
           || m == SatSolverMode::KISSAT))
   {
-    if (d_options->bv().bitblastMode == options::BitblastMode::LAZY
-        && d_options->bv().bitblastMode__setByUser)
+    if (d_options->bv.bitblastMode == options::BitblastMode::LAZY
+        && d_options->bv.bitblastMode__setByUser)
     {
       throwLazyBBUnsupported(m);
     }
@@ -175,9 +175,9 @@ void OptionsHandler::checkBitblastMode(const std::string& option, const std::str
     options::bv::default_bitvectorEqualitySolver(*d_options, true);
     options::bv::default_bitvectorInequalitySolver(*d_options, true);
     options::bv::default_bitvectorAlgebraicSolver(*d_options, true);
-    if (d_options->bv().bvSatSolver != options::SatSolverMode::MINISAT)
+    if (d_options->bv.bvSatSolver != options::SatSolverMode::MINISAT)
     {
-      throwLazyBBUnsupported(d_options->bv().bvSatSolver);
+      throwLazyBBUnsupported(d_options->bv.bvSatSolver);
     }
   }
   else if (m == BitblastMode::EAGER)
@@ -189,14 +189,14 @@ void OptionsHandler::checkBitblastMode(const std::string& option, const std::str
 void OptionsHandler::setBitblastAig(const std::string& option, const std::string& flag, bool arg)
 {
   if(arg) {
-    if(d_options->bv().bitblastMode__setByUser) {
-      if (d_options->bv().bitblastMode != options::BitblastMode::EAGER)
+    if(d_options->bv.bitblastMode__setByUser) {
+      if (d_options->bv.bitblastMode != options::BitblastMode::EAGER)
       {
         throw OptionException("bitblast-aig must be used with eager bitblaster");
       }
     } else {
       options::BitblastMode mode = stringToBitblastMode("eager");
-      d_options->bv().bitblastMode = mode;
+      d_options->bv.bitblastMode = mode;
     }
   }
 }
@@ -231,13 +231,13 @@ InstFormatMode OptionsHandler::stringToInstFormatMode(const std::string& option,
 // decision/options_handlers.h
 void OptionsHandler::setDecisionModeStopOnly(const std::string& option, const std::string& flag, DecisionMode m)
 {
-  d_options->decision().decisionStopOnly = (m == DecisionMode::RELEVANCY);
+  d_options->decision.decisionStopOnly = (m == DecisionMode::RELEVANCY);
 }
 
 void OptionsHandler::setProduceAssertions(const std::string& option, const std::string& flag, bool value)
 {
-  d_options->smt().produceAssertions = value;
-  d_options->smt().interactiveMode = value;
+  d_options->smt.produceAssertions = value;
+  d_options->smt.interactiveMode = value;
 }
 
 void OptionsHandler::setStats(const std::string& option, const std::string& flag, bool value)
@@ -256,24 +256,24 @@ void OptionsHandler::setStats(const std::string& option, const std::string& flag
   {
     if (option == options::base::statisticsAll__name)
     {
-      d_options->base().statistics = true;
+      d_options->base.statistics = true;
     }
     else if (option == options::base::statisticsEveryQuery__name)
     {
-      d_options->base().statistics = true;
+      d_options->base.statistics = true;
     }
     else if (option == options::base::statisticsExpert__name)
     {
-      d_options->base().statistics = true;
+      d_options->base.statistics = true;
     }
   }
   else
   {
     if (option == options::base::statistics__name)
     {
-      d_options->base().statisticsAll = false;
-      d_options->base().statisticsEveryQuery = false;
-      d_options->base().statisticsExpert = false;
+      d_options->base.statisticsAll = false;
+      d_options->base.statisticsEveryQuery = false;
+      d_options->base.statisticsExpert = false;
     }
   }
 }
@@ -484,7 +484,7 @@ OutputLanguage OptionsHandler::stringToOutputLanguage(const std::string& option,
                                                       std::string optarg)
 {
   if(optarg == "help") {
-    d_options->base().languageHelp = true;
+    d_options->base.languageHelp = true;
     return language::output::LANG_AUTO;
   }
 
@@ -502,7 +502,7 @@ InputLanguage OptionsHandler::stringToInputLanguage(const std::string& option, c
                                                     std::string optarg)
 {
   if(optarg == "help") {
-    d_options->base().languageHelp = true;
+    d_options->base.languageHelp = true;
     return language::input::LANG_AUTO;
   }
 
@@ -547,13 +547,13 @@ void OptionsHandler::setVerbosity(const std::string& option, const std::string& 
 }
 
 void OptionsHandler::increaseVerbosity(const std::string& option, const std::string& flag) {
-  d_options->base().verbosity += 1;
-  setVerbosity(option, flag, d_options->base().verbosity);
+  d_options->base.verbosity += 1;
+  setVerbosity(option, flag, d_options->base.verbosity);
 }
 
 void OptionsHandler::decreaseVerbosity(const std::string& option, const std::string& flag) {
-  d_options->base().verbosity -= 1;
-  setVerbosity(option, flag, d_options->base().verbosity);
+  d_options->base.verbosity -= 1;
+  setVerbosity(option, flag, d_options->base.verbosity);
 }
 
 }  // namespace options

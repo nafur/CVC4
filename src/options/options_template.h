@@ -100,6 +100,8 @@ ${holder_getter_decls}$
 
   void notifyListener(const std::string& key);
 
+  options::HolderARITH& hold;
+
  private:
   /** Pointer to the options listener, if one exists */
   OptionsListener* d_olisten = nullptr;
