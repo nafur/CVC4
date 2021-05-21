@@ -11,7 +11,8 @@ class IncludeBuildFile(SphinxDirective):
 
         .. include-build-file:: <filename>
 
-        The argument should be proper filenames to rst files.
+    The argument should be a filename of an rst files within one of the
+    folders given by the `ibf_folders` config option.
     """
 
     # The "arguments" are actually the content of the directive
@@ -25,6 +26,7 @@ class IncludeBuildFile(SphinxDirective):
                 filename = candidate
                 break
         content = open(filename).readlines()
+        content = [line.rstrip('\n') for line in content]
         # parse the string list
         node = nodes.Element()
         nested_parse_with_titles(self.state, StringList(content), node)

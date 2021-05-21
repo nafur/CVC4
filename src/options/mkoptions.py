@@ -298,12 +298,22 @@ class SphinxGenerator:
                 names.append('-{} {}'.format(option.short, option.long_opt))
             else:
                 names.append('-{}'.format(option.short))
+        
+        modes = None
+        if option.mode:
+            modes = {}
+            for _, data in option.mode.items():
+                assert len(data) == 1
+                data = data[0]
+                modes[data['name']] = data.get('help', '')
 
         data = {
             'name': names,
             'help': option.help,
             'expert': option.category == 'expert',
             'alternate': option.type == 'bool' and option.alternate,
+            'help_mode': option.help_mode,
+            'modes': modes,
         }
 
         if option.category == 'common':
@@ -313,52 +323,48 @@ class SphinxGenerator:
                 self.others[module.name] = []
             self.others[module.name].append(data)
     
+    def __render_option(self, res, opt):
+        desc = '``{}``'
+        val = '    {}'
+        if opt['expert']:
+            res.append('.. admonition:: This option is intended for Experts only!')
+            res.append('    ')
+            desc = '    ' + desc
+            val = '    ' + val
+
+        if opt['alternate']:
+            desc += ' (also ``--no-*``)'
+        res.append(desc.format(' | '.join(opt['name'])))
+        res.append(val.format(opt['help']))
+
+        if opt['modes']:
+            res.append(val.format(''))
+            res.append(val.format(opt['help_mode']))
+            res.append(val.format(''))
+            for k, v in opt['modes'].items():
+                res.append(val.format(':{}: {}'.format(k, v)))
+        res.append('    ')
+
+
     def render(self, dstdir, filename):
         res = []
 
-        res.append('Most commonly-used cvc5 options')
+        res.append('Most Commonly-Used cvc5 Options')
         res.append('===============================')
         for opt in self.common:
-            fmt = '``{}``'
-            if opt['alternate']:
-                fmt += ' (also ``--no-*``)'
-            res.append(fmt.format(' | '.join(opt['name'])))
-            res.append('    {}'.format(opt['help']))
-            if opt['expert']:
-                    res.append('    ')
-                    res.append('    .. DANGER::')
-                    res.append('        This option is only intended for Experts!')
-            res.append('    ')
+            self.__render_option(res, opt)
 
         res.append('')
-        res.append('Additional cvc5 options')
+        res.append('Additional cvc5 Options')
         res.append('=======================')
         for module in self.others:
             res.append('')
-            res.append('{} module'.format(module))
+            res.append('{} Module'.format(module))
             res.append('-' * (len(module) + 8))
             for opt in self.others[module]:
-                desc = '``{}``'
-                val = '    {}'
-                if opt['expert']:
-                    res.append('.. admonition:: This option is intended for Experts only!')
-                    res.append('    ')
-                    desc = '    ' + desc
-                    val = '    ' + val
-
-                if opt['alternate']:
-                    desc += ' (also ``--no-*``)'
-                res.append(desc.format(' | '.join(opt['name'])))
-                res.append(val.format(opt['help']))
-                res.append('    ')
-
-        res.append('')
-        res.append('.. _alternate target:')
-        res.append('')
-        res.append(':sup:`-\-no-` Each of these options has a --no-OPTIONNAME variant, which reverses the sense of the option.')
+                self.__render_option(res, opt)
 
         write_file(dstdir, filename, '\n'.join(res))
-
 
 
 def die(msg):

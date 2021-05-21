@@ -1,5 +1,5 @@
 id     = "BUILTIN"
-name   = "Builtin theory"
+name   = "Builtin Theory"
 
 [[option]]
   name = "test"
