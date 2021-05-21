@@ -103,17 +103,18 @@ class CVC5_EXPORT Options
 // clang-format off
 ${holder_mem_decls}$
 // clang-format on
-
+ public:
+// clang-format off
+${holder_ref_decls}$
+// clang-format on
+  
+ private:
   /** The handler for the options of the theory. */
   std::unique_ptr<options::OptionsHandler> d_handler;
 
   /** The current Options in effect */
   static thread_local Options* s_current;
 
-  public:
-// clang-format off
-${holder_ref_decls}$
-// clang-format on
 
 }; /* class Options */
 

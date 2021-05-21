@@ -178,8 +178,12 @@ def get_holder_mem_decls(modules):
 
 def get_holder_mem_inits(modules):
     """Render initializations of holder members of the Option class"""
-    return concat_format('        d_{id}(std::make_unique<options::Holder{id_cap}>()), {id}(*d_{id}),', modules)
+    return concat_format('        d_{id}(std::make_unique<options::Holder{id_cap}>()),', modules)
 
+
+def get_holder_ref_inits(modules):
+    """Render initializations of holder references of the Option class"""
+    return concat_format('        {id}(*d_{id}),', modules)
 
 def get_holder_mem_copy(modules):
     """Render copy operation of holder members of the Option class"""
@@ -891,6 +895,7 @@ def codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_
         'headers_module': get_module_headers(modules),
         'headers_handler': '\n'.join(sorted(list(headers_handler))),
         'holder_mem_inits': get_holder_mem_inits(modules),
+        'holder_ref_inits': get_holder_ref_inits(modules),
         'holder_mem_copy': get_holder_mem_copy(modules),
         'cmdline_options': '\n  '.join(getopt_long),
         'help_common': '\n'.join(help_common),

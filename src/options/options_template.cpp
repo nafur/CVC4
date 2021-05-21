@@ -33,6 +33,7 @@ namespace cvc5
         d_olisten(ol),
 // clang-format off
 ${holder_mem_inits}$
+${holder_ref_inits}$
 // clang-format on
         d_handler(std::make_unique<options::OptionsHandler>(this))
   {
