@@ -84,10 +84,6 @@ class CVC5_EXPORT Options
     return *d_handler;
   }
 
-// clang-format off
-${holder_ref_decls}$
-// clang-format on
-
   /**
    * Copies the value of the options stored in OptionsHolder into the current
    * Options object.
@@ -113,6 +109,11 @@ ${holder_mem_decls}$
 
   /** The current Options in effect */
   static thread_local Options* s_current;
+
+  public:
+// clang-format off
+${holder_ref_decls}$
+// clang-format on
 
 }; /* class Options */
 
