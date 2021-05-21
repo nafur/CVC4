@@ -185,12 +185,13 @@ def get_holder_ref_inits(modules):
     """Render initializations of holder references of the Option class"""
     return concat_format('        {id}(*d_{id}),', modules)
 
+
 def get_holder_mem_copy(modules):
     """Render copy operation of holder members of the Option class"""
     return concat_format('      *d_{id} = *options.d_{id};', modules)
 
 
-def get_holder_reference_decls(modules):
+def get_holder_ref_decls(modules):
     """Render reference declarations for holder members of the Option class"""
     return concat_format('  options::Holder{id_cap}& {id};', modules)
 
@@ -891,7 +892,7 @@ def codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_
     data = {
         'holder_fwd_decls': get_holder_fwd_decls(modules),
         'holder_mem_decls': get_holder_mem_decls(modules),
-        'holder_ref_decls': get_holder_reference_decls(modules),
+        'holder_ref_decls': get_holder_ref_decls(modules),
         'headers_module': get_module_headers(modules),
         'headers_handler': '\n'.join(sorted(list(headers_handler))),
         'holder_mem_inits': get_holder_mem_inits(modules),
