@@ -25,7 +25,10 @@
 #include "theory/strings/strings_rewriter.h"
 #include "theory/strings/theory_strings_utils.h"
 #include "theory/strings/word.h"
+#include "util/rational.h"
+#include "util/regexp.h"
 #include "util/statistics_registry.h"
+#include "util/string.h"
 
 using namespace std;
 using namespace cvc5::kind;
@@ -757,8 +760,7 @@ Node SequencesRewriter::rewriteConcatRegExp(TNode node)
     else if (c.getKind() == REGEXP_EMPTY)
     {
       // re.++( ..., empty, ... ) ---> empty
-      std::vector<Node> nvec;
-      Node ret = nm->mkNode(REGEXP_EMPTY, nvec);
+      Node ret = nm->mkNode(REGEXP_EMPTY);
       return returnRewrite(node, ret, Rewrite::RE_CONCAT_EMPTY);
     }
     else
@@ -983,7 +985,6 @@ Node SequencesRewriter::rewriteAndOrRegExp(TNode node)
     }
   }
   NodeManager* nm = NodeManager::currentNM();
-  std::vector<Node> emptyVec;
   // use inclusion tests
   for (const Node& negMem : polRegExp[1])
   {
@@ -999,11 +1000,11 @@ Node SequencesRewriter::rewriteAndOrRegExp(TNode node)
         Node retNode;
         if (nk == REGEXP_INTER)
         {
-          retNode = nm->mkNode(kind::REGEXP_EMPTY, emptyVec);
+          retNode = nm->mkNode(kind::REGEXP_EMPTY);
         }
         else
         {
-          retNode = nm->mkNode(REGEXP_STAR, nm->mkNode(REGEXP_SIGMA, emptyVec));
+          retNode = nm->mkNode(REGEXP_STAR, nm->mkNode(REGEXP_SIGMA));
         }
         return returnRewrite(node, retNode, Rewrite::RE_ANDOR_INC_CONFLICT);
       }
@@ -1014,11 +1015,11 @@ Node SequencesRewriter::rewriteAndOrRegExp(TNode node)
   {
     if (nk == REGEXP_INTER)
     {
-      retNode = nm->mkNode(REGEXP_STAR, nm->mkNode(REGEXP_SIGMA, emptyVec));
+      retNode = nm->mkNode(REGEXP_STAR, nm->mkNode(REGEXP_SIGMA));
     }
     else
     {
-      retNode = nm->mkNode(kind::REGEXP_EMPTY, emptyVec);
+      retNode = nm->mkNode(kind::REGEXP_EMPTY);
     }
   }
   else
@@ -1151,8 +1152,7 @@ Node SequencesRewriter::rewriteRangeRegExp(TNode node)
   if (ch[0] > ch[1])
   {
     // re.range( "B", "A" ) ---> re.none
-    std::vector<Node> emptyVec;
-    Node retNode = nm->mkNode(REGEXP_EMPTY, emptyVec);
+    Node retNode = nm->mkNode(REGEXP_EMPTY);
     return returnRewrite(node, retNode, Rewrite::RE_RANGE_EMPTY);
   }
   return node;
@@ -3176,8 +3176,7 @@ std::pair<size_t, size_t> SequencesRewriter::firstMatch(Node n, Node r)
   Assert(r.getType().isRegExp());
   NodeManager* nm = NodeManager::currentNM();
 
-  std::vector<Node> emptyVec;
-  Node sigmaStar = nm->mkNode(REGEXP_STAR, nm->mkNode(REGEXP_SIGMA, emptyVec));
+  Node sigmaStar = nm->mkNode(REGEXP_STAR, nm->mkNode(REGEXP_SIGMA));
   Node re = nm->mkNode(REGEXP_CONCAT, r, sigmaStar);
   String s = n.getConst<String>();
 

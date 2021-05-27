@@ -66,6 +66,7 @@
 #include "theory/smt_engine_subsolver.h"
 #include "theory/theory_engine.h"
 #include "util/random.h"
+#include "util/rational.h"
 #include "util/resource_manager.h"
 #include "util/sexpr.h"
 #include "util/statistics_registry.h"
@@ -1628,12 +1629,6 @@ void SmtEngine::getInstantiationTermVectors(
     // otherwise, just get the list of all instantiations
     qe->getInstantiationTermVectors(insts);
   }
-}
-
-void SmtEngine::printSynthSolution( std::ostream& out ) {
-  SmtScope smts(this);
-  finishInit();
-  d_sygusSolver->printSynthSolution(out);
 }
 
 bool SmtEngine::getSynthSolutions(std::map<Node, Node>& solMap)

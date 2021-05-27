@@ -24,7 +24,9 @@
 #include "theory/strings/arith_entail.h"
 #include "theory/strings/sequences_rewriter.h"
 #include "theory/strings/word.h"
+#include "util/rational.h"
 #include "util/statistics_registry.h"
+#include "util/string.h"
 
 using namespace cvc5;
 using namespace cvc5::kind;
@@ -96,7 +98,7 @@ Node StringsPreprocess::reduce(Node t,
     // Length of the result is at most m
     Node b14 = nm->mkNode(LEQ, nm->mkNode(STRING_LENGTH, skt), m);
 
-    Node b1 = nm->mkNode(AND, b11, b12, b13, b14);
+    Node b1 = nm->mkNode(AND, {b11, b12, b13, b14});
     Node b2 = skt.eqNode(emp);
     Node lemma = nm->mkNode(ITE, cond, b1, b2);
 
@@ -652,7 +654,7 @@ Node StringsPreprocess::reduce(Node t,
         nm->mkNode(ITE,
                    matchesEmpty,
                    res1,
-                   nm->mkNode(AND, splitX, firstMatch, k2Match, res2)),
+                   nm->mkNode(AND, {splitX, firstMatch, k2Match, res2})),
         k.eqNode(x)));
     retNode = k;
   }

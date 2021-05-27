@@ -39,6 +39,7 @@
 #include "base/check.h"
 #include "theory/bv/theory_bv_utils.h"
 #include "theory/fp/fp_converter.h"
+#include "util/floatingpoint.h"
 
 namespace cvc5 {
 namespace theory {
@@ -290,7 +291,8 @@ namespace rewrite {
     Assert(!isPreRewrite);  // Likely redundant in pre-rewrite
 
     if (node[1] > node[2]) {
-      Node normal = NodeManager::currentNM()->mkNode(kind::FLOATINGPOINT_FMA,node[0],node[2],node[1],node[3]);
+      Node normal = NodeManager::currentNM()->mkNode(
+          kind::FLOATINGPOINT_FMA, {node[0], node[2], node[1], node[3]});
       return RewriteResponse(REWRITE_DONE, normal);
     } else {
       return RewriteResponse(REWRITE_DONE, node);
@@ -1083,23 +1085,23 @@ RewriteResponse maxTotal(TNode node, bool isPreRewrite)
     RoundingMode arg0(node[0].getConst<RoundingMode>());
     switch (arg0)
     {
-      case ROUND_NEAREST_TIES_TO_EVEN:
+      case RoundingMode::ROUND_NEAREST_TIES_TO_EVEN:
         value = symfpuSymbolic::traits::RNE().getConst<BitVector>();
         break;
 
-      case ROUND_NEAREST_TIES_TO_AWAY:
+      case RoundingMode::ROUND_NEAREST_TIES_TO_AWAY:
         value = symfpuSymbolic::traits::RNA().getConst<BitVector>();
         break;
 
-      case ROUND_TOWARD_POSITIVE:
+      case RoundingMode::ROUND_TOWARD_POSITIVE:
         value = symfpuSymbolic::traits::RTP().getConst<BitVector>();
         break;
 
-      case ROUND_TOWARD_NEGATIVE:
+      case RoundingMode::ROUND_TOWARD_NEGATIVE:
         value = symfpuSymbolic::traits::RTN().getConst<BitVector>();
         break;
 
-      case ROUND_TOWARD_ZERO:
+      case RoundingMode::ROUND_TOWARD_ZERO:
         value = symfpuSymbolic::traits::RTZ().getConst<BitVector>();
         break;
 
@@ -1498,11 +1500,11 @@ TheoryFpRewriter::TheoryFpRewriter(context::UserContext* u) : d_fpExpDef(u)
 
             NodeManager* nm = NodeManager::currentNM();
 
-            Node rne(nm->mkConst(ROUND_NEAREST_TIES_TO_EVEN));
-            Node rna(nm->mkConst(ROUND_NEAREST_TIES_TO_AWAY));
-            Node rtz(nm->mkConst(ROUND_TOWARD_POSITIVE));
-            Node rtn(nm->mkConst(ROUND_TOWARD_NEGATIVE));
-            Node rtp(nm->mkConst(ROUND_TOWARD_ZERO));
+            Node rne(nm->mkConst(RoundingMode::ROUND_NEAREST_TIES_TO_EVEN));
+            Node rna(nm->mkConst(RoundingMode::ROUND_NEAREST_TIES_TO_AWAY));
+            Node rtz(nm->mkConst(RoundingMode::ROUND_TOWARD_POSITIVE));
+            Node rtn(nm->mkConst(RoundingMode::ROUND_TOWARD_NEGATIVE));
+            Node rtp(nm->mkConst(RoundingMode::ROUND_TOWARD_ZERO));
 
             TNode rm(res.d_node[0]);
 

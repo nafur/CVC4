@@ -23,12 +23,17 @@
 #include "base/listener.h"
 #include "expr/attribute.h"
 #include "expr/bound_var_manager.h"
+#include "expr/datatype_index.h"
 #include "expr/dtype.h"
 #include "expr/dtype_cons.h"
 #include "expr/metakind.h"
 #include "expr/node_manager_attributes.h"
 #include "expr/skolem_manager.h"
 #include "expr/type_checker.h"
+#include "theory/bags/make_bag_op.h"
+#include "theory/sets/singleton_op.h"
+#include "util/abstract_value.h"
+#include "util/bitvector.h"
 #include "util/resource_manager.h"
 
 using namespace std;
@@ -1150,6 +1155,24 @@ Kind NodeManager::getKindForFunction(TNode fun)
     return kind::APPLY_TESTER;
   }
   return kind::UNDEFINED_KIND;
+}
+
+Node NodeManager::mkNode(Kind kind, std::initializer_list<TNode> children)
+{
+  NodeBuilder nb(this, kind);
+  nb.append(children.begin(), children.end());
+  return nb.constructNode();
+}
+
+Node NodeManager::mkNode(TNode opNode, std::initializer_list<TNode> children)
+{
+  NodeBuilder nb(this, operatorToKind(opNode));
+  if (opNode.getKind() != kind::BUILTIN)
+  {
+    nb << opNode;
+  }
+  nb.append(children.begin(), children.end());
+  return nb.constructNode();
 }
 
 }  // namespace cvc5
