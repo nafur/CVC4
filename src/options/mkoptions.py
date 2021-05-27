@@ -104,7 +104,7 @@ TPL_HOLDER_MACRO_ATTR_DEF = '''  {type} {name} = {default};
 
 TPL_NAME_DECL = 'static constexpr const char* {name}__name = "{long_name}";'
 
-TPL_DECL_SET_DEFAULT = 'void default_{name}(Options& opts, {type} value);'
+TPL_DECL_SET_DEFAULT = 'void setDefault{funcname}(Options& opts, {type} value);'
 TPL_IMPL_SET_DEFAULT = TPL_DECL_SET_DEFAULT[:-1] + '''
 {{
     if (!opts.{module}.{name}__setByUser) {{
@@ -571,8 +571,10 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
             long_name = ""
         option_names.append(TPL_NAME_DECL.format(name=option.name, type=option.type, long_name = long_name))
 
+        capoptionname = option.name[0].capitalize() + option.name[1:]
+
         # Generate module specialization
-        default_decl.append(TPL_DECL_SET_DEFAULT.format(module=module.id, name=option.name, type=option.type))
+        default_decl.append(TPL_DECL_SET_DEFAULT.format(module=module.id, name=option.name, funcname=capoptionname, type=option.type))
 
         if option.long and option.type not in ['bool', 'void'] and \
            '=' not in option.long:
@@ -592,7 +594,7 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
         ### Generate code for {module.name}_options.cpp
 
         # Accessors
-        default_impl.append(TPL_IMPL_SET_DEFAULT.format(module=module.id, name=option.name, type=option.type))
+        default_impl.append(TPL_IMPL_SET_DEFAULT.format(module=module.id, name=option.name, funcname=capoptionname, type=option.type))
 
         # Global definitions
         #defs.append(f'thread_local struct {option.name}__option_t {option.name};')
