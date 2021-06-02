@@ -65,7 +65,6 @@ SUPPORTED_CTYPES = ['int', 'unsigned', 'unsigned long', 'double']
 
 ### Other globals
 
-g_long_to_opt = dict()     # maps long options to option objects
 g_long_cache = dict()      # maps long options to filename/fileno
 
 g_getopt_long_start = 256
@@ -102,8 +101,6 @@ TPL_HOLDER_MACRO_ATTR = '''  {type} {name};
 TPL_HOLDER_MACRO_ATTR_DEF = '''  {type} {name} = {default};
   bool {name}__setByUser = false;'''
 
-TPL_NAME_DECL = 'static constexpr const char* {name}__name = "{long_name}";'
-
 TPL_DECL_SET_DEFAULT = 'void setDefault{funcname}(Options& opts, {type} value);'
 TPL_IMPL_SET_DEFAULT = TPL_DECL_SET_DEFAULT[:-1] + '''
 {{
@@ -111,6 +108,8 @@ TPL_IMPL_SET_DEFAULT = TPL_DECL_SET_DEFAULT[:-1] + '''
         opts.{module}.{name} = value;
     }}
 }}'''
+
+TPL_NAME_DECL = 'static constexpr const char* {name}__name = "{long_name}";'
 
 # Option specific methods
 
@@ -433,15 +432,6 @@ def long_get_option(name):
     return name.split('=')[0]
 
 
-def get_long_name(option):
-    """
-    Determine the name of the option used as option name.
-    """
-    if option.long:
-        return long_get_option(option.long)
-    return None
-
-
 def is_numeric_cpp_type(ctype):
     """
     Check if given type is a numeric C++ type (this should cover the most
@@ -535,8 +525,6 @@ def codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp):
     """
     Generate code for each option module (*_options.{h,cpp})
     """
-    global g_long_to_opt
-
     # *_options.h / *.options.cpp
     includes = set()
     holder_specs = []
@@ -1068,8 +1056,6 @@ def mkoptions_main():
         # applicable.
         for option in module.options:
             check_long(filename, option, option.long, option.type)
-            if option.long:
-                g_long_to_opt[long_get_option(option.long)] = option
         modules.append(module)
 
     # Create *_options.{h,cpp} in destination directory
