@@ -12,8 +12,7 @@
  *
  * Definitions of public facing interface functions for Options.
  *
- * These are all 1 line wrappers for Options::get<T>, Options::set<T>, and
- * Options::wasSetByUser<T> for different option types T.
+ * These are all one line wrappers for accessing the internal option data.
  */
 
 #include "options_public.h"
@@ -25,11 +24,11 @@
 
 #include "base/listener.h"
 #include "base/modal_exception.h"
-#include "options/options.h"
 #include "options/base_options.h"
 #include "options/language.h"
 #include "options/main_options.h"
 #include "options/option_exception.h"
+#include "options/options.h"
 #include "options/parser_options.h"
 #include "options/printer_modes.h"
 #include "options/printer_options.h"
@@ -81,16 +80,10 @@ bool getInteractivePrompt(const Options& opts)
 {
   return opts.driver.interactivePrompt;
 }
-bool getLanguageHelp(const Options& opts)
-{
-  return opts.base.languageHelp;
-}
+bool getLanguageHelp(const Options& opts) { return opts.base.languageHelp; }
 bool getMemoryMap(const Options& opts) { return opts.parser.memoryMap; }
 bool getParseOnly(const Options& opts) { return opts.base.parseOnly; }
-bool getProduceModels(const Options& opts)
-{
-  return opts.smt.produceModels;
-}
+bool getProduceModels(const Options& opts) { return opts.smt.produceModels; }
 bool getSegvSpin(const Options& opts) { return opts.driver.segvSpin; }
 bool getSemanticChecks(const Options& opts)
 {
@@ -105,11 +98,11 @@ bool getStrictParsing(const Options& opts)
 {
   return opts.parser.strictParsing;
 }
-int getTearDownIncremental(const Options& opts)
+int32_t getTearDownIncremental(const Options& opts)
 {
   return opts.driver.tearDownIncremental;
 }
-unsigned long getCumulativeTimeLimit(const Options& opts)
+uint64_t getCumulativeTimeLimit(const Options& opts)
 {
   return opts.resman.cumulativeMillisecondLimit;
 }
@@ -118,7 +111,7 @@ const std::string& getForceLogicString(const Options& opts)
 {
   return opts.parser.forceLogicString;
 }
-int getVerbosity(const Options& opts) { return opts.base.verbosity; }
+int32_t getVerbosity(const Options& opts) { return opts.base.verbosity; }
 
 std::istream* getIn(const Options& opts) { return opts.base.in; }
 std::ostream* getErr(const Options& opts) { return opts.base.err; }

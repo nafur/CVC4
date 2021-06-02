@@ -111,7 +111,8 @@ InteractiveShell::InteractiveShell(api::Solver* solver, SymbolManager* sm)
 #endif /* EDITLINE_COMPENTRY_FUNC_RETURNS_CHARP */
     ::using_history();
 
-    OutputLanguage lang = toOutputLanguage(options::getInputLanguage(d_options));
+    OutputLanguage lang =
+        toOutputLanguage(options::getInputLanguage(d_options));
     switch(lang) {
       case output::LANG_CVC:
         d_historyFilename = string(getenv("HOME")) + "/.cvc5_history";
@@ -283,7 +284,8 @@ restart:
       if (d_usingEditline)
       {
 #if HAVE_LIBEDITLINE
-        lineBuf = ::readline(options::getInteractivePrompt(d_options) ? "... > " : "");
+        lineBuf = ::readline(options::getInteractivePrompt(d_options) ? "... > "
+                                                                      : "");
         if(lineBuf != NULL && lineBuf[0] != '\0') {
           ::add_history(lineBuf);
         }
