@@ -691,7 +691,7 @@ def codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_
     headers_handler = set()  # option includes (for handlers, predicates, ...)
     getopt_short = []        # short options for getopt_long
     getopt_long = []         # long options for getopt_long
-    options_getall = []  # options for options::getAll()
+    options_getall = []      # options for options::getAll()
     options_handler = []     # option handler calls
     help_common = []         # help text for all common options
     help_others = []         # help text for all non-common options
