@@ -36,6 +36,7 @@
 #include "options/options.h"
 #include "options/options_api.h"
 #include "options/options_public.h"
+#include "options/parser_options.h"
 #include "options/set_language.h"
 #include "parser/parser.h"
 #include "parser/parser_builder.h"
@@ -159,7 +160,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
   }
   const char* filename = filenameStr.c_str();
 
-  if (options::getInputLanguage(opts) == language::input::LANG_AUTO)
+  if (opts.parser.inputLanguage == language::input::LANG_AUTO)
   {
     if( inputFromStdin ) {
       // We can't do any fancy detection on stdin
@@ -182,10 +183,10 @@ int runCvc5(int argc, char* argv[], Options& opts)
     }
   }
 
-  if (options::getOutputLanguage(opts) == language::output::LANG_AUTO)
+  if (opts.parser.outputLanguage == language::output::LANG_AUTO)
   {
     options::setOutputLanguage(
-        language::toOutputLanguage(options::getInputLanguage(opts)), opts);
+        language::toOutputLanguage(opts.parser.inputLanguage), opts);
   }
 
   // Determine which messages to show based on smtcomp_mode and verbosity
@@ -200,7 +201,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
 
   // important even for muzzled builds (to get result output right)
   (*(options::getOut(opts)))
-      << language::SetLanguage(options::getOutputLanguage(opts));
+      << language::SetLanguage(opts.parser.outputLanguage);
 
   // Create the command executor to execute the parsed commands
   pExecutor = std::make_unique<CommandExecutor>(opts);
@@ -284,11 +285,11 @@ int runCvc5(int argc, char* argv[], Options& opts)
       std::unique_ptr<Parser> parser(parserBuilder.build());
       if( inputFromStdin ) {
         parser->setInput(Input::newStreamInput(
-            options::getInputLanguage(opts), cin, filename));
+            opts.parser.inputLanguage, cin, filename));
       }
       else
       {
-        parser->setInput(Input::newFileInput(options::getInputLanguage(opts),
+        parser->setInput(Input::newFileInput(opts.parser.inputLanguage,
                                              filename,
                                              options::getMemoryMap(opts)));
       }
@@ -451,11 +452,11 @@ int runCvc5(int argc, char* argv[], Options& opts)
       std::unique_ptr<Parser> parser(parserBuilder.build());
       if( inputFromStdin ) {
         parser->setInput(Input::newStreamInput(
-            options::getInputLanguage(opts), cin, filename));
+            opts.parser.inputLanguage, cin, filename));
       }
       else
       {
-        parser->setInput(Input::newFileInput(options::getInputLanguage(opts),
+        parser->setInput(Input::newFileInput(opts.parser.inputLanguage,
                                              filename,
                                              options::getMemoryMap(opts)));
       }

@@ -19,6 +19,7 @@
 #include "context/context.h"
 #include "expr/node.h"
 #include "options/base_options.h"
+#include "options/parser_options.h"
 #include "printer/printer.h"
 #include "proof/conv_proof_generator.h"
 #include "smt/dump_manager.h"
@@ -104,7 +105,7 @@ ResourceManager* Env::getResourceManager() const
 
 const Printer& Env::getPrinter()
 {
-  return *Printer::getPrinter(d_options.base.outputLanguage);
+  return *Printer::getPrinter(d_options.parser.outputLanguage);
 }
 
 std::ostream& Env::getDumpOut() { return *d_options.base.out; }

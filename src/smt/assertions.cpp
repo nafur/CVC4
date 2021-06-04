@@ -22,6 +22,7 @@
 #include "options/base_options.h"
 #include "options/expr_options.h"
 #include "options/language.h"
+#include "options/parser_options.h"
 #include "options/smt_options.h"
 #include "smt/abstract_values.h"
 #include "smt/env.h"

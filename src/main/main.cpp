@@ -30,6 +30,7 @@
 #include "options/option_exception.h"
 #include "options/options.h"
 #include "options/options_public.h"
+#include "options/parser_options.h"
 #include "parser/parser.h"
 #include "parser/parser_builder.h"
 #include "parser/parser_exception.h"
@@ -62,7 +63,7 @@ int main(int argc, char* argv[]) {
 #ifdef CVC5_COMPETITION_MODE
     *options::getOut(opts) << "unknown" << endl;
 #endif
-    if (language::isOutputLang_smt2(options::getOutputLanguage(opts)))
+    if (language::isOutputLang_smt2(opts.parser.outputLanguage))
     {
       *options::getOut(opts) << "(error \"" << e << "\")" << endl;
     } else {

@@ -28,6 +28,7 @@
 #include "options/language.h"
 #include "options/main_options.h"
 #include "options/option_exception.h"
+#include "options/parser_options.h"
 #include "options/printer_options.h"
 #include "options/proof_options.h"
 #include "options/resource_manager_options.h"
@@ -445,7 +446,7 @@ void SmtEngine::setInfo(const std::string& key, const std::string& value)
   {
     d_state->setFilename(value);
   }
-  else if (key == "smt-lib-version" && !getOptions().base.inputLanguage__setByUser)
+  else if (key == "smt-lib-version" && !getOptions().parser.inputLanguage__setByUser)
   {
     language::input::Language ilang = language::input::LANG_SMTLIB_V2_6;
 
@@ -455,14 +456,14 @@ void SmtEngine::setInfo(const std::string& key, const std::string& value)
                 << " unsupported, defaulting to language (and semantics of) "
                    "SMT-LIB 2.6\n";
     }
-    getOptions().base.inputLanguage = ilang;
+    getOptions().parser.inputLanguage = ilang;
     // also update the output language
-    if (!getOptions().base.outputLanguage__setByUser)
+    if (!getOptions().parser.outputLanguage__setByUser)
     {
       language::output::Language olang = language::toOutputLanguage(ilang);
-      if (d_env->getOptions().base.outputLanguage != olang)
+      if (d_env->getOptions().parser.outputLanguage != olang)
       {
-        getOptions().base.outputLanguage = olang;
+        getOptions().parser.outputLanguage = olang;
         *d_env->getOptions().base.out << language::SetLanguage(olang);
       }
     }

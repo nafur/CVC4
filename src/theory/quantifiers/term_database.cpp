@@ -17,6 +17,7 @@
 
 #include "expr/skolem_manager.h"
 #include "options/base_options.h"
+#include "options/parser_options.h"
 #include "options/quantifiers_options.h"
 #include "options/smt_options.h"
 #include "options/theory_options.h"

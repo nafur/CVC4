@@ -17,6 +17,7 @@
 #include <string>
 
 #include "options/base_options.h"
+#include "options/parser_options.h"
 #include "options/language.h"
 #include "printer/ast/ast_printer.h"
 #include "printer/cvc/cvc_printer.h"
@@ -135,12 +136,12 @@ Printer* Printer::getPrinter(OutputLanguage lang)
     // the singleton "null" expr.  So we guard against segfault
     if (not Options::isCurrentNull())
     {
-      if (Options::current().base.outputLanguage__setByUser)
+      if (Options::current().parser.outputLanguage__setByUser)
       {
         lang = options::outputLanguage();
       }
       if (lang == language::output::LANG_AUTO
-          && Options::current().base.inputLanguage__setByUser)
+          && Options::current().parser.inputLanguage__setByUser)
       {
         lang = language::toOutputLanguage(options::inputLanguage());
       }

@@ -1,5 +1,6 @@
 id     = "SMT"
 name   = "SMT Layer"
+public = true
 
 [[option]]
   name       = "dumpModeString"

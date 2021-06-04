@@ -15,7 +15,7 @@
 
 #include "theory/quantifiers/instantiation_list.h"
 
-#include "options/base_options.h"
+#include "options/parser_options.h"
 #include "printer/printer.h"
 
 namespace cvc5 {

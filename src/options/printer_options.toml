@@ -1,5 +1,6 @@
 id     = "PRINTER"
 name   = "Printing"
+public = true
 
 [[option]]
   name       = "modelFormatMode"

@@ -43,6 +43,7 @@
 #include "options/language.h"
 #include "options/options.h"
 #include "options/options_public.h"
+#include "options/parser_options.h"
 #include "parser/input.h"
 #include "parser/parser.h"
 #include "parser/parser_builder.h"
@@ -313,7 +314,7 @@ restart:
   }
 
   d_parser->setInput(Input::newStringInput(
-      options::getInputLanguage(d_options), input, INPUT_FILENAME));
+      d_options.parser.inputLanguage, input, INPUT_FILENAME));
 
   /* There may be more than one command in the input. Build up a
      sequence. */
@@ -364,7 +365,7 @@ restart:
   }
   catch (ParserException& pe)
   {
-    if (language::isOutputLang_smt2(options::getOutputLanguage(d_options)))
+    if (language::isOutputLang_smt2(d_options.parser.outputLanguage))
     {
       d_out << "(error \"" << pe << "\")" << endl;
     }

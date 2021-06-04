@@ -38,18 +38,18 @@
 
 namespace cvc5::options {
 
-InputLanguage getInputLanguage(const Options& opts)
-{
-  return opts.base.inputLanguage;
-}
+//InputLanguage getInputLanguage(const Options& opts)
+//{
+//  return opts.base.inputLanguage;
+//}
 InstFormatMode getInstFormatMode(const Options& opts)
 {
   return opts.printer.instFormatMode;
 }
-OutputLanguage getOutputLanguage(const Options& opts)
-{
-  return opts.base.outputLanguage;
-}
+//OutputLanguage getOutputLanguage(const Options& opts)
+//{
+//  return opts.base.outputLanguage;
+//}
 bool getUfHo(const Options& opts) { return opts.uf.ufHo; }
 bool getDumpInstantiations(const Options& opts)
 {
@@ -123,7 +123,7 @@ const std::string& getBinaryName(const Options& opts)
 
 void setInputLanguage(InputLanguage val, Options& opts)
 {
-  opts.base.inputLanguage = val;
+  opts.parser.inputLanguage = val;
 }
 void setInteractive(bool val, Options& opts)
 {
@@ -132,7 +132,7 @@ void setInteractive(bool val, Options& opts)
 void setOut(std::ostream* val, Options& opts) { opts.base.out = val; }
 void setOutputLanguage(OutputLanguage val, Options& opts)
 {
-  opts.base.outputLanguage = val;
+  opts.parser.outputLanguage = val;
 }
 
 bool wasSetByUserEarlyExit(const Options& opts)

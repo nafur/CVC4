@@ -23,6 +23,7 @@
 #include "cvc/cvc.h"
 #include "options/options.h"
 #include "options/options_public.h"
+#include "options/parser_options.h"
 #include "parser/antlr_input.h"
 #include "parser/input.h"
 #include "parser/parser.h"
@@ -120,7 +121,7 @@ ParserBuilder& ParserBuilder::withParseOnly(bool flag) {
 ParserBuilder& ParserBuilder::withOptions(const Options& opts)
 {
   ParserBuilder& retval = *this;
-  retval = retval.withInputLanguage(options::getInputLanguage(opts))
+  retval = retval.withInputLanguage(opts.parser.inputLanguage)
                .withChecks(options::getSemanticChecks(opts))
                .withStrictMode(options::getStrictParsing(opts))
                .withParseOnly(options::getParseOnly(opts))
