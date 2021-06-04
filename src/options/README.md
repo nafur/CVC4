@@ -48,7 +48,7 @@ Handler functions
 
 Custom handler functions are used to turn the option value from a `std::string` into the type specified by `type`.
 Standard handler functions are provided for basic types (`std::string`, `bool`, integer types and floating point types) as well as enums specified by `mode`.
-A custom handler function needs to be member function of `options::OptionsHandler` with signature `{type} {handler}(const std::string& option, const std::string& optionvalue)`, or alternatively `void {handler}(const std::string& option)` if the `type` is `void`.
+A custom handler function needs to be member function of `options::OptionsHandler` with signature `{type} {handler}(const std::string& option, const std::string& flag, const std::string& optionvalue)`, or alternatively `void {handler}(const std::string& option, const std::string& flag)` if the `type` is `void`.
 
 
 Predicate functions

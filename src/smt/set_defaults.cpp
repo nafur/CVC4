@@ -974,7 +974,7 @@ void setDefaults(LogicInfo& logic, bool isInternalSubsolver)
     opts.quantifiers.cegqi = false;
   }
 
-  if ((opts.quantifiers.fmfBoundLazy__setByUser && options::fmfBoundInt())
+  if ((opts.quantifiers.fmfBoundLazy__setByUser && options::fmfBoundLazy())
       || (opts.quantifiers.fmfBoundInt__setByUser && options::fmfBoundInt()))
   {
     opts.quantifiers.fmfBound = true;

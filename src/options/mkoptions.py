@@ -801,7 +801,7 @@ def codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_
                             name=option.name,
                             option='key'))
                 elif option.handler:
-                    h = '    opts.handler().{handler}("{smtname}", "{smtname}"'
+                    h = '    opts.handler().{handler}("{smtname}", key'
                     if argument_req:
                         h += ', optionarg'
                     h += ');'
