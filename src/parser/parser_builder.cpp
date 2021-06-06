@@ -21,6 +21,7 @@
 #include "api/cpp/cvc5.h"
 #include "base/check.h"
 #include "cvc/cvc.h"
+#include "options/base_options.h"
 #include "options/options.h"
 #include "options/options_public.h"
 #include "options/parser_options.h"
@@ -124,11 +125,11 @@ ParserBuilder& ParserBuilder::withOptions(const Options& opts)
   retval = retval.withInputLanguage(opts.parser.inputLanguage)
                .withChecks(options::getSemanticChecks(opts))
                .withStrictMode(options::getStrictParsing(opts))
-               .withParseOnly(options::getParseOnly(opts))
-               .withIncludeFile(options::getFilesystemAccess(opts));
+               .withParseOnly(opts.base.parseOnly)
+               .withIncludeFile(opts.parser.filesystemAccess);
   if (options::wasSetByUserForceLogicString(opts))
   {
-    LogicInfo tmp(options::getForceLogicString(opts));
+    LogicInfo tmp(opts.parser.forceLogicString);
     retval = retval.withForcedLogic(tmp.getLogicString());
   }
   return retval;

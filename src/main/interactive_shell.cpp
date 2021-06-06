@@ -99,7 +99,7 @@ InteractiveShell::InteractiveShell(api::Solver* solver, SymbolManager* sm)
   d_parser = parserBuilder.build();
   if (options::wasSetByUserForceLogicString(d_options))
   {
-    LogicInfo tmp(options::getForceLogicString(d_options));
+    LogicInfo tmp(d_options.parser.forceLogicString);
     d_parser->forceLogic(tmp.getLogicString());
   }
 

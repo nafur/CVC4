@@ -38,44 +38,15 @@
 
 namespace cvc5::options {
 
-//InputLanguage getInputLanguage(const Options& opts)
-//{
-//  return opts.base.inputLanguage;
-//}
 InstFormatMode getInstFormatMode(const Options& opts)
 {
   return opts.printer.instFormatMode;
 }
-//OutputLanguage getOutputLanguage(const Options& opts)
-//{
-//  return opts.base.outputLanguage;
-//}
 bool getUfHo(const Options& opts) { return opts.uf.ufHo; }
-//bool getDumpInstantiations(const Options& opts)
-//{
-//  return opts.driver.dumpInstantiations;
-//}
-//bool getDumpModels(const Options& opts) { return opts.driver.dumpModels; }
-//bool getDumpProofs(const Options& opts) { return opts.driver.dumpProofs; }
-//bool getDumpUnsatCores(const Options& opts)
-//{
-//  return opts.driver.dumpUnsatCores || opts.driver.dumpUnsatCoresFull;
-//}
-bool getFilesystemAccess(const Options& opts)
-{
-  return opts.parser.filesystemAccess;
-}
 bool getForceNoLimitCpuWhileDump(const Options& opts)
 {
   return opts.driver.forceNoLimitCpuWhileDump;
 }
-bool getIncrementalSolving(const Options& opts)
-{
-  return opts.smt.incrementalSolving;
-}
-bool getLanguageHelp(const Options& opts) { return opts.base.languageHelp; }
-bool getMemoryMap(const Options& opts) { return opts.parser.memoryMap; }
-bool getParseOnly(const Options& opts) { return opts.base.parseOnly; }
 bool getProduceModels(const Options& opts) { return opts.smt.produceModels; }
 bool getSemanticChecks(const Options& opts)
 {
@@ -94,11 +65,6 @@ uint64_t getCumulativeTimeLimit(const Options& opts)
 {
   return opts.resman.cumulativeMillisecondLimit;
 }
-const std::string& getForceLogicString(const Options& opts)
-{
-  return opts.parser.forceLogicString;
-}
-int32_t getVerbosity(const Options& opts) { return opts.base.verbosity; }
 
 std::istream* getIn(const Options& opts) { return opts.base.in; }
 std::ostream* getErr(const Options& opts) { return opts.base.err; }
@@ -110,11 +76,7 @@ const std::string& getBinaryName(const Options& opts)
 
 void setInputLanguage(InputLanguage val, Options& opts)
 {
-<<<<<<< HEAD
   opts.parser.inputLanguage = val;
-=======
-  opts.base.inputLanguage = val;
->>>>>>> upstream/master
 }
 void setOut(std::ostream* val, Options& opts) { opts.base.out = val; }
 void setOutputLanguage(OutputLanguage val, Options& opts)

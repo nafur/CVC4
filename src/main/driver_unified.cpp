@@ -33,11 +33,13 @@
 #include "main/main.h"
 #include "main/signal_handlers.h"
 #include "main/time_limit.h"
+#include "options/base_options.h"
 #include "options/options.h"
 #include "options/options_api.h"
 #include "options/options_public.h"
 #include "options/parser_options.h"
 #include "options/main_options.h"
+#include "options/smt_options.h"
 #include "options/set_language.h"
 #include "parser/parser.h"
 #include "parser/parser_builder.h"
@@ -82,7 +84,7 @@ TotalTimer::~TotalTimer()
 
 void printUsage(Options& opts, bool full) {
   stringstream ss;
-  ss << "usage: " << options::getBinaryName(opts) << " [options] [input-file]"
+  ss << "usage: " << opts.base.binary_name << " [options] [input-file]"
      << endl
      << endl
      << "Without an input file, or with `-', cvc5 reads from standard input."
@@ -112,15 +114,14 @@ int runCvc5(int argc, char* argv[], Options& opts)
 
   auto limit = install_time_limit(opts);
 
-  string progNameStr = options::getBinaryName(opts);
-  progName = &progNameStr;
+  progName = &opts.base.binary_name;
 
   if (opts.driver.help)
   {
     printUsage(opts, true);
     exit(1);
   }
-  else if (options::getLanguageHelp(opts))
+  else if (opts.base.languageHelp)
   {
     options::printLanguageHelp(*(options::getOut(opts)));
     exit(1);
@@ -262,7 +263,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
     }
     else if (opts.driver.tearDownIncremental > 0)
     {
-      if (!options::getIncrementalSolving(opts)
+      if (!opts.smt.incrementalSolving
           && opts.driver.tearDownIncremental > 1)
       {
         // For tear-down-incremental values greater than 1, need incremental
@@ -292,7 +293,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
       {
         parser->setInput(Input::newFileInput(opts.parser.inputLanguage,
                                              filename,
-                                             options::getMemoryMap(opts)));
+                                             opts.parser.memoryMap));
       }
 
       vector< vector<Command*> > allCommands;
@@ -459,7 +460,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
       {
         parser->setInput(Input::newFileInput(opts.parser.inputLanguage,
                                              filename,
-                                             options::getMemoryMap(opts)));
+                                             opts.parser.memoryMap));
       }
 
       bool interrupted = false;
