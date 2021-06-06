@@ -1,6 +1,5 @@
 id     = "SMT"
 name   = "SMT Layer"
-public = true
 
 [[option]]
   name       = "dumpModeString"
@@ -80,14 +79,6 @@ public = true
   help       = "after SAT/INVALID/UNKNOWN, check that the generated model satisfies user and internal assertions"
 
 [[option]]
-  name       = "dumpModels"
-  category   = "regular"
-  long       = "dump-models"
-  type       = "bool"
-  default    = "false"
-  help       = "output models after every SAT/INVALID/UNKNOWN response"
-
-[[option]]
   name       = "modelCoresMode"
   category   = "regular"
   long       = "model-cores=MODE"
@@ -132,27 +123,11 @@ public = true
   help       = "produce proofs, support check-proofs and get-proof"
 
 [[option]]
-  name       = "dumpProofs"
-  category   = "regular"
-  long       = "dump-proofs"
-  type       = "bool"
-  default    = "false"
-  help       = "output proofs after every UNSAT/VALID response"
-
-[[option]]
   name       = "checkProofs"
   category   = "regular"
   long       = "check-proofs"
   type       = "bool"
   help       = "after UNSAT/VALID, check the generated proof (with proof)"
-
-[[option]]
-  name       = "dumpInstantiations"
-  category   = "regular"
-  long       = "dump-instantiations"
-  type       = "bool"
-  default    = "false"
-  help       = "output instantiations of quantified formulas after every UNSAT/VALID response"
 
 [[option]]
   name       = "sygusOut"
@@ -217,22 +192,6 @@ public = true
   long       = "check-unsat-cores"
   type       = "bool"
   help       = "after UNSAT/VALID, produce and check an unsat core (expensive)"
-
-[[option]]
-  name       = "dumpUnsatCores"
-  category   = "regular"
-  long       = "dump-unsat-cores"
-  type       = "bool"
-  default    = "false"
-  help       = "output unsat cores after every UNSAT/VALID response"
-
-[[option]]
-  name       = "dumpUnsatCoresFull"
-  category   = "regular"
-  long       = "dump-unsat-cores-full"
-  type       = "bool"
-  default    = "false"
-  help       = "dump the full unsat core, including unlabeled assertions"
 
 [[option]]
   name       = "unsatAssumptions"
@@ -421,14 +380,6 @@ public = true
   category   = "regular"
   type       = "std::string"
   help       = "set the diagnostic output channel of the solver"
-
-[[option]]
-  name       = "forceNoLimitCpuWhileDump"
-  category   = "regular"
-  long       = "force-no-limit-cpu-while-dump"
-  type       = "bool"
-  default    = "false"
-  help       = "Force no CPU limit when dumping models and proofs"
 
 [[option]]
   name       = "foreignTheoryRewrite"

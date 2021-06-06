@@ -28,8 +28,8 @@
 #include "main/main.h"
 #include "options/options_public.h"
 #include "options/base_options.h"
+#include "options/main_options.h"
 #include "options/printer_options.h"
-#include "options/smt_options.h"
 #include "smt/command.h"
 #include "smt/smt_engine.h"
 
@@ -163,19 +163,19 @@ bool CommandExecutor::doCommandSingleton(Command* cmd)
   // dump the model/proof/unsat core if option is set
   if (status) {
     std::vector<std::unique_ptr<Command> > getterCommands;
-    if (d_options.smt.dumpModels
+    if (d_options.driver.dumpModels
         && (res.isSat()
             || (res.isSatUnknown()
                 && res.getUnknownExplanation() == api::Result::INCOMPLETE)))
     {
       getterCommands.emplace_back(new GetModelCommand());
     }
-    if (d_options.smt.dumpProofs && isResultUnsat)
+    if (d_options.driver.dumpProofs && isResultUnsat)
     {
       getterCommands.emplace_back(new GetProofCommand());
     }
 
-    if (d_options.smt.dumpInstantiations
+    if (d_options.driver.dumpInstantiations
         && ((d_options.printer.instFormatMode
                  != options::InstFormatMode::SZS
              && (res.isSat()
@@ -187,14 +187,14 @@ bool CommandExecutor::doCommandSingleton(Command* cmd)
       getterCommands.emplace_back(new GetInstantiationsCommand());
     }
 
-    if ((d_options.smt.dumpUnsatCores || d_options.smt.dumpUnsatCoresFull) && isResultUnsat)
+    if ((d_options.driver.dumpUnsatCores || d_options.driver.dumpUnsatCoresFull) && isResultUnsat)
     {
       getterCommands.emplace_back(new GetUnsatCoreCommand());
     }
 
     if (!getterCommands.empty()) {
       // set no time limit during dumping if applicable
-      if (d_options.smt.forceNoLimitCpuWhileDump)
+      if (d_options.driver.forceNoLimitCpuWhileDump)
       {
         setNoLimitCPU();
       }

@@ -51,40 +51,32 @@ InstFormatMode getInstFormatMode(const Options& opts)
 //  return opts.base.outputLanguage;
 //}
 bool getUfHo(const Options& opts) { return opts.uf.ufHo; }
-bool getDumpInstantiations(const Options& opts)
-{
-  return opts.smt.dumpInstantiations;
-}
-bool getDumpModels(const Options& opts) { return opts.smt.dumpModels; }
-bool getDumpProofs(const Options& opts) { return opts.smt.dumpProofs; }
-bool getDumpUnsatCores(const Options& opts)
-{
-  return opts.smt.dumpUnsatCores || opts.smt.dumpUnsatCoresFull;
-}
-bool getEarlyExit(const Options& opts) { return opts.driver.earlyExit; }
+//bool getDumpInstantiations(const Options& opts)
+//{
+//  return opts.driver.dumpInstantiations;
+//}
+//bool getDumpModels(const Options& opts) { return opts.driver.dumpModels; }
+//bool getDumpProofs(const Options& opts) { return opts.driver.dumpProofs; }
+//bool getDumpUnsatCores(const Options& opts)
+//{
+//  return opts.driver.dumpUnsatCores || opts.driver.dumpUnsatCoresFull;
+//}
 bool getFilesystemAccess(const Options& opts)
 {
   return opts.parser.filesystemAccess;
 }
 bool getForceNoLimitCpuWhileDump(const Options& opts)
 {
-  return opts.smt.forceNoLimitCpuWhileDump;
+  return opts.driver.forceNoLimitCpuWhileDump;
 }
-bool getHelp(const Options& opts) { return opts.driver.help; }
 bool getIncrementalSolving(const Options& opts)
 {
   return opts.smt.incrementalSolving;
-}
-bool getInteractive(const Options& opts) { return opts.driver.interactive; }
-bool getInteractivePrompt(const Options& opts)
-{
-  return opts.driver.interactivePrompt;
 }
 bool getLanguageHelp(const Options& opts) { return opts.base.languageHelp; }
 bool getMemoryMap(const Options& opts) { return opts.parser.memoryMap; }
 bool getParseOnly(const Options& opts) { return opts.base.parseOnly; }
 bool getProduceModels(const Options& opts) { return opts.smt.produceModels; }
-bool getSegvSpin(const Options& opts) { return opts.driver.segvSpin; }
 bool getSemanticChecks(const Options& opts)
 {
   return opts.parser.semanticChecks;
@@ -98,15 +90,10 @@ bool getStrictParsing(const Options& opts)
 {
   return opts.parser.strictParsing;
 }
-int32_t getTearDownIncremental(const Options& opts)
-{
-  return opts.driver.tearDownIncremental;
-}
 uint64_t getCumulativeTimeLimit(const Options& opts)
 {
   return opts.resman.cumulativeMillisecondLimit;
 }
-bool getVersion(const Options& opts) { return opts.driver.version; }
 const std::string& getForceLogicString(const Options& opts)
 {
   return opts.parser.forceLogicString;
@@ -124,10 +111,6 @@ const std::string& getBinaryName(const Options& opts)
 void setInputLanguage(InputLanguage val, Options& opts)
 {
   opts.parser.inputLanguage = val;
-}
-void setInteractive(bool val, Options& opts)
-{
-  opts.driver.interactive = val;
 }
 void setOut(std::ostream* val, Options& opts) { opts.base.out = val; }
 void setOutputLanguage(OutputLanguage val, Options& opts)
