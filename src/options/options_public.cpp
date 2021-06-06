@@ -110,7 +110,11 @@ const std::string& getBinaryName(const Options& opts)
 
 void setInputLanguage(InputLanguage val, Options& opts)
 {
+<<<<<<< HEAD
   opts.parser.inputLanguage = val;
+=======
+  opts.base.inputLanguage = val;
+>>>>>>> upstream/master
 }
 void setOut(std::ostream* val, Options& opts) { opts.base.out = val; }
 void setOutputLanguage(OutputLanguage val, Options& opts)
