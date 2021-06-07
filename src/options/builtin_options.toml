@@ -1,13 +1,2 @@
 id     = "BUILTIN"
 name   = "Builtin Theory"
-
-[[option]]
-  name = "test"
-  long = "test-long"
-  alias = ["test-long1", "test-long2"]
-  category = "regular"
-  short = "y"
-  type = "bool"
-  default = "false"
-  predicates = ["testPred"]
-  help = "test"

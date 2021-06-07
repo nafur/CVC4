@@ -32,8 +32,6 @@ libcvc5_add_sources(
   options_listener.h
   options_public.cpp
   options_public.h
-  printer_modes.cpp
-  printer_modes.h
   set_language.cpp
   set_language.h
 )

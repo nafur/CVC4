@@ -26,7 +26,7 @@
 #include "options/decision_options.h"
 #include "options/language.h"
 #include "options/option_exception.h"
-#include "options/printer_modes.h"
+#include "options/printer_options.h"
 #include "options/quantifiers_options.h"
 
 namespace cvc5 {
@@ -95,10 +95,6 @@ public:
   /* expr/options_handlers.h */
   void setDefaultExprDepthPredicate(const std::string& option, const std::string& flag, int depth);
   void setDefaultDagThreshPredicate(const std::string& option, const std::string& flag, int dag);
-
-  void testPred(const std::string& option, const std::string& flag, bool val) {
-    std::cerr << "Test predicate: " << option << " -> " << val << std::endl;
-  }
 
   /* main/options_handlers.h */
   void copyright(const std::string& option, const std::string& flag);

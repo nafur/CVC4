@@ -22,9 +22,7 @@ public = true
   category   = "regular"
   long       = "inst-format=MODE"
   type       = "InstFormatMode"
-  default    = "InstFormatMode::DEFAULT"
-  handler    = "stringToInstFormatMode"
-  includes   = ["options/printer_modes.h"]
+  default    = "DEFAULT"
   help       = "print format mode for instantiations, see --inst-format=help"
   help_mode  = "Instantiation format modes."
 [[option.mode.DEFAULT]]

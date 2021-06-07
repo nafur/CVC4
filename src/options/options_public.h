@@ -25,7 +25,6 @@
 
 #include "options/language.h"
 #include "options/options.h"
-#include "options/printer_modes.h"
 
 namespace cvc5::options {
 
