@@ -39,13 +39,4 @@ namespace cvc5::options {
 
 bool getUfHo(const Options& opts) { return opts.uf.ufHo; }
 
-bool wasSetByUserIncrementalSolving(const Options& opts)
-{
-  return opts.base.incrementalSolving__setByUser;
-}
-bool wasSetByUserInteractive(const Options& opts)
-{
-  return opts.driver.interactive__setByUser;
-}
-
 }  // namespace cvc5::options

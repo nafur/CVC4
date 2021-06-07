@@ -148,7 +148,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
   const bool inputFromStdin = filenames.empty() || filenames[0] == "-";
 
   // if we're reading from stdin on a TTY, default to interactive mode
-  if (!options::wasSetByUserInteractive(opts))
+  if (!opts.driver.interactive__setByUser)
   {
     opts.driver.interactive = inputFromStdin && isatty(fileno(stdin));
   }
@@ -270,7 +270,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
         cmd.reset(new SetOptionCommand("incremental", "true"));
         cmd->setMuted(true);
         pExecutor->doCommand(cmd);
-        // if(options::wasSetByUserIncrementalSolving(opts)) {
+        // if(opts.base.incremental__setByUser) {
         //   throw OptionException(
         //     "--tear-down-incremental incompatible with --incremental");
         // }
@@ -440,7 +440,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
     }
     else
     {
-      if (!options::wasSetByUserIncrementalSolving(opts))
+      if (!opts.base.incrementalSolving__setByUser)
       {
         cmd.reset(new SetOptionCommand("incremental", "false"));
         cmd->setMuted(true);
