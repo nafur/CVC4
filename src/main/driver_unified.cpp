@@ -92,9 +92,9 @@ void printUsage(Options& opts, bool full) {
      << endl
      << "cvc5 options:" << endl;
   if(full) {
-    options::printUsage(ss.str(), *(options::getOut(opts)));
+    options::printUsage(ss.str(), *opts.base.out);
   } else {
-    options::printShortUsage(ss.str(), *(options::getOut(opts)));
+    options::printShortUsage(ss.str(), *opts.base.out);
   }
 }
 
@@ -123,12 +123,12 @@ int runCvc5(int argc, char* argv[], Options& opts)
   }
   else if (opts.base.languageHelp)
   {
-    options::printLanguageHelp(*(options::getOut(opts)));
+    options::printLanguageHelp(*opts.base.out);
     exit(1);
   }
   else if (opts.driver.version)
   {
-    *(options::getOut(opts)) << Configuration::about().c_str() << flush;
+    *opts.base.out << Configuration::about().c_str() << flush;
     exit(0);
   }
 
@@ -136,7 +136,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
 
   // If in competition mode, set output stream option to flush immediately
 #ifdef CVC5_COMPETITION_MODE
-  *(options::getOut(opts)) << unitbuf;
+  *opts.base.out << unitbuf;
 #endif /* CVC5_COMPETITION_MODE */
 
   // We only accept one input file
@@ -201,7 +201,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
   }
 
   // important even for muzzled builds (to get result output right)
-  (*(options::getOut(opts)))
+  (*opts.base.out)
       << language::SetLanguage(opts.parser.outputLanguage);
 
   // Create the command executor to execute the parsed commands
@@ -249,7 +249,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
         try {
           cmd.reset(shell.readCommand());
         } catch(UnsafeInterruptException& e) {
-          (*options::getOut(opts)) << CommandInterrupted();
+          *opts.base.out << CommandInterrupted();
           break;
         }
         if (cmd == nullptr)
@@ -303,7 +303,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
       while (status)
       {
         if (interrupted) {
-          (*options::getOut(opts)) << CommandInterrupted();
+          *opts.base.out << CommandInterrupted();
           break;
         }
 
@@ -361,7 +361,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
               }
             }
             if (interrupted) continue;
-            (*options::getOut(opts)) << CommandSuccess();
+            *opts.base.out << CommandSuccess();
             needReset = 0;
           }
           else
@@ -466,7 +466,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
       while (status)
       {
         if (interrupted) {
-          (*options::getOut(opts)) << CommandInterrupted();
+          *opts.base.out << CommandInterrupted();
           pExecutor->reset();
           break;
         }
@@ -500,9 +500,9 @@ int runCvc5(int argc, char* argv[], Options& opts)
     }
 
 #ifdef CVC5_COMPETITION_MODE
-    if (cvc5::options::getOut(opts) != nullptr)
+    if (opts.base.out != nullptr)
     {
-      *cvc5::options::getOut(opts) << std::flush;
+      *opts.base.out << std::flush;
     }
     // exit, don't return (don't want destructors to run)
     // _exit() from unistd.h doesn't run global destructors

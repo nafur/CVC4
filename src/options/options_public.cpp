@@ -43,30 +43,10 @@ InstFormatMode getInstFormatMode(const Options& opts)
   return opts.printer.instFormatMode;
 }
 bool getUfHo(const Options& opts) { return opts.uf.ufHo; }
-bool getProduceModels(const Options& opts) { return opts.smt.produceModels; }
-bool getSemanticChecks(const Options& opts)
-{
-  return opts.parser.semanticChecks;
-}
-bool getStatistics(const Options& opts) { return opts.base.statistics; }
-bool getStatsEveryQuery(const Options& opts)
-{
-  return opts.base.statisticsEveryQuery;
-}
-bool getStrictParsing(const Options& opts)
-{
-  return opts.parser.strictParsing;
-}
 uint64_t getCumulativeTimeLimit(const Options& opts)
 {
   return opts.resman.cumulativeMillisecondLimit;
 }
-
-std::istream* getIn(const Options& opts) { return opts.base.in; }
-std::ostream* getErr(const Options& opts) { return opts.base.err; }
-std::ostream* getOut(const Options& opts) { return opts.base.out; }
-
-void setOut(std::ostream* val, Options& opts) { opts.base.out = val; }
 
 bool wasSetByUserEarlyExit(const Options& opts)
 {

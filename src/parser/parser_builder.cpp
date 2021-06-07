@@ -123,8 +123,8 @@ ParserBuilder& ParserBuilder::withOptions(const Options& opts)
 {
   ParserBuilder& retval = *this;
   retval = retval.withInputLanguage(opts.parser.inputLanguage)
-               .withChecks(options::getSemanticChecks(opts))
-               .withStrictMode(options::getStrictParsing(opts))
+               .withChecks(opts.parser.semanticChecks)
+               .withStrictMode(opts.parser.strictParsing)
                .withParseOnly(opts.base.parseOnly)
                .withIncludeFile(opts.parser.filesystemAccess);
   if (options::wasSetByUserForceLogicString(opts))

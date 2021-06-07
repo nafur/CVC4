@@ -31,18 +31,7 @@ namespace cvc5::options {
 
 InstFormatMode getInstFormatMode(const Options& opts) CVC5_EXPORT;
 bool getUfHo(const Options& opts) CVC5_EXPORT;
-bool getProduceModels(const Options& opts) CVC5_EXPORT;
-bool getSemanticChecks(const Options& opts) CVC5_EXPORT;
-bool getStatistics(const Options& opts) CVC5_EXPORT;
-bool getStatsEveryQuery(const Options& opts) CVC5_EXPORT;
-bool getStrictParsing(const Options& opts) CVC5_EXPORT;
 uint64_t getCumulativeTimeLimit(const Options& opts) CVC5_EXPORT;
-
-std::istream* getIn(const Options& opts) CVC5_EXPORT;
-std::ostream* getErr(const Options& opts) CVC5_EXPORT;
-std::ostream* getOut(const Options& opts) CVC5_EXPORT;
-
-void setOut(std::ostream* val, Options& opts) CVC5_EXPORT;
 
 bool wasSetByUserEarlyExit(const Options& opts) CVC5_EXPORT;
 bool wasSetByUserForceLogicString(const Options& opts) CVC5_EXPORT;

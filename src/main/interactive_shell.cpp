@@ -40,6 +40,7 @@
 #include "base/check.h"
 #include "base/output.h"
 #include "expr/symbol_manager.h"
+#include "options/base_options.h"
 #include "options/language.h"
 #include "options/main_options.h"
 #include "options/options.h"
@@ -90,8 +91,8 @@ static set<string> s_declarations;
 
 InteractiveShell::InteractiveShell(api::Solver* solver, SymbolManager* sm)
     : d_options(solver->getOptions()),
-      d_in(*options::getIn(d_options)),
-      d_out(*options::getOut(d_options)),
+      d_in(*d_options.base.in),
+      d_out(*d_options.base.out),
       d_quit(false)
 {
   ParserBuilder parserBuilder(solver, sm, d_options);
