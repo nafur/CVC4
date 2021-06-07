@@ -43,10 +43,6 @@ InstFormatMode getInstFormatMode(const Options& opts)
   return opts.printer.instFormatMode;
 }
 bool getUfHo(const Options& opts) { return opts.uf.ufHo; }
-bool getForceNoLimitCpuWhileDump(const Options& opts)
-{
-  return opts.driver.forceNoLimitCpuWhileDump;
-}
 bool getProduceModels(const Options& opts) { return opts.smt.produceModels; }
 bool getSemanticChecks(const Options& opts)
 {
@@ -69,20 +65,8 @@ uint64_t getCumulativeTimeLimit(const Options& opts)
 std::istream* getIn(const Options& opts) { return opts.base.in; }
 std::ostream* getErr(const Options& opts) { return opts.base.err; }
 std::ostream* getOut(const Options& opts) { return opts.base.out; }
-const std::string& getBinaryName(const Options& opts)
-{
-  return opts.base.binary_name;
-}
 
-void setInputLanguage(InputLanguage val, Options& opts)
-{
-  opts.parser.inputLanguage = val;
-}
 void setOut(std::ostream* val, Options& opts) { opts.base.out = val; }
-void setOutputLanguage(OutputLanguage val, Options& opts)
-{
-  opts.parser.outputLanguage = val;
-}
 
 bool wasSetByUserEarlyExit(const Options& opts)
 {

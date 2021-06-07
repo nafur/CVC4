@@ -166,29 +166,28 @@ int runCvc5(int argc, char* argv[], Options& opts)
   {
     if( inputFromStdin ) {
       // We can't do any fancy detection on stdin
-      options::setInputLanguage(language::input::LANG_CVC, opts);
+      opts.parser.inputLanguage = language::input::LANG_CVC;
     } else {
       size_t len = filenameStr.size();
       if(len >= 5 && !strcmp(".smt2", filename + len - 5)) {
-        options::setInputLanguage(language::input::LANG_SMTLIB_V2_6, opts);
+        opts.parser.inputLanguage = language::input::LANG_SMTLIB_V2_6;
       } else if((len >= 2 && !strcmp(".p", filename + len - 2))
                 || (len >= 5 && !strcmp(".tptp", filename + len - 5))) {
-        options::setInputLanguage(language::input::LANG_TPTP, opts);
+        opts.parser.inputLanguage = language::input::LANG_TPTP;
       } else if(( len >= 4 && !strcmp(".cvc", filename + len - 4) )
                 || ( len >= 5 && !strcmp(".cvc4", filename + len - 5) )) {
-        options::setInputLanguage(language::input::LANG_CVC, opts);
+        opts.parser.inputLanguage = language::input::LANG_CVC;
       } else if((len >= 3 && !strcmp(".sy", filename + len - 3))
                 || (len >= 3 && !strcmp(".sl", filename + len - 3))) {
         // version 2 sygus is the default
-        options::setInputLanguage(language::input::LANG_SYGUS_V2, opts);
+        opts.parser.inputLanguage = language::input::LANG_SYGUS_V2;
       }
     }
   }
 
   if (opts.parser.outputLanguage == language::output::LANG_AUTO)
   {
-    options::setOutputLanguage(
-        language::toOutputLanguage(opts.parser.inputLanguage), opts);
+    opts.parser.outputLanguage = language::toOutputLanguage(opts.parser.inputLanguage);
   }
 
   // Determine which messages to show based on smtcomp_mode and verbosity
