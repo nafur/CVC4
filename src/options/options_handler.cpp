@@ -83,7 +83,7 @@ unsigned long OptionsHandler::limitHandler(const std::string& option, const std:
 
 void OptionsHandler::setResourceWeight(const std::string& option, const std::string& flag, std::string optarg)
 {
-  d_options->resman.resourceWeightHolder.emplace_back(optarg);
+  d_options->base.resourceWeightHolder.emplace_back(optarg);
 }
 
 // theory/quantifiers/options_handlers.h

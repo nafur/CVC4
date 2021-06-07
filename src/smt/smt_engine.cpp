@@ -1813,16 +1813,16 @@ void SmtEngine::setResourceLimit(uint64_t units, bool cumulative)
 {
   if (cumulative)
   {
-    d_env->d_options.resman.cumulativeResourceLimit = units;
+    d_env->d_options.base.cumulativeResourceLimit = units;
   }
   else
   {
-    d_env->d_options.resman.perCallResourceLimit = units;
+    d_env->d_options.base.perCallResourceLimit = units;
   }
 }
 void SmtEngine::setTimeLimit(uint64_t millis)
 {
-  d_env->d_options.resman.perCallMillisecondLimit = millis;
+  d_env->d_options.base.perCallMillisecondLimit = millis;
 }
 
 unsigned long SmtEngine::getResourceUsage() const

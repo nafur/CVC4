@@ -29,7 +29,6 @@
 namespace cvc5::options {
 
 bool getUfHo(const Options& opts) CVC5_EXPORT;
-uint64_t getCumulativeTimeLimit(const Options& opts) CVC5_EXPORT;
 
 bool wasSetByUserEarlyExit(const Options& opts) CVC5_EXPORT;
 bool wasSetByUserForceLogicString(const Options& opts) CVC5_EXPORT;

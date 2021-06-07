@@ -38,10 +38,6 @@
 namespace cvc5::options {
 
 bool getUfHo(const Options& opts) { return opts.uf.ufHo; }
-uint64_t getCumulativeTimeLimit(const Options& opts)
-{
-  return opts.resman.cumulativeMillisecondLimit;
-}
 
 bool wasSetByUserEarlyExit(const Options& opts)
 {
