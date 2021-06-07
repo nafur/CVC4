@@ -26,15 +26,13 @@ public = true
   handler    = "stringToInstFormatMode"
   includes   = ["options/printer_modes.h"]
   help       = "print format mode for instantiations, see --inst-format=help"
-# InstFormatMode is currently exported as public so we can't auto genenerate
-# the enum.
-#  help_mode  = "Inst format modes."
-#[[option.mode.DEFAULT]]
-#  name = "default"
-#  help = "Print instantiations as a list in the output language format."
-#[[option.mode.SZS]]
-#  name = "szs"
-#  help = "Print instantiations as SZS compliant proof."
+  help_mode  = "Instantiation format modes."
+[[option.mode.DEFAULT]]
+  name = "default"
+  help = "Print instantiations as a list in the output language format."
+[[option.mode.SZS]]
+  name = "szs"
+  help = "Print instantiations as SZS compliant proof."
 
 [[option]]
   name       = "flattenHOChains"

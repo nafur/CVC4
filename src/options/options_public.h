@@ -29,7 +29,6 @@
 
 namespace cvc5::options {
 
-InstFormatMode getInstFormatMode(const Options& opts) CVC5_EXPORT;
 bool getUfHo(const Options& opts) CVC5_EXPORT;
 uint64_t getCumulativeTimeLimit(const Options& opts) CVC5_EXPORT;
 

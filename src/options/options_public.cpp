@@ -38,10 +38,6 @@
 
 namespace cvc5::options {
 
-InstFormatMode getInstFormatMode(const Options& opts)
-{
-  return opts.printer.instFormatMode;
-}
 bool getUfHo(const Options& opts) { return opts.uf.ufHo; }
 uint64_t getCumulativeTimeLimit(const Options& opts)
 {
