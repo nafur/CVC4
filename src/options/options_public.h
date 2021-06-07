@@ -30,8 +30,6 @@ namespace cvc5::options {
 
 bool getUfHo(const Options& opts) CVC5_EXPORT;
 
-bool wasSetByUserEarlyExit(const Options& opts) CVC5_EXPORT;
-bool wasSetByUserForceLogicString(const Options& opts) CVC5_EXPORT;
 bool wasSetByUserIncrementalSolving(const Options& opts) CVC5_EXPORT;
 bool wasSetByUserInteractive(const Options& opts) CVC5_EXPORT;
 

@@ -39,17 +39,9 @@ namespace cvc5::options {
 
 bool getUfHo(const Options& opts) { return opts.uf.ufHo; }
 
-bool wasSetByUserEarlyExit(const Options& opts)
-{
-  return opts.driver.earlyExit__setByUser;
-}
-bool wasSetByUserForceLogicString(const Options& opts)
-{
-  return opts.parser.forceLogicString__setByUser;
-}
 bool wasSetByUserIncrementalSolving(const Options& opts)
 {
-  return opts.smt.incrementalSolving__setByUser;
+  return opts.base.incrementalSolving__setByUser;
 }
 bool wasSetByUserInteractive(const Options& opts)
 {

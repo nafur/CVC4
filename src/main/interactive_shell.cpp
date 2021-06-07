@@ -98,7 +98,7 @@ InteractiveShell::InteractiveShell(api::Solver* solver, SymbolManager* sm)
   ParserBuilder parserBuilder(solver, sm, d_options);
   /* Create parser with bogus input. */
   d_parser = parserBuilder.build();
-  if (options::wasSetByUserForceLogicString(d_options))
+  if (d_options.parser.forceLogicString__setByUser)
   {
     LogicInfo tmp(d_options.parser.forceLogicString);
     d_parser->forceLogic(tmp.getLogicString());
