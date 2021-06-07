@@ -148,7 +148,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
   const bool inputFromStdin = filenames.empty() || filenames[0] == "-";
 
   // if we're reading from stdin on a TTY, default to interactive mode
-  if (!opts.driver.interactive__setByUser)
+  if (!opts.driver.interactiveWasSetByUser)
   {
     opts.driver.interactive = inputFromStdin && isatty(fileno(stdin));
   }
@@ -222,7 +222,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
         throw Exception(
             "--tear-down-incremental doesn't work in interactive mode");
       }
-      if (!opts.base.incrementalSolving__setByUser)
+      if (!opts.base.incrementalSolvingWasSetByUser)
       {
         cmd.reset(new SetOptionCommand("incremental", "true"));
         cmd->setMuted(true);
@@ -270,7 +270,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
         cmd.reset(new SetOptionCommand("incremental", "true"));
         cmd->setMuted(true);
         pExecutor->doCommand(cmd);
-        // if(opts.base.incremental__setByUser) {
+        // if(opts.base.incrementalWasSetByUser) {
         //   throw OptionException(
         //     "--tear-down-incremental incompatible with --incremental");
         // }
@@ -440,7 +440,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
     }
     else
     {
-      if (!opts.base.incrementalSolving__setByUser)
+      if (!opts.base.incrementalSolvingWasSetByUser)
       {
         cmd.reset(new SetOptionCommand("incremental", "false"));
         cmd->setMuted(true);
@@ -514,7 +514,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
     pExecutor->flushOutputStreams();
 
 #ifdef CVC5_DEBUG
-    if (opts.driver.earlyExit && opts.driver.earlyExit__setByUser)
+    if (opts.driver.earlyExit && opts.driver.earlyExitWasSetByUser)
     {
       _exit(returnValue);
     }

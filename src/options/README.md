@@ -115,10 +115,10 @@ Option modules
 --------------
 
 Every option module declares an "option holder" class, which is a simple struct that has two members for every option (that is not declared as `type = void`):
-the actual option value as `{option.type} {option.name}` and a Boolean flag `bool {option.name}__setByUser` that indicates whether the option value was explicitly set.
+the actual option value as `{option.type} {option.name}` and a Boolean flag `bool {option.name}WasSetByUser` that indicates whether the option value was explicitly set.
 If any of the options of a module is a mode option, the option module also defines a enum class that corresponds to the mode, including `operator<<()` and `stringTo{mode type}`.
 
-For convenience, the option modules also provide methods `void default_{option.name}(Options& opts, {option.type} value)`. Each such method sets the option value to the given value, if the option was not yet set by the user, i.e., the `__setByUser` flag is false.
+For convenience, the option modules also provide methods `void default_{option.name}(Options& opts, {option.type} value)`. Each such method sets the option value to the given value, if the option was not yet set by the user, i.e., the `WasSetByUser` flag is false.
 Additionally, every option module exports the `long` option name as `static constexpr const char* {option.name}__name`.
 
 

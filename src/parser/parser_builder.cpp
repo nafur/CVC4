@@ -127,7 +127,7 @@ ParserBuilder& ParserBuilder::withOptions(const Options& opts)
                .withStrictMode(opts.parser.strictParsing)
                .withParseOnly(opts.base.parseOnly)
                .withIncludeFile(opts.parser.filesystemAccess);
-  if (opts.parser.forceLogicString__setByUser)
+  if (opts.parser.forceLogicStringWasSetByUser)
   {
     LogicInfo tmp(opts.parser.forceLogicString);
     retval = retval.withForcedLogic(tmp.getLogicString());

@@ -445,7 +445,7 @@ void SmtEngine::setInfo(const std::string& key, const std::string& value)
   {
     d_state->setFilename(value);
   }
-  else if (key == "smt-lib-version" && !getOptions().parser.inputLanguage__setByUser)
+  else if (key == "smt-lib-version" && !getOptions().parser.inputLanguageWasSetByUser)
   {
     language::input::Language ilang = language::input::LANG_SMTLIB_V2_6;
 
@@ -457,7 +457,7 @@ void SmtEngine::setInfo(const std::string& key, const std::string& value)
     }
     getOptions().parser.inputLanguage = ilang;
     // also update the output language
-    if (!getOptions().parser.outputLanguage__setByUser)
+    if (!getOptions().parser.outputLanguageWasSetByUser)
     {
       language::output::Language olang = language::toOutputLanguage(ilang);
       if (d_env->getOptions().parser.outputLanguage != olang)
