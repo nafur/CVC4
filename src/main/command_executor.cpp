@@ -84,7 +84,7 @@ void CommandExecutor::printStatisticsSafe(int fd) const
 
 bool CommandExecutor::doCommand(Command* cmd)
 {
-  if (d_options.base.statistics)
+  if (d_options.base.parseOnly)
   {
     return true;
   }
