@@ -420,7 +420,7 @@ ${options_handler}$
  */
 std::vector<std::string> parse(Options& opts,
                                                int argc,
-                                               char* argv[])
+                                               char* argv[], std::string& binaryName)
 {
   Assert(argv != nullptr);
 
@@ -442,7 +442,7 @@ std::vector<std::string> parse(Options& opts,
   if(x != nullptr) {
     progName = x + 1;
   }
-  opts.base.binary_name = std::string(progName);
+  binaryName = std::string(progName);
 
   std::vector<std::string> nonoptions;
   parseInternal(opts, argc, argv, nonoptions);

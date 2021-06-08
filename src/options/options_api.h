@@ -67,7 +67,8 @@ void printLanguageHelp(std::ostream& os) CVC5_EXPORT;
  */
 std::vector<std::string> parse(Options& opts,
                                int argc,
-                               char* argv[]) CVC5_EXPORT;
+                               char* argv[],
+                               std::string& binaryName) CVC5_EXPORT;
 
 std::string get(const Options& opts, const std::string& key) CVC5_EXPORT;
 
