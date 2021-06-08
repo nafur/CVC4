@@ -115,7 +115,7 @@ InteractiveShell::InteractiveShell(api::Solver* solver, SymbolManager* sm)
     ::using_history();
 
     OutputLanguage lang =
-        toOutputLanguage(options::getInputLanguage(d_options));
+        toOutputLanguage(d_options.base.inputLanguage);
     switch(lang) {
       case output::LANG_CVC:
         d_historyFilename = string(getenv("HOME")) + "/.cvc5_history";
