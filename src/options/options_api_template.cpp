@@ -418,9 +418,8 @@ ${options_handler}$
  *
  * Throws OptionException on failures.
  */
-std::vector<std::string> parse(Options& opts,
-                                               int argc,
-                                               char* argv[], std::string& binaryName)
+std::vector<std::string> parse(
+    Options & opts, int argc, char* argv[], std::string& binaryName)
 {
   Assert(argv != nullptr);
 
