@@ -122,7 +122,7 @@ ParserBuilder& ParserBuilder::withParseOnly(bool flag) {
 ParserBuilder& ParserBuilder::withOptions(const Options& opts)
 {
   ParserBuilder& retval = *this;
-  retval = retval.withInputLanguage(opts.parser.inputLanguage)
+  retval = retval.withInputLanguage(opts.base.inputLanguage)
                .withChecks(opts.parser.semanticChecks)
                .withStrictMode(opts.parser.strictParsing)
                .withParseOnly(opts.base.parseOnly)

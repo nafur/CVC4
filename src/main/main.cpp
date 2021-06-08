@@ -28,10 +28,10 @@
 #include "main/interactive_shell.h"
 #include "options/base_options.h"
 #include "options/language.h"
+#include "options/base_options.h"
 #include "options/option_exception.h"
 #include "options/options.h"
 #include "options/options_public.h"
-#include "options/parser_options.h"
 #include "parser/parser.h"
 #include "parser/parser_builder.h"
 #include "parser/parser_exception.h"
@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
 #ifdef CVC5_COMPETITION_MODE
     *opts.base.out << "unknown" << endl;
 #endif
-    if (language::isOutputLang_smt2(opts.parser.outputLanguage))
+    if (language::isOutputLang_smt2(opts.base.outputLanguage))
     {
       *opts.base.out << "(error \"" << e << "\")" << endl;
     } else {

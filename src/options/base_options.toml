@@ -24,6 +24,29 @@ public = true
   includes   = ["<iostream>"]
 
 [[option]]
+  name       = "inputLanguage"
+  alias      = ["input-language"]
+  category   = "common"
+  short      = "L"
+  long       = "lang=LANG"
+  type       = "InputLanguage"
+  default    = "language::input::LANG_AUTO"
+  handler    = "stringToInputLanguage"
+  includes   = ["options/language.h"]
+  help       = "force input language (default is \"auto\"; see --lang help)"
+
+[[option]]
+  name       = "outputLanguage"
+  alias      = ["output-language"]
+  category   = "common"
+  long       = "output-lang=LANG"
+  type       = "OutputLanguage"
+  default    = "language::output::LANG_AUTO"
+  handler    = "stringToOutputLanguage"
+  includes   = ["options/language.h"]
+  help       = "force output language (default is \"auto\"; see --output-lang help)"
+
+[[option]]
   name       = "languageHelp"
   category   = "undocumented"
   type       = "bool"

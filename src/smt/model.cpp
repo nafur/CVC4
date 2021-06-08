@@ -16,7 +16,7 @@
 #include "smt/model.h"
 
 #include "expr/expr_iomanip.h"
-#include "options/parser_options.h"
+#include "options/base_options.h"
 #include "printer/printer.h"
 #include "smt/dump_manager.h"
 #include "smt/node_command.h"

@@ -316,7 +316,7 @@ restart:
   }
 
   d_parser->setInput(Input::newStringInput(
-      d_options.parser.inputLanguage, input, INPUT_FILENAME));
+      d_options.base.inputLanguage, input, INPUT_FILENAME));
 
   /* There may be more than one command in the input. Build up a
      sequence. */
@@ -367,7 +367,7 @@ restart:
   }
   catch (ParserException& pe)
   {
-    if (language::isOutputLang_smt2(d_options.parser.outputLanguage))
+    if (language::isOutputLang_smt2(d_options.base.outputLanguage))
     {
       d_out << "(error \"" << pe << "\")" << endl;
     }

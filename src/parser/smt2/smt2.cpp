@@ -17,9 +17,9 @@
 #include <algorithm>
 
 #include "base/check.h"
+#include "options/base_options.h"
 #include "options/options.h"
 #include "options/options_public.h"
-#include "options/parser_options.h"
 #include "parser/antlr_input.h"
 #include "parser/parser.h"
 #include "parser/smt2/smt2_input.h"
@@ -851,7 +851,7 @@ api::Term Smt2::mkAbstractValue(const std::string& name)
 
 InputLanguage Smt2::getLanguage() const
 {
-  return d_solver->getOptions().parser.inputLanguage;
+  return d_solver->getOptions().base.inputLanguage;
 }
 
 void Smt2::parseOpApplyTypeAscription(ParseOp& p, api::Sort type)

@@ -160,32 +160,32 @@ int runCvc5(int argc, char* argv[], Options& opts)
   }
   const char* filename = filenameStr.c_str();
 
-  if (opts.parser.inputLanguage == language::input::LANG_AUTO)
+  if (opts.base.inputLanguage == language::input::LANG_AUTO)
   {
     if( inputFromStdin ) {
       // We can't do any fancy detection on stdin
-      opts.parser.inputLanguage = language::input::LANG_CVC;
+      opts.base.inputLanguage = language::input::LANG_CVC;
     } else {
       size_t len = filenameStr.size();
       if(len >= 5 && !strcmp(".smt2", filename + len - 5)) {
-        opts.parser.inputLanguage = language::input::LANG_SMTLIB_V2_6;
+        opts.base.inputLanguage = language::input::LANG_SMTLIB_V2_6;
       } else if((len >= 2 && !strcmp(".p", filename + len - 2))
                 || (len >= 5 && !strcmp(".tptp", filename + len - 5))) {
-        opts.parser.inputLanguage = language::input::LANG_TPTP;
+        opts.base.inputLanguage = language::input::LANG_TPTP;
       } else if(( len >= 4 && !strcmp(".cvc", filename + len - 4) )
                 || ( len >= 5 && !strcmp(".cvc4", filename + len - 5) )) {
-        opts.parser.inputLanguage = language::input::LANG_CVC;
+        opts.base.inputLanguage = language::input::LANG_CVC;
       } else if((len >= 3 && !strcmp(".sy", filename + len - 3))
                 || (len >= 3 && !strcmp(".sl", filename + len - 3))) {
         // version 2 sygus is the default
-        opts.parser.inputLanguage = language::input::LANG_SYGUS_V2;
+        opts.base.inputLanguage = language::input::LANG_SYGUS_V2;
       }
     }
   }
 
-  if (opts.parser.outputLanguage == language::output::LANG_AUTO)
+  if (opts.base.outputLanguage == language::output::LANG_AUTO)
   {
-    opts.parser.outputLanguage = language::toOutputLanguage(opts.parser.inputLanguage);
+    opts.base.outputLanguage = language::toOutputLanguage(opts.base.inputLanguage);
   }
 
   // Determine which messages to show based on smtcomp_mode and verbosity
@@ -200,7 +200,7 @@ int runCvc5(int argc, char* argv[], Options& opts)
 
   // important even for muzzled builds (to get result output right)
   (*opts.base.out)
-      << language::SetLanguage(opts.parser.outputLanguage);
+      << language::SetLanguage(opts.base.outputLanguage);
 
   // Create the command executor to execute the parsed commands
   pExecutor = std::make_unique<CommandExecutor>(opts);
@@ -284,11 +284,11 @@ int runCvc5(int argc, char* argv[], Options& opts)
       std::unique_ptr<Parser> parser(parserBuilder.build());
       if( inputFromStdin ) {
         parser->setInput(Input::newStreamInput(
-            opts.parser.inputLanguage, cin, filename));
+            opts.base.inputLanguage, cin, filename));
       }
       else
       {
-        parser->setInput(Input::newFileInput(opts.parser.inputLanguage,
+        parser->setInput(Input::newFileInput(opts.base.inputLanguage,
                                              filename,
                                              opts.parser.memoryMap));
       }
@@ -451,11 +451,11 @@ int runCvc5(int argc, char* argv[], Options& opts)
       std::unique_ptr<Parser> parser(parserBuilder.build());
       if( inputFromStdin ) {
         parser->setInput(Input::newStreamInput(
-            opts.parser.inputLanguage, cin, filename));
+            opts.base.inputLanguage, cin, filename));
       }
       else
       {
-        parser->setInput(Input::newFileInput(opts.parser.inputLanguage,
+        parser->setInput(Input::newFileInput(opts.base.inputLanguage,
                                              filename,
                                              opts.parser.memoryMap));
       }
