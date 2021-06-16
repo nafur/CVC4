@@ -1,6 +1,6 @@
 /******************************************************************************
  * Top contributors (to current version):
- *   Tim King, Morgan Deters, Paul Meng
+ *   Tim King, Gereon Kremer, Andrew Reynolds
  *
  * This file is part of the cvc5 project.
  *
@@ -13,7 +13,7 @@
  * Global (command-line, set-option, ...) parameters for SMT.
  */
 
-#include "options/options_api.h"
+#include "options/options_public.h"
 
 #if !defined(_BSD_SOURCE) && defined(__MINGW32__) && !defined(__MINGW64__)
 // force use of optreset; mingw32 croaks on argv-switching otherwise
@@ -41,6 +41,7 @@ extern int optreset;
 #include "options/options_handler.h"
 #include "options/options_listener.h"
 #include "options/options.h"
+#include "options/uf_options.h"
 ${headers_module}$
 ${headers_handler}$
 
@@ -49,6 +50,8 @@ ${headers_handler}$
 #include <limits>
 
 namespace cvc5::options {
+
+bool getUfHo(const Options& opts) { return opts.uf.ufHo; }
 
 // clang-format off
 static const std::string mostCommonOptionsDescription =
@@ -490,5 +493,4 @@ ${options_getall}$
   return res;
 }
 
-
-}
+}  // namespace cvc5::options

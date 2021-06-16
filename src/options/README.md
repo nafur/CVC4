@@ -97,7 +97,7 @@ After code generation, files related to options live either in `src/options/` (i
 After all code has been generated, the entire options setup consists of the following components:
 
 * `options.h`: core `Options` class
-* `options_api.h`: utility methods used by the API (`parse()`, `set()`, `get()`, ...)
+* `options_public.h`: utility methods used by the API (`parse()`, `set()`, `get()`, ...)
 * `{module}_options.h`: specifics for one single options module
 
 

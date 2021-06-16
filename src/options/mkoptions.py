@@ -27,7 +27,7 @@
 
     Directory <tpl-src> must contain:
         - options_template.cpp
-        - options_api_template.cpp
+        - options_public_template.cpp
         - module_template.cpp
         - module_template.h
 
@@ -689,7 +689,7 @@ def format_modules(s, modules):
     return '\n'.join([s.format(**m.__dict__) for m in modules])
 
 
-def codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_cpp, tpl_options_api):
+def codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_cpp, tpl_options_public):
     """
     Generate code for all option modules (options.cpp).
     """
@@ -906,7 +906,7 @@ def codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_
     }
     write_file(dst_dir, 'options.h', tpl_options_h.format(**data))
     write_file(dst_dir, 'options.cpp', tpl_options_cpp.format(**data))
-    write_file(dst_dir, 'options_api.cpp', tpl_options_api.format(**data))
+    write_file(dst_dir, 'options_public.cpp', tpl_options_public.format(**data))
 
     if os.path.isdir('{}/docs/'.format(build_dir)):
         sphinxgen.render('{}/docs/'.format(build_dir), 'options_generated.rst')
@@ -1048,7 +1048,7 @@ def mkoptions_main():
     # Read source code template files from source directory.
     tpl_module_h = read_tpl(src_dir, 'module_template.h')
     tpl_module_cpp = read_tpl(src_dir, 'module_template.cpp')
-    tpl_options_api = read_tpl(src_dir, 'options_api_template.cpp')
+    tpl_options_public = read_tpl(src_dir, 'options_public_template.cpp')
     tpl_options_h = read_tpl(src_dir, 'options_template.h')
     tpl_options_cpp = read_tpl(src_dir, 'options_template.cpp')
 
@@ -1069,7 +1069,7 @@ def mkoptions_main():
         codegen_module(module, dst_dir, tpl_module_h, tpl_module_cpp)
 
     # Create options.cpp in destination directory
-    codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_cpp, tpl_options_api)
+    codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_cpp, tpl_options_public)
 
 
 if __name__ == "__main__":
