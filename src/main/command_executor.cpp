@@ -176,13 +176,7 @@ bool CommandExecutor::doCommandSingleton(Command* cmd)
     }
 
     if (d_options.driver.dumpInstantiations
-        && ((d_options.printer.instFormatMode
-                 != options::InstFormatMode::SZS
-             && (res.isSat()
-                 || (res.isSatUnknown()
-                     && res.getUnknownExplanation()
-                            == api::Result::INCOMPLETE)))
-            || isResultUnsat))
+        && GetInstantiationsCommand::isEnabled(d_solver.get(), res))
     {
       getterCommands.emplace_back(new GetInstantiationsCommand());
     }

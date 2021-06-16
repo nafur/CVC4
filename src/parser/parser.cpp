@@ -28,7 +28,6 @@
 #include "expr/kind.h"
 #include "options/base_options.h"
 #include "options/options.h"
-#include "options/options_public.h"
 #include "parser/input.h"
 #include "parser/parser_exception.h"
 #include "smt/command.h"
@@ -110,8 +109,8 @@ api::Term Parser::getExpressionForNameAndType(const std::string& name,
   if(expr.isNull()) {
     // the variable is overloaded, try with type if the type exists
     if(!t.isNull()) {
-      // if we decide later to support annotations for function types, this will update to 
-      // separate t into ( argument types, return type )
+      // if we decide later to support annotations for function types, this will
+      // update to separate t into ( argument types, return type )
       expr = getOverloadedConstantForType(name, t);
       if(expr.isNull()) {
         parseError("Cannot get overloaded constant for type ascription.");

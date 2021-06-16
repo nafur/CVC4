@@ -17,7 +17,6 @@
 
 #include "options_public.h"
 
-#include "options/options.h"
 #include "options/uf_options.h"
 
 namespace cvc5::options {

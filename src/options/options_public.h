@@ -23,7 +23,6 @@
 #ifndef CVC5__OPTIONS__OPTIONS_PUBLIC_H
 #define CVC5__OPTIONS__OPTIONS_PUBLIC_H
 
-#include "options/language.h"
 #include "options/options.h"
 
 namespace cvc5::options {
