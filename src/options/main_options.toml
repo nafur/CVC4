@@ -127,6 +127,7 @@ public = true
   long       = "dump-unsat-cores-full"
   type       = "bool"
   default    = "false"
+  predicates = ["dumpUnsatCoresFull"]
   help       = "dump the full unsat core, including unlabeled assertions"
 
 [[option]]

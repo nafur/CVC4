@@ -69,6 +69,7 @@ name   = "SMT Layer"
   category   = "regular"
   long       = "check-models"
   type       = "bool"
+  predicates = ["checkModels"]
   help       = "after SAT/INVALID/UNKNOWN, check that the generated model satisfies user assertions"
 
 [[option]]

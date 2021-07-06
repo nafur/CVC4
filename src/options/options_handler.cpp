@@ -32,6 +32,7 @@
 #include "options/decision_options.h"
 #include "options/didyoumean.h"
 #include "options/language.h"
+#include "options/main_options.h"
 #include "options/option_exception.h"
 #include "options/smt_options.h"
 #include "options/theory_options.h"
@@ -295,6 +296,31 @@ void OptionsHandler::setStats(const std::string& option,
   }
 }
 
+void OptionsHandler::threadN(const std::string& option, const std::string& flag)
+{
+  throw OptionException(flag + " is not a real option by itself.  Use e.g. --thread0=\"--random-seed=10 --random-freq=0.02\" --thread1=\"--random-seed=20 --random-freq=0.05\"");
+}
+
+void OptionsHandler::dumpUnsatCoresFull(const std::string& option,
+                                        const std::string& flag,
+                                        bool value)
+{
+  if (value)
+  {
+    d_options->driver.dumpUnsatCores = true;
+  }
+}
+
+void OptionsHandler::checkModels(const std::string& option,
+                                 const std::string& flag,
+                                 bool value)
+{
+  if (value)
+  {
+    d_options->smt.produceAssignments = true;
+    d_options->smt.produceModels = true;
+  }
+}
 void OptionsHandler::debugCheckModels(const std::string& option,
                                       const std::string& flag,
                                       bool value)
@@ -314,11 +340,6 @@ void OptionsHandler::dumpModels(const std::string& option,
   {
     d_options->smt.produceModels = true;
   }
-}
-
-void OptionsHandler::threadN(const std::string& option, const std::string& flag)
-{
-  throw OptionException(flag + " is not a real option by itself.  Use e.g. --thread0=\"--random-seed=10 --random-freq=0.02\" --thread1=\"--random-seed=20 --random-freq=0.05\"");
 }
 
 // expr/options_handlers.h

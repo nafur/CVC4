@@ -51,10 +51,6 @@ void setDefaults(LogicInfo& logic, bool isInternalSubsolver)
 {
   Options& opts = Options::current();
   // unsat cores and proofs shenanigans
-  if (options::dumpUnsatCoresFull())
-  {
-    opts.driver.dumpUnsatCores = true;
-  }
   if (options::checkUnsatCores() || options::dumpUnsatCores()
       || options::unsatAssumptions()
       || options::unsatCoresMode() != options::UnsatCoresMode::OFF)

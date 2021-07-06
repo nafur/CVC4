@@ -115,13 +115,6 @@ public:
 
   void setStats(const std::string& option, const std::string& flag, bool value);
 
-  void debugCheckModels(const std::string& option,
-                        const std::string& flag,
-                        bool value);
-  void dumpModels(const std::string& option,
-                  const std::string& flag,
-                  bool value);
-
   uint64_t limitHandler(const std::string& option,
                         const std::string& flag,
                         const std::string& optarg);
@@ -137,12 +130,26 @@ public:
                                     const std::string& flag,
                                     int dag);
 
-  /* main/options_handlers.h */
+  /* main option handlers */
   void copyright(const std::string& option, const std::string& flag);
   void showConfiguration(const std::string& option, const std::string& flag);
   void showDebugTags(const std::string& option, const std::string& flag);
   void showTraceTags(const std::string& option, const std::string& flag);
   void threadN(const std::string& option, const std::string& flag);
+  void dumpUnsatCoresFull(const std::string& option,
+                          const std::string& flag,
+                          bool value);
+
+  /* smt option handlers */
+  void checkModels(const std::string& option,
+                   const std::string& flag,
+                   bool value);
+  void debugCheckModels(const std::string& option,
+                        const std::string& flag,
+                        bool value);
+  void dumpModels(const std::string& option,
+                  const std::string& flag,
+                  bool value);
 
   /* options/base_options_handlers.h */
   void setVerbosity(const std::string& option,
