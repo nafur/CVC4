@@ -50,19 +50,6 @@ namespace smt {
 void setDefaults(LogicInfo& logic, bool isInternalSubsolver)
 {
   Options& opts = Options::current();
-  // implied options
-  if (options::debugCheckModels())
-  {
-    opts.smt.checkModels = true;
-  }
-  if (options::checkModels() || options::dumpModels())
-  {
-    opts.smt.produceModels = true;
-  }
-  if (options::checkModels())
-  {
-    opts.smt.produceAssignments = true;
-  }
   // unsat cores and proofs shenanigans
   if (options::dumpUnsatCoresFull())
   {

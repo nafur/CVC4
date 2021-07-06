@@ -295,6 +295,27 @@ void OptionsHandler::setStats(const std::string& option,
   }
 }
 
+void OptionsHandler::debugCheckModels(const std::string& option,
+                                      const std::string& flag,
+                                      bool value)
+{
+  if (value)
+  {
+    d_options->smt.checkModels = true;
+    d_options->smt.produceAssignments = true;
+    d_options->smt.produceModels = true;
+  }
+}
+void OptionsHandler::dumpModels(const std::string& option,
+                                const std::string& flag,
+                                bool value)
+{
+  if (value)
+  {
+    d_options->smt.produceModels = true;
+  }
+}
+
 void OptionsHandler::threadN(const std::string& option, const std::string& flag)
 {
   throw OptionException(flag + " is not a real option by itself.  Use e.g. --thread0=\"--random-seed=10 --random-freq=0.02\" --thread1=\"--random-seed=20 --random-freq=0.05\"");

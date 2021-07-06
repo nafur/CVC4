@@ -115,6 +115,13 @@ public:
 
   void setStats(const std::string& option, const std::string& flag, bool value);
 
+  void debugCheckModels(const std::string& option,
+                        const std::string& flag,
+                        bool value);
+  void dumpModels(const std::string& option,
+                  const std::string& flag,
+                  bool value);
+
   uint64_t limitHandler(const std::string& option,
                         const std::string& flag,
                         const std::string& optarg);

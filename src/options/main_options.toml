@@ -94,6 +94,7 @@ public = true
   long       = "dump-models"
   type       = "bool"
   default    = "false"
+  predicates = ["dumpModels"]
   help       = "output models after every SAT/INVALID/UNKNOWN response"
 
 [[option]]
