@@ -92,6 +92,10 @@ public = true
   type       = "bool"
   predicates = ["setStats"]
   help       = "give statistics on exit"
+[[option.implies.false]]
+  base.statisticsAll = "false"
+  base.statisticsExpert = "false"
+  base.statisticsEveryQuery = "false"
 
 [[option]]
   name       = "statisticsAll"
@@ -100,6 +104,8 @@ public = true
   type       = "bool"
   predicates = ["setStats"]
   help       = "print unchanged (defaulted) statistics as well"
+[[option.implies.true]]
+  base.statistics = "true"
 
 [[option]]
   name       = "statisticsExpert"
@@ -108,6 +114,8 @@ public = true
   type       = "bool"
   predicates = ["setStats"]
   help       = "print expert (non-public) statistics as well"
+[[option.implies.true]]
+  base.statistics = "true"
 
 [[option]]
   name       = "statisticsEveryQuery"
@@ -117,6 +125,8 @@ public = true
   predicates = ["setStats"]
   default    = "false"
   help       = "in incremental mode, print stats after every satisfiability or validity query"
+[[option.implies.true]]
+  base.statistics = "true"
 
 [[option]]
   name       = "parseOnly"

@@ -264,30 +264,6 @@ void OptionsHandler::setStats(const std::string& option,
     throw OptionException(ss.str());
   }
 #endif /* CVC5_STATISTICS_ON */
-  if (value)
-  {
-    if (option == options::base::statisticsAll__name)
-    {
-      d_options->base.statistics = true;
-    }
-    else if (option == options::base::statisticsEveryQuery__name)
-    {
-      d_options->base.statistics = true;
-    }
-    else if (option == options::base::statisticsExpert__name)
-    {
-      d_options->base.statistics = true;
-    }
-  }
-  else
-  {
-    if (option == options::base::statistics__name)
-    {
-      d_options->base.statisticsAll = false;
-      d_options->base.statisticsEveryQuery = false;
-      d_options->base.statisticsExpert = false;
-    }
-  }
 }
 
 void OptionsHandler::threadN(const std::string& option, const std::string& flag)
