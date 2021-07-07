@@ -56,7 +56,7 @@ OPTION_ATTR_REQ = ['category', 'type']
 OPTION_ATTR_ALL = OPTION_ATTR_REQ + [
     'name', 'short', 'long', 'alias',
     'default', 'alternate', 'mode',
-    'handler', 'predicates', 'includes',
+    'handler', 'predicates', 'includes', 'implies',
     'help', 'help_mode'
 ]
 
@@ -71,20 +71,26 @@ g_getopt_long_start = 256
 
 ### Source code templates
 
+TPL_SET_DECL = 'void set_{module}_{name}(Options& opts, const std::string& option, {type} value);'
+TPL_SET = '''
+void set_{module}_{name}(Options& opts, const std::string& option, {type} value) {{
+  opts.{module}.{name} = value;{implications}
+}}'''
+
 TPL_ASSIGN = '''
 void assign_{module}_{name}(Options& opts, const std::string& option, const std::string& optionarg) {{
   auto value = {handler};
   {predicates}
-  opts.{module}.{name} = value;
   opts.{module}.{name}WasSetByUser = true;
+  set_{module}_{name}(opts, option, value);
   Trace("options") << "user assigned option {name} = " << value << std::endl;
 }}'''
 
 TPL_ASSIGN_BOOL = '''
 void assign_{module}_{name}(Options& opts, const std::string& option, bool value) {{
   {predicates}
-  opts.{module}.{name} = value;
   opts.{module}.{name}WasSetByUser = true;
+  set_{module}_{name}(opts, option, value);
   Trace("options") << "user assigned option {name} = " << value << std::endl;
 }}'''
 
@@ -123,7 +129,7 @@ enum class {type}
 }};
 
 static constexpr size_t {type}__numValues = {nvalues};
-"""
+'''
 
 TPL_DECL_MODE_FUNC = \
 """
@@ -236,6 +242,27 @@ def get_getall(module, option):
     else:
         return '{{ std::stringstream ss; ss << opts.{}.{}; res.push_back({{"{}", ss.str()}}); }}'.format(module.id,
             option.name, option.long_name)
+
+def get_option_implications(module, option):
+    if not option.implies:
+        return ''
+    res = ''
+    for value, implications in option.implies.items():
+        res += '\n  if (opts.{module}.{name} == {value})'.format(
+            module=module.id,
+            name=option.name,
+            value=value
+        )
+        res += '\n  {'
+        for impls in implications:
+            for mod, imp in impls.items():
+                for name, val in imp.items():
+                    res += '\n    set_{module}_{name}(opts, option, {value});'.format(
+                        module=mod,
+                        name=name, value=val
+                    )
+        res += '\n  }'
+    return res
 
 class Module(object):
     """Options module.
@@ -711,6 +738,7 @@ def codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_
     setoption_handlers = []  # handlers for set-option command
     getoption_handlers = []  # handlers for get-option command
 
+    assign_decls = []
     assign_impls = []
 
     sphinxgen = SphinxGenerator()
@@ -879,6 +907,18 @@ def codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_
 
                 # Define handler assign/assignBool
                 if not mode_handler:
+
+                    assign_decls.append(TPL_SET_DECL.format(
+                        module=module.id,
+                        name=option.name,
+                        type=option.type,
+                    ))
+                    assign_impls.append(TPL_SET.format(
+                        module=module.id,
+                        name=option.name,
+                        type=option.type,
+                        implications=get_option_implications(module, option),
+                    ))
                     if option.type == 'bool':
                         assign_impls.append(TPL_ASSIGN_BOOL.format(
                             module=module.id,
@@ -908,7 +948,8 @@ def codegen_all_modules(modules, build_dir, dst_dir, tpl_options_h, tpl_options_
         'help_others': '\n'.join(help_others),
         'options_handler': '\n    '.join(options_handler),
         'options_short': ''.join(getopt_short),
-        'assigns': '\n'.join(assign_impls),
+        'assigns_decls': '\n'.join(assign_decls),
+        'assigns_impls': '\n'.join(assign_impls),
         'options_getall': '\n  '.join(options_getall),
         'getoption_handlers': '\n'.join(getoption_handlers),
         'setoption_handlers': '\n'.join(setoption_handlers),

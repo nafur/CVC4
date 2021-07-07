@@ -299,7 +299,8 @@ std::string handleOption<std::string>(const std::string& option, const std::stri
 }
 
 // clang-format off
-${assigns}$
+${assigns_decls}$
+${assigns_impls}$
 // clang-format off
 
 void parseInternal(Options& opts, int argc,
@@ -469,7 +470,7 @@ std::string get(const Options& options, const std::string& key)
 void setInternal(Options& opts, const std::string& key,
                                 const std::string& optionarg)
                                 {
-  ${setoption_handlers}$
+${setoption_handlers}$
   throw UnrecognizedOptionException(key);
 }
 
