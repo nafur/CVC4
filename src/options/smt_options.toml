@@ -86,6 +86,8 @@ public = true
   long       = "debug-check-models"
   type       = "bool"
   help       = "after SAT/INVALID/UNKNOWN, check that the generated model satisfies user and internal assertions"
+[[option.implies.true]]
+  smt.checkModels = "true"
 
 [[option]]
   name       = "modelCoresMode"
