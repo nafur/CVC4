@@ -30,6 +30,8 @@ libcvc5_add_sources(
   options_handler.h
   options_listener.h
   options_public.h
+  outputc.cpp
+  outputc.h
   set_language.cpp
   set_language.h
 )
