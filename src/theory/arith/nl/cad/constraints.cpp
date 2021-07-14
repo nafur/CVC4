@@ -57,7 +57,8 @@ void Constraints::sortConstraints()
     Trace("cdcac") << "Constraints before sorting:" << std::endl;
     for (const auto& c : d_constraints)
     {
-      Trace("cdcac") << "\t" << c << std::endl;
+      Trace("cdcac") << "\t" << std::get<0>(c) << " " << std::get<1>(c)
+                     << " 0 (" << std::get<2>(c) << ")" << std::endl;
     }
   }
   using Tpl = std::tuple<poly::Polynomial, poly::SignCondition, Node>;
@@ -85,7 +86,8 @@ void Constraints::sortConstraints()
     Trace("cdcac") << "Constraints after sorting:" << std::endl;
     for (const auto& c : d_constraints)
     {
-      Trace("cdcac") << "\t" << c << std::endl;
+      Trace("cdcac") << "\t" << std::get<0>(c) << " " << std::get<1>(c)
+                     << " 0 (" << std::get<2>(c) << ")" << std::endl;
     }
   }
 }
