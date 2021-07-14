@@ -52,6 +52,14 @@ void Constraints::reset() { d_constraints.clear(); }
 
 void Constraints::sortConstraints()
 {
+  if (Trace.isOn("cdcac"))
+  {
+    Trace("cdcac") << "Constraints before sorting:" << std::endl;
+    for (const auto& c : d_constraints)
+    {
+      Trace("cdcac") << "\t" << c << std::endl;
+    }
+  }
   using Tpl = std::tuple<poly::Polynomial, poly::SignCondition, Node>;
   std::sort(d_constraints.begin(),
             d_constraints.end(),
@@ -71,6 +79,14 @@ void Constraints::sortConstraints()
   {
     auto* p = std::get<0>(c).get_internal();
     lp_polynomial_set_external(p);
+  }
+  if (Trace.isOn("cdcac"))
+  {
+    Trace("cdcac") << "Constraints after sorting:" << std::endl;
+    for (const auto& c : d_constraints)
+    {
+      Trace("cdcac") << "\t" << c << std::endl;
+    }
   }
 }
 

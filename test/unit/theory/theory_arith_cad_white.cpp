@@ -21,6 +21,7 @@
 #include <memory>
 #include <vector>
 
+#include "base/output.h"
 #include "test_smt.h"
 #include "theory/arith/nl/cad/cdcac.h"
 #include "theory/arith/nl/cad/lazard_evaluation.h"
@@ -273,6 +274,8 @@ TEST_F(TestTheoryWhiteArithCAD, test_cdcac_2)
 
 TEST_F(TestTheoryWhiteArithCAD, test_cdcac_3)
 {
+  Trace.on("cdcac");
+  Trace.on("poly::conversion");
   cad::CDCAC cac(nullptr, nullptr, {});
   poly::Variable x = cac.getConstraints().varMapper()(make_real_variable("x"));
   poly::Variable y = cac.getConstraints().varMapper()(make_real_variable("y"));

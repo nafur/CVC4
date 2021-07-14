@@ -49,6 +49,8 @@ poly::Variable VariableMapper::operator()(const cvc5::Node& n)
     }
     it = mVarCVCpoly.emplace(n, poly::Variable(name.c_str())).first;
     mVarpolyCVC.emplace(it->second, n);
+    Trace("poly::conversion") << "Added new variable to mapper: " << it->second
+                              << " <-> " << n << std::endl;
   }
   return it->second;
 }
