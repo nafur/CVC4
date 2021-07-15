@@ -39,8 +39,8 @@ int main()
 
   std::unique_ptr<api::Solver> solver =
       std::unique_ptr<api::Solver>(new api::Solver());
-  solver->setOption(":input-language", "smtlib2");
-  solver->setOption(":output-language", "smtlib2");
+  solver->setOption("input-language", "smtlib2");
+  solver->setOption("output-language", "smtlib2");
   testGetInfo(solver.get(), ":error-behavior");
   testGetInfo(solver.get(), ":name");
   testGetInfo(solver.get(), ":authors");
