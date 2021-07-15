@@ -110,7 +110,6 @@ int runCvc5(int argc, char* argv[], std::unique_ptr<api::Solver>& solver)
 
   // Parse the options
   std::vector<string> filenames = options::parse(opts, argc, argv, progName);
-  pExecutor->storeOptionsAsOriginal();
 
   auto limit = install_time_limit(opts);
 
@@ -187,6 +186,7 @@ int runCvc5(int argc, char* argv[], std::unique_ptr<api::Solver>& solver)
   {
     opts.base.outputLanguage = language::toOutputLanguage(opts.base.inputLanguage);
   }
+  pExecutor->storeOptionsAsOriginal();
 
   // Determine which messages to show based on smtcomp_mode and verbosity
   if(Configuration::isMuzzledBuild()) {
