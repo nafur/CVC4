@@ -25,6 +25,7 @@
 #include "options/bv_options.h"
 #include "options/decision_options.h"
 #include "options/language.h"
+#include "options/managed_streams.h"
 #include "options/option_exception.h"
 #include "options/printer_options.h"
 #include "options/quantifiers_options.h"
@@ -133,6 +134,15 @@ public:
   void threadN(const std::string& option, const std::string& flag);
 
   /* options/base_options_handlers.h */
+  void applyErr(const std::string& option,
+                const std::string& flag,
+                const ManagedErr& me);
+  void applyIn(const std::string& option,
+               const std::string& flag,
+               const ManagedIn& mi);
+  void applyOut(const std::string& option,
+                const std::string& flag,
+                const ManagedOut& mo);
   void setVerbosity(const std::string& option,
                     const std::string& flag,
                     int value);

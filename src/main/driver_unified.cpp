@@ -95,7 +95,7 @@ void printUsage(const Options& opts, bool full) {
   }
 }
 
-int runCvc5(int argc, char* argv[], Options& opts)
+int runCvc5(int argc, char* argv[], std::unique_ptr<api::Solver>& solver)
 {
   main::totalTime = std::make_unique<TotalTimer>();
 
@@ -104,8 +104,13 @@ int runCvc5(int argc, char* argv[], Options& opts)
 
   progPath = argv[0];
 
+  // Create the command executor to execute the parsed commands
+  pExecutor = std::make_unique<CommandExecutor>(solver);
+  Options& opts = solver->getOptions();
+
   // Parse the options
   std::vector<string> filenames = options::parse(opts, argc, argv, progName);
+  pExecutor->storeOptionsAsOriginal();
 
   auto limit = install_time_limit(opts);
 
@@ -197,8 +202,6 @@ int runCvc5(int argc, char* argv[], Options& opts)
   (*opts.base.out)
       << language::SetLanguage(opts.base.outputLanguage);
 
-  // Create the command executor to execute the parsed commands
-  pExecutor = std::make_unique<CommandExecutor>(opts);
 
   int returnValue = 0;
   {

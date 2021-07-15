@@ -264,9 +264,17 @@ TypeNode Command::grammarToTypeNode(api::Grammar* grammar)
                             : sortToTypeNode(grammar->resolve());
 }
 
-Options& Command::getOriginalOptionsFrom(api::Solver* s)
+void Command::resetSolver(api::Solver* solver)
 {
-  return *s->d_originalOptions.get();
+  std::unique_ptr<Options> opts = std::make_unique<Options>();
+  opts->copyValues(*solver->d_originalOptions);
+  // This reconstructs a new solver object at the same memory location as the
+  // current one. Note that this command does not own the solver object!
+  // It may be safer to instead make the ResetCommand a special case in the
+  // CommandExecutor such that this reconstruction can be done within the
+  // CommandExecutor, who actually owns the solver.
+  solver->~Solver();
+  new (solver) api::Solver(std::move(opts));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -926,15 +934,7 @@ void ResetCommand::invoke(api::Solver* solver, SymbolManager* sm)
   try
   {
     sm->reset();
-    Options opts;
-    opts.copyValues(getOriginalOptionsFrom(solver));
-    // This reconstructs a new solver object at the same memory location as the
-    // current one. Note that this command does not own the solver object!
-    // It may be safer to instead make the ResetCommand a special case in the
-    // CommandExecutor such that this reconstruction can be done within the
-    // CommandExecutor, who actually owns the solver.
-    solver->~Solver();
-    new (solver) api::Solver(&opts);
+    resetSolver(solver);
     d_commandStatus = CommandSuccess::instance();
   }
   catch (exception& e)

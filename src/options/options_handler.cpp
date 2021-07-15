@@ -16,6 +16,7 @@
 #include "options/options_handler.h"
 
 #include <cerrno>
+#include <fstream>
 #include <ostream>
 #include <string>
 
@@ -35,6 +36,7 @@
 #include "options/option_exception.h"
 #include "options/smt_options.h"
 #include "options/theory_options.h"
+#include "smt/update_ostream.h"
 
 namespace cvc5 {
 namespace options {
@@ -518,6 +520,33 @@ InputLanguage OptionsHandler::stringToInputLanguage(const std::string& option,
   }
 
   Unreachable();
+}
+
+void OptionsHandler::applyErr(const std::string& option,
+                         const std::string& flag, const ManagedErr& me)
+{
+  DebugOstreamUpdate debugOstreamUpdate;
+  debugOstreamUpdate.apply(me);
+  WarningOstreamUpdate warningOstreamUpdate;
+  warningOstreamUpdate.apply(me);
+  MessageOstreamUpdate messageOstreamUpdate;
+  messageOstreamUpdate.apply(me);
+  NoticeOstreamUpdate noticeOstreamUpdate;
+  noticeOstreamUpdate.apply(me);
+  ChatOstreamUpdate chatOstreamUpdate;
+  chatOstreamUpdate.apply(me);
+  TraceOstreamUpdate traceOstreamUpdate;
+  traceOstreamUpdate.apply(me);
+  OptionsErrOstreamUpdate optionsErrOstreamUpdate;
+  optionsErrOstreamUpdate.apply(me);
+}
+void OptionsHandler::applyIn(const std::string& option,
+                         const std::string& flag, const ManagedIn& mi)
+{
+}
+void OptionsHandler::applyOut(const std::string& option,
+                         const std::string& flag, const ManagedOut& mo)
+{
 }
 
 /* options/base_options_handlers.h */
