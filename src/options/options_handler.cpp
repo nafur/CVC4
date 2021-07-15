@@ -36,6 +36,7 @@
 #include "options/option_exception.h"
 #include "options/smt_options.h"
 #include "options/theory_options.h"
+#include "smt/command.h"
 #include "smt/update_ostream.h"
 
 namespace cvc5 {
@@ -601,6 +602,19 @@ void OptionsHandler::setDumpMode(const std::string& option,
                        const std::string& optarg)
 {
     Dump.setDumpFromString(optarg);
+}
+
+void OptionsHandler::setPrintSuccess(const std::string& option,
+                                     const std::string& flag,
+                                     bool value)
+{
+    Debug.getStream() << Command::printsuccess(value);
+    Trace.getStream() << Command::printsuccess(value);
+    Notice.getStream() << Command::printsuccess(value);
+    Chat.getStream() << Command::printsuccess(value);
+    CVC5Message.getStream() << Command::printsuccess(value);
+    Warning.getStream() << Command::printsuccess(value);
+    *options::out() << Command::printsuccess(value);
 }
 
 }  // namespace options

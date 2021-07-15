@@ -168,6 +168,9 @@ public:
   void setDumpMode(const std::string& option,
                        const std::string& flag,
                        const std::string& optarg);
+  void setPrintSuccess(const std::string& option,
+                       const std::string& flag,
+                       bool value);
 
  private:
 
