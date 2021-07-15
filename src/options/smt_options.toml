@@ -8,6 +8,7 @@ public = true
   long       = "dump=MODE"
   type       = "std::string"
   help       = "dump preprocessed assertions, etc., see --dump=help"
+  predicates = ["setDumpMode"]
 
 [[option]]
   name       = "dumpToFileName"

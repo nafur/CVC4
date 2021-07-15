@@ -596,5 +596,12 @@ void OptionsHandler::decreaseVerbosity(const std::string& option,
   setVerbosity(option, flag, d_options->base.verbosity);
 }
 
+void OptionsHandler::setDumpMode(const std::string& option,
+                       const std::string& flag,
+                       const std::string& optarg)
+{
+    Dump.setDumpFromString(optarg);
+}
+
 }  // namespace options
 }  // namespace cvc5
